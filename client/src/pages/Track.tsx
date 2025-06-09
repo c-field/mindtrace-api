@@ -75,11 +75,10 @@ export default function Track() {
           Record and categorize negative thought patterns to gain insight into your mental health journey.
         </p>
       </div>
-
       {/* Thought Input Form */}
       <div className="app-surface rounded-2xl p-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-[#333333]">
             {/* Thought Content */}
             <FormField
               control={form.control}
