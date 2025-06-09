@@ -67,7 +67,7 @@ export default function Profile() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="app-surface-light border-slate-600 app-text-primary focus:border-primary"
+              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
             />
           </div>
           <div>
@@ -79,7 +79,7 @@ export default function Profile() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="app-surface-light border-slate-600 app-text-primary focus:border-primary"
+              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
             />
           </div>
         </div>
