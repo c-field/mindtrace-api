@@ -46,6 +46,7 @@ export class MemStorage implements IStorage {
     const thought: Thought = {
       ...insertThought,
       id,
+      trigger: insertThought.trigger || null,
       createdAt: new Date(),
     };
     this.thoughts.set(id, thought);

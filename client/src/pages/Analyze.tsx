@@ -256,8 +256,11 @@ export default function Analyze() {
                   <div className="font-medium mb-1 app-text-primary">
                     {distortion?.name || thought.category}
                   </div>
+                  <div className="app-text-primary text-sm mb-2 line-clamp-2">
+                    {thought.content}
+                  </div>
                   {thought.trigger && (
-                    <div className="app-text-secondary text-xs">{thought.trigger}</div>
+                    <div className="app-text-secondary text-xs">Trigger: {thought.trigger}</div>
                   )}
                 </div>
               );

@@ -64,6 +64,15 @@
     color: hsl(210, 40%, 98%);
   }
 
+  /* Fix input and textarea text colors */
+  input, textarea, select {
+    color: hsl(210, 40%, 98%) !important;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: hsl(215, 20%, 65%) !important;
+  }
+
   .app-container {
     background: hsl(222, 84%, 4.9%);
     color: hsl(210, 40%, 98%);
