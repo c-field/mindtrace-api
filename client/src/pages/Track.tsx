@@ -91,7 +91,7 @@ export default function Track() {
                   <FormControl>
                     <Textarea
                       placeholder="Share your negative thought or worry here..."
-                      className="h-32 app-surface-light border-slate-600 app-text-primary placeholder:app-text-secondary focus:border-primary resize-none"
+                      className="h-32 app-surface-light border-slate-600 text-gray-800 placeholder:text-gray-500 focus:border-primary resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -160,7 +160,7 @@ export default function Track() {
                   <FormControl>
                     <Input
                       placeholder="What might have triggered this thought?"
-                      className="app-surface-light border-slate-600 app-text-primary placeholder:app-text-secondary focus:border-primary"
+                      className="app-surface-light border-slate-600 text-gray-800 placeholder:text-gray-500 focus:border-primary"
                       {...field}
                     />
                   </FormControl>
