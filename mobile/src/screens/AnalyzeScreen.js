@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://your-repl-name.your-username.repl.co';
 const { width } = Dimensions.get('window');
 
 const dateFilters = [
