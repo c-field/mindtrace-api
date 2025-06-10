@@ -114,7 +114,7 @@ export default function Export() {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary pl-[0px] pr-[0px]"
               />
             </div>
             <div>
@@ -124,7 +124,7 @@ export default function Export() {
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary pl-[0px] pr-[0px]"
               />
             </div>
           </div>

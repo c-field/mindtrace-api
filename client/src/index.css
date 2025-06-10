@@ -73,6 +73,25 @@
     color: #6b7280 !important;
   }
 
+  /* Ensure date inputs are fully clickable */
+  input[type="date"] {
+    cursor: pointer;
+    position: relative;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    color: transparent;
+    background: transparent;
+    cursor: pointer;
+  }
+
   .app-container {
     background: hsl(222, 84%, 4.9%);
     color: hsl(210, 40%, 98%);
