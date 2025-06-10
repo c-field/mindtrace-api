@@ -6,13 +6,27 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { apiRequest } from "@/lib/queryClient";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Edit2, Check, X } from "lucide-react";
 
 export default function Profile() {
   const [name, setName] = useState("Alex Chen");
   const [email, setEmail] = useState("alex.chen@email.com");
+  const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const handleSaveProfile = () => {
+    setIsEditing(false);
+    toast({
+      title: "Profile Updated",
+      description: "Your profile information has been saved.",
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    // Reset to original values if needed
+  };
 
   const clearDataMutation = useMutation({
     mutationFn: async () => {
@@ -55,34 +69,81 @@ export default function Profile() {
   return (
     <div className="space-y-6 pb-4">
       {/* Profile Info */}
-      <div className="app-surface rounded-2xl p-6">
-        <h2 className="text-xl font-semibold mb-4 app-text-primary">Profile Settings</h2>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name" className="text-sm font-medium app-text-primary mb-2 block">
-              Name
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
-            />
-          </div>
-          <div>
-            <Label htmlFor="email" className="text-sm font-medium app-text-primary mb-2 block">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
-            />
-          </div>
+      <div className="bg-gradient-to-r from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold app-text-primary">Your Profile</h2>
+          {!isEditing ? (
+            <Button
+              onClick={() => setIsEditing(true)}
+              variant="ghost"
+              size="sm"
+              className="app-primary hover:bg-primary/20 p-2"
+            >
+              <Edit2 className="w-4 h-4" />
+            </Button>
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                onClick={handleSaveProfile}
+                variant="ghost"
+                size="sm"
+                className="text-green-400 hover:bg-green-400/20 p-2"
+              >
+                <Check className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={handleCancelEdit}
+                variant="ghost"
+                size="sm"
+                className="text-red-400 hover:bg-red-400/20 p-2"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
+        
+        {!isEditing ? (
+          // Display mode
+          <div className="space-y-4">
+            <div className="app-surface-light rounded-lg p-4">
+              <div className="text-sm app-text-secondary mb-1">Name</div>
+              <div className="text-lg font-medium app-text-primary">{name}</div>
+            </div>
+            <div className="app-surface-light rounded-lg p-4">
+              <div className="text-sm app-text-secondary mb-1">Email</div>
+              <div className="text-lg font-medium app-text-primary">{email}</div>
+            </div>
+          </div>
+        ) : (
+          // Edit mode
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name" className="text-sm font-medium app-text-primary mb-2 block">
+                Name
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+              />
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-sm font-medium app-text-primary mb-2 block">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Data Management */}
