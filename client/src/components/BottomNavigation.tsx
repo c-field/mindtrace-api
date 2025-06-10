@@ -15,7 +15,7 @@ export default function BottomNavigation({ activeTab, onTabChange }: BottomNavig
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm app-surface border-t border-slate-700">
-      <div className="flex justify-around py-2 pt-[5px] pb-[5px]">
+      <div className="flex justify-around py-2 pt-[5px] pb-[5px] w-full">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
