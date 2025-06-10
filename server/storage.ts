@@ -1,4 +1,6 @@
-import { thoughts, type Thought, type InsertThought, users, type User, type InsertUser } from "@shared/schema";
+import { users, thoughts, type User, type InsertUser, type Thought, type InsertThought } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, gte, lte, desc } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -11,66 +13,56 @@ export interface IStorage {
   deleteAllThoughts(): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private thoughts: Map<number, Thought>;
-  private currentUserId: number;
-  private currentThoughtId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.thoughts = new Map();
-    this.currentUserId = 1;
-    this.currentThoughtId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async createThought(insertThought: InsertThought): Promise<Thought> {
-    const id = this.currentThoughtId++;
-    const thought: Thought = {
-      ...insertThought,
-      id,
-      trigger: insertThought.trigger || null,
-      createdAt: new Date(),
-    };
-    this.thoughts.set(id, thought);
+    const [thought] = await db
+      .insert(thoughts)
+      .values({
+        ...insertThought,
+        createdAt: new Date(),
+      })
+      .returning();
     return thought;
   }
 
   async getThoughts(dateFrom?: Date, dateTo?: Date): Promise<Thought[]> {
-    let thoughtsArray = Array.from(this.thoughts.values());
+    let query = db.select().from(thoughts);
     
     if (dateFrom || dateTo) {
-      thoughtsArray = thoughtsArray.filter(thought => {
-        const thoughtDate = new Date(thought.createdAt);
-        if (dateFrom && thoughtDate < dateFrom) return false;
-        if (dateTo && thoughtDate > dateTo) return false;
-        return true;
-      });
+      const conditions = [];
+      if (dateFrom) {
+        conditions.push(gte(thoughts.createdAt, dateFrom));
+      }
+      if (dateTo) {
+        conditions.push(lte(thoughts.createdAt, dateTo));
+      }
+      query = query.where(and(...conditions));
     }
-    
-    return thoughtsArray.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return await query.orderBy(desc(thoughts.createdAt));
   }
 
   async deleteAllThoughts(): Promise<void> {
-    this.thoughts.clear();
+    await db.delete(thoughts);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

@@ -1,8 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertThoughtSchema, insertUserSchema } from "@shared/schema";
+import { insertThoughtSchema, insertUserSchema, users, thoughts } from "@shared/schema";
 import { z } from "zod";
+import { db } from "./db";
+import { eq, sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
@@ -74,6 +76,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ message: "Logged out successfully" });
     });
+  });
+
+  // Database API endpoints for HubSpot integration
+  app.get("/api/database/users", async (req, res) => {
+    try {
+      // Get all users with basic info (no passwords)
+      const allUsers = await db.select({
+        id: users.id,
+        username: users.username,
+        createdAt: users.createdAt
+      }).from(users);
+      
+      res.json(allUsers);
+    } catch (error) {
+      console.error("Database users error:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.get("/api/database/users/:userId/thoughts", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      // Get all thoughts for a specific user
+      const userThoughts = await db.select().from(thoughts).where(eq(thoughts.userId, userId));
+      
+      res.json(userThoughts);
+    } catch (error) {
+      console.error("Database user thoughts error:", error);
+      res.status(500).json({ message: "Failed to fetch user thoughts" });
+    }
+  });
+
+  app.get("/api/database/analytics", async (req, res) => {
+    try {
+      // Get analytics data for HubSpot integration
+      const totalUsers = await db.select({ count: sql`count(*)` }).from(users);
+      const totalThoughts = await db.select({ count: sql`count(*)` }).from(thoughts);
+      
+      // Get user engagement stats
+      const activeUsers = await db.select({
+        userId: thoughts.userId,
+        thoughtCount: sql`count(*)`
+      })
+      .from(thoughts)
+      .groupBy(thoughts.userId);
+
+      res.json({
+        totalUsers: totalUsers[0].count,
+        totalThoughts: totalThoughts[0].count,
+        activeUsers: activeUsers.length,
+        userEngagement: activeUsers
+      });
+    } catch (error) {
+      console.error("Database analytics error:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
   });
 
   // Middleware to check authentication for protected routes
