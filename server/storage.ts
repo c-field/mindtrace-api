@@ -9,8 +9,8 @@ export interface IStorage {
   
   // Thought operations
   createThought(thought: InsertThought): Promise<Thought>;
-  getThoughts(dateFrom?: Date, dateTo?: Date): Promise<Thought[]>;
-  deleteAllThoughts(): Promise<void>;
+  getThoughts(dateFrom?: Date, dateTo?: Date, userId?: number): Promise<Thought[]>;
+  deleteAllThoughts(userId?: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -43,25 +43,32 @@ export class DatabaseStorage implements IStorage {
     return thought;
   }
 
-  async getThoughts(dateFrom?: Date, dateTo?: Date): Promise<Thought[]> {
-    let query = db.select().from(thoughts);
+  async getThoughts(dateFrom?: Date, dateTo?: Date, userId?: number): Promise<Thought[]> {
+    const conditions = [];
     
-    if (dateFrom || dateTo) {
-      const conditions = [];
-      if (dateFrom) {
-        conditions.push(gte(thoughts.createdAt, dateFrom));
-      }
-      if (dateTo) {
-        conditions.push(lte(thoughts.createdAt, dateTo));
-      }
-      query = query.where(and(...conditions));
+    if (userId) {
+      conditions.push(eq(thoughts.userId, userId));
+    }
+    if (dateFrom) {
+      conditions.push(gte(thoughts.createdAt, dateFrom));
+    }
+    if (dateTo) {
+      conditions.push(lte(thoughts.createdAt, dateTo));
     }
 
-    return await query.orderBy(desc(thoughts.createdAt));
+    if (conditions.length > 0) {
+      return await db.select().from(thoughts).where(and(...conditions)).orderBy(desc(thoughts.createdAt));
+    }
+
+    return await db.select().from(thoughts).orderBy(desc(thoughts.createdAt));
   }
 
-  async deleteAllThoughts(): Promise<void> {
-    await db.delete(thoughts);
+  async deleteAllThoughts(userId?: number): Promise<void> {
+    if (userId) {
+      await db.delete(thoughts).where(eq(thoughts.userId, userId));
+    } else {
+      await db.delete(thoughts);
+    }
   }
 }
 

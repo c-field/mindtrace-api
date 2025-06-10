@@ -165,7 +165,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         to.setHours(23, 59, 59, 999);
       }
       
-      const thoughts = await storage.getThoughts(from, to);
+      const userId = (req.session as any).userId;
+      const thoughts = await storage.getThoughts(from, to, userId);
       res.json(thoughts);
     } catch (error) {
       res.status(500).json({ message: "Failed to retrieve thoughts" });
@@ -175,7 +176,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new thought
   app.post("/api/thoughts", requireAuth, async (req, res) => {
     try {
-      const validatedData = insertThoughtSchema.parse(req.body);
+      const userId = (req.session as any).userId;
+      const validatedData = insertThoughtSchema.parse({
+        ...req.body,
+        userId
+      });
       const thought = await storage.createThought(validatedData);
       res.status(201).json(thought);
     } catch (error) {
@@ -190,7 +195,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete all thoughts
   app.delete("/api/thoughts", requireAuth, async (req, res) => {
     try {
-      await storage.deleteAllThoughts();
+      const userId = (req.session as any).userId;
+      await storage.deleteAllThoughts(userId);
       res.json({ message: "All thoughts deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete thoughts" });
@@ -213,16 +219,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         to.setHours(23, 59, 59, 999);
       }
       
-      const thoughts = await storage.getThoughts(from, to);
+      const userId = (req.session as any).userId;
+      const thoughts = await storage.getThoughts(from, to, userId);
       
       // Create CSV content
-      const csvHeader = "Date,Category,Intensity,Trigger,Content\n";
+      const csvHeader = "Date,Emotion,Intensity,Cognitive Distortions,Trigger,Content\n";
       const csvRows = thoughts.map(thought => {
         const date = new Date(thought.createdAt).toLocaleDateString();
         const content = `"${thought.content.replace(/"/g, '""')}"`;
         const trigger = thought.trigger ? `"${thought.trigger.replace(/"/g, '""')}"` : "";
-        const category = `"${thought.category}"`;
-        return `${date},${category},${thought.intensity},${trigger},${content}`;
+        const emotion = `"${thought.emotion}"`;
+        const distortions = `"${thought.cognitiveDistortions.join(', ')}"`;
+        return `${date},${emotion},${thought.intensity},${distortions},${trigger},${content}`;
       }).join("\n");
       
       const csv = csvHeader + csvRows;
