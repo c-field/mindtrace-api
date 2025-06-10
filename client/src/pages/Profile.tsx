@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,11 +13,18 @@ interface ProfileProps {
 }
 
 export default function Profile({ onLogout }: ProfileProps = {}) {
-  const [name, setName] = useState("Alex Chen");
-  const [email, setEmail] = useState("alex.chen@email.com");
+  const [name, setName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch current user data
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["/api/auth/me"],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const email = (user as any)?.username || "";
 
   const handleSaveProfile = () => {
     setIsEditing(false);
@@ -90,6 +97,17 @@ export default function Profile({ onLogout }: ProfileProps = {}) {
     },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-6 pb-20">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold app-text-primary mb-2">Profile</h1>
+          <p className="app-text-secondary">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 pb-4">
       {/* Profile Info */}
@@ -156,14 +174,14 @@ export default function Profile({ onLogout }: ProfileProps = {}) {
             </div>
             <div>
               <Label htmlFor="email" className="text-sm font-medium app-text-primary mb-2 block">
-                Email
+                Email (Cannot be changed)
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+                readOnly
+                className="app-surface-light border-slate-600 text-gray-500 bg-gray-100 cursor-not-allowed"
               />
             </div>
           </div>
