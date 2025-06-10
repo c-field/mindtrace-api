@@ -1,12 +1,93 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertThoughtSchema } from "@shared/schema";
+import { insertThoughtSchema, insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication routes
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      const validatedData = insertUserSchema.parse(req.body);
+      
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(validatedData.username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      const user = await storage.createUser(validatedData);
+      
+      // Set session
+      (req.session as any).userId = user.id;
+      
+      res.status(201).json({ id: user.id, username: user.username });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid user data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create account" });
+      }
+    }
+  });
+
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const validatedData = insertUserSchema.parse(req.body);
+      
+      const user = await storage.getUserByUsername(validatedData.username);
+      if (!user || user.password !== validatedData.password) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      
+      // Set session
+      (req.session as any).userId = user.id;
+      
+      res.json({ id: user.id, username: user.username });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid login data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Login failed" });
+      }
+    }
+  });
+
+  app.get("/api/auth/me", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    
+    res.json({ id: user.id, username: user.username });
+  });
+
+  app.post("/api/auth/logout", async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Failed to logout" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  // Middleware to check authentication for protected routes
+  const requireAuth = async (req: any, res: any, next: any) => {
+    const userId = req.session?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    req.userId = userId;
+    next();
+  };
+
   // Get all thoughts with optional date filtering
-  app.get("/api/thoughts", async (req, res) => {
+  app.get("/api/thoughts", requireAuth, async (req, res) => {
     try {
       const { dateFrom, dateTo } = req.query;
       
@@ -30,7 +111,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create a new thought
-  app.post("/api/thoughts", async (req, res) => {
+  app.post("/api/thoughts", requireAuth, async (req, res) => {
     try {
       const validatedData = insertThoughtSchema.parse(req.body);
       const thought = await storage.createThought(validatedData);
@@ -45,7 +126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete all thoughts
-  app.delete("/api/thoughts", async (req, res) => {
+  app.delete("/api/thoughts", requireAuth, async (req, res) => {
     try {
       await storage.deleteAllThoughts();
       res.json({ message: "All thoughts deleted successfully" });
@@ -55,7 +136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Export thoughts as CSV
-  app.get("/api/export/csv", async (req, res) => {
+  app.get("/api/export/csv", requireAuth, async (req, res) => {
     try {
       const { dateFrom, dateTo } = req.query;
       
