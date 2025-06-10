@@ -117,7 +117,7 @@ export default function Track() {
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="app-surface-light border-slate-600 app-text-primary focus:border-primary">
+                      <SelectTrigger className="app-surface-light border-slate-600 text-gray-700 focus:border-primary">
                         <SelectValue placeholder="Select a category..." />
                       </SelectTrigger>
                     </FormControl>
@@ -126,7 +126,7 @@ export default function Track() {
                         <SelectItem
                           key={distortion.id}
                           value={distortion.id}
-                          className="app-text-primary hover:app-surface-light"
+                          className="text-gray-700 hover:app-surface-light focus:text-gray-700"
                         >
                           {distortion.name}
                         </SelectItem>
