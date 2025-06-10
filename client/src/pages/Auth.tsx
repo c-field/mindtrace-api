@@ -11,7 +11,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Brain } from "lucide-react";
 
 const authSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  username: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -101,11 +101,12 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium app-text-primary">
-                      Username
+                      Email Address
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your username"
+                        type="email"
+                        placeholder="Enter your email address"
                         className="app-surface-light border-slate-600 text-gray-700 placeholder:text-gray-500 focus:border-primary"
                         {...field}
                       />

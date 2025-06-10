@@ -13,7 +13,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(validatedData.username);
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        return res.status(400).json({ message: "Email address already exists" });
       }
       
       const user = await storage.createUser(validatedData);
