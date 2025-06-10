@@ -43,7 +43,7 @@ function App() {
       case "export":
         return <Export />;
       case "profile":
-        return <Profile />;
+        return <Profile onLogout={() => setIsAuthenticated(false)} />;
       default:
         return <Track />;
     }

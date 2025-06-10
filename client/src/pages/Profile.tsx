@@ -6,9 +6,13 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { apiRequest } from "@/lib/queryClient";
-import { ExternalLink, Edit2, Check, X } from "lucide-react";
+import { ExternalLink, Edit2, Check, X, LogOut } from "lucide-react";
 
-export default function Profile() {
+interface ProfileProps {
+  onLogout?: () => void;
+}
+
+export default function Profile({ onLogout }: ProfileProps = {}) {
   const [name, setName] = useState("Alex Chen");
   const [email, setEmail] = useState("alex.chen@email.com");
   const [isEditing, setIsEditing] = useState(false);
@@ -27,6 +31,26 @@ export default function Profile() {
     setIsEditing(false);
     // Reset to original values if needed
   };
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/auth/logout");
+    },
+    onSuccess: () => {
+      toast({
+        title: "Logged out",
+        description: "You've been successfully logged out.",
+      });
+      if (onLogout) onLogout();
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to logout. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const clearDataMutation = useMutation({
     mutationFn: async () => {
@@ -144,6 +168,21 @@ export default function Profile() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Account Actions */}
+      <div className="app-surface rounded-2xl p-6">
+        <h3 className="text-lg font-semibold mb-4 app-text-primary">Account</h3>
+        <div className="space-y-3">
+          <Button
+            onClick={() => logoutMutation.mutate()}
+            disabled={logoutMutation.isPending}
+            className="w-full bg-slate-600 hover:bg-slate-700 text-white font-medium py-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            {logoutMutation.isPending ? "Logging out..." : "Logout"}
+          </Button>
+        </div>
       </div>
 
       {/* Data Management */}
