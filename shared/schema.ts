@@ -2,12 +2,21 @@ import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const thoughts = pgTable("thoughts", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
   content: text("content").notNull(),
-  category: text("category").notNull(),
-  trigger: text("trigger"),
+  emotion: text("emotion").notNull(),
   intensity: integer("intensity").notNull(),
+  cognitiveDistortions: text("cognitive_distortions").array().notNull(),
+  trigger: text("trigger"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -18,13 +27,6 @@ export const insertThoughtSchema = createInsertSchema(thoughts).omit({
 
 export type InsertThought = z.infer<typeof insertThoughtSchema>;
 export type Thought = typeof thoughts.$inferSelect;
-
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
