@@ -15,7 +15,8 @@ import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiv
 
 const thoughtFormSchema = z.object({
   content: z.string().min(1, "Please enter your thought"),
-  category: z.string().min(1, "Please select a category"),
+  emotion: z.string().min(1, "Please select an emotion"),
+  cognitiveDistortions: z.array(z.string()).default([]),
   trigger: z.string().optional(),
   intensity: z.number().min(1).max(10),
 });
@@ -23,7 +24,8 @@ const thoughtFormSchema = z.object({
 type ThoughtFormData = z.infer<typeof thoughtFormSchema>;
 
 export default function Track() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedEmotion, setSelectedEmotion] = useState<string>("");
+  const [selectedDistortions, setSelectedDistortions] = useState<string[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -31,7 +33,8 @@ export default function Track() {
     resolver: zodResolver(thoughtFormSchema),
     defaultValues: {
       content: "",
-      category: "",
+      emotion: "",
+      cognitiveDistortions: [],
       trigger: "",
       intensity: 5,
     },
@@ -45,7 +48,8 @@ export default function Track() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/thoughts"] });
       form.reset();
-      setSelectedCategory("");
+      setSelectedEmotion("");
+      setSelectedDistortions([]);
       toast({
         title: "Thought Recorded!",
         description: "Your thought has been successfully logged and categorized.",
@@ -64,7 +68,7 @@ export default function Track() {
     createThoughtMutation.mutate(data);
   };
 
-  const selectedDistortion = getCognitiveDistortionById(selectedCategory);
+  const selectedDistortion = selectedDistortions.length > 0 ? getCognitiveDistortionById(selectedDistortions[0]) : null;
 
   return (
     <div className="space-y-6">
@@ -100,29 +104,29 @@ export default function Track() {
               )}
             />
 
-            {/* Category Selection */}
+            {/* Emotion Selection */}
             <FormField
               control={form.control}
-              name="category"
+              name="emotion"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium app-text-primary">
-                    Cognitive Distortion Category
+                    Primary Emotion
                   </FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
-                      setSelectedCategory(value);
+                      setSelectedEmotion(value);
                     }}
                     value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className="app-surface-light border-slate-600 text-gray-700 focus:border-primary">
-                        <SelectValue placeholder="Select a category..." />
+                        <SelectValue placeholder="Select an emotion..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="app-surface border-slate-600">
-                      {cognitiveDistortions.map((distortion) => (
+                      {["anxiety", "sadness", "anger", "fear", "shame", "guilt", "hopelessness", "overwhelm", "frustration", "loneliness"].map((emotion) => (
                         <SelectItem
                           key={distortion.id}
                           value={distortion.id}
