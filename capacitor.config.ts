@@ -5,17 +5,41 @@ const config: CapacitorConfig = {
   appName: 'MindTrace',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    cleartext: true
   },
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: "#1e3a8a",
-      showSpinner: false
+      backgroundColor: "#374151",
+      showSpinner: false,
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      splashFullScreen: true,
+      splashImmersive: true
     },
     StatusBar: {
-      style: "dark"
+      style: "DARK",
+      backgroundColor: "#374151"
+    },
+    Keyboard: {
+      resize: "body",
+      style: "dark",
+      resizeOnFullScreen: true
+    },
+    App: {
+      launchUrl: ""
     }
+  },
+  ios: {
+    contentInset: "automatic",
+    scrollEnabled: true,
+    backgroundColor: "#374151"
+  },
+  android: {
+    backgroundColor: "#374151",
+    allowMixedContent: true,
+    captureInput: true
   }
 };
 

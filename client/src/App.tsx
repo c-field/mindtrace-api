@@ -24,9 +24,14 @@ function App() {
     // Check if user is already authenticated
     const checkAuth = async () => {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout for mobile
+        
         const response = await fetch("/api/auth/me", {
           credentials: "include",
+          signal: controller.signal,
         });
+        clearTimeout(timeoutId);
         setIsAuthenticated(response.ok);
       } catch (error) {
         setIsAuthenticated(false);

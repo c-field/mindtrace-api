@@ -16,13 +16,18 @@ export default defineConfig({
     outDir: '../dist',
     emptyOutDir: true,
     sourcemap: false,
+    target: 'es2020',
+    minify: 'terser',
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast', '@radix-ui/react-select', '@radix-ui/react-slider'],
           charts: ['recharts'],
-          forms: ['react-hook-form', '@hookform/resolvers'],
+          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
+          query: ['@tanstack/react-query'],
+          router: ['wouter'],
+          utils: ['date-fns', 'clsx', 'tailwind-merge']
         }
       }
     }
