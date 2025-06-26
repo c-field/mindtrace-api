@@ -15,8 +15,7 @@ import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiv
 
 const thoughtFormSchema = z.object({
   content: z.string().min(1, "Please enter your thought"),
-  emotion: z.string().min(1, "Please select an emotion"),
-  cognitiveDistortions: z.array(z.string()).default([]),
+  cognitiveDistortion: z.string().min(1, "Please select a cognitive distortion"),
   trigger: z.string().optional(),
   intensity: z.number().min(1).max(10),
 });
@@ -24,8 +23,7 @@ const thoughtFormSchema = z.object({
 type ThoughtFormData = z.infer<typeof thoughtFormSchema>;
 
 export default function Track() {
-  const [selectedEmotion, setSelectedEmotion] = useState<string>("");
-  const [selectedDistortions, setSelectedDistortions] = useState<string[]>([]);
+  const [selectedDistortion, setSelectedDistortion] = useState<string>("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -33,8 +31,7 @@ export default function Track() {
     resolver: zodResolver(thoughtFormSchema),
     defaultValues: {
       content: "",
-      emotion: "",
-      cognitiveDistortions: [],
+      cognitiveDistortion: "",
       trigger: "",
       intensity: 5,
     },
@@ -48,8 +45,7 @@ export default function Track() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/thoughts"] });
       form.reset();
-      setSelectedEmotion("");
-      setSelectedDistortions([]);
+      setSelectedDistortion("");
       toast({
         title: "Thought Recorded!",
         description: "Your thought has been successfully logged and categorized.",
@@ -65,16 +61,10 @@ export default function Track() {
   });
 
   const onSubmit = (data: ThoughtFormData) => {
-    // Ensure cognitiveDistortions is always an array, even if empty
-    const submitData = {
-      ...data,
-      cognitiveDistortions: data.cognitiveDistortions || [],
-      trigger: data.trigger || undefined
-    };
-    createThoughtMutation.mutate(submitData);
+    createThoughtMutation.mutate(data);
   };
 
-  const selectedDistortion = selectedDistortions.length > 0 ? getCognitiveDistortionById(selectedDistortions[0]) : null;
+  const distortionDefinition = selectedDistortion ? getCognitiveDistortionById(selectedDistortion) : null;
 
   return (
     <div className="space-y-6">
@@ -110,66 +100,25 @@ export default function Track() {
               )}
             />
 
-            {/* Emotion Selection */}
+            {/* Cognitive Distortion Selection */}
             <FormField
               control={form.control}
-              name="emotion"
+              name="cognitiveDistortion"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium app-text-primary">
-                    Primary Emotion
+                    Cognitive Distortion Pattern
                   </FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
-                      setSelectedEmotion(value);
+                      setSelectedDistortion(value);
                     }}
                     value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className="app-surface-light border-slate-600 text-gray-700 focus:border-primary">
-                        <SelectValue placeholder="Select an emotion..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="app-surface border-slate-600">
-                      {["anxiety", "sadness", "anger", "fear", "shame", "guilt", "hopelessness", "overwhelm", "frustration", "loneliness"].map((emotion) => (
-                        <SelectItem
-                          key={emotion}
-                          value={emotion}
-                          className="text-gray-700 hover:app-surface-light focus:text-gray-700"
-                        >
-                          {emotion.charAt(0).toUpperCase() + emotion.slice(1)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Cognitive Distortions Selection */}
-            <FormField
-              control={form.control}
-              name="cognitiveDistortions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary">
-                    Cognitive Distortion Patterns (Optional)
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      const newDistortions = [...selectedDistortions];
-                      if (!newDistortions.includes(value)) {
-                        newDistortions.push(value);
-                        setSelectedDistortions(newDistortions);
-                        field.onChange(newDistortions);
-                      }
-                    }}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="app-surface-light border-slate-600 text-gray-700 focus:border-primary">
-                        <SelectValue placeholder="Select cognitive distortions..." />
+                        <SelectValue placeholder="Select a cognitive distortion..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="app-surface border-slate-600">
@@ -184,31 +133,16 @@ export default function Track() {
                       ))}
                     </SelectContent>
                   </Select>
-                  {selectedDistortions.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedDistortions.map((distortionId) => {
-                        const distortion = getCognitiveDistortionById(distortionId);
-                        return distortion ? (
-                          <span
-                            key={distortionId}
-                            className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-lg"
-                          >
-                            {distortion.name}
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
 
             {/* Definition Display */}
-            {selectedDistortion && (
+            {distortionDefinition && (
               <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl">
                 <p className="text-sm app-text-secondary">
-                  {selectedDistortion.definition}
+                  {distortionDefinition.definition}
                 </p>
               </div>
             )}

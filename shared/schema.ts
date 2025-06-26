@@ -13,9 +13,8 @@ export const thoughts = pgTable("thoughts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
   content: text("content").notNull(),
-  emotion: text("emotion").notNull(),
   intensity: integer("intensity").notNull(),
-  cognitiveDistortions: text("cognitive_distortions").array().notNull(),
+  cognitiveDistortion: text("cognitive_distortion").notNull(),
   trigger: text("trigger"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
