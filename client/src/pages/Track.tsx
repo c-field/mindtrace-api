@@ -65,7 +65,13 @@ export default function Track() {
   });
 
   const onSubmit = (data: ThoughtFormData) => {
-    createThoughtMutation.mutate(data);
+    // Ensure cognitiveDistortions is always an array, even if empty
+    const submitData = {
+      ...data,
+      cognitiveDistortions: data.cognitiveDistortions || [],
+      trigger: data.trigger || undefined
+    };
+    createThoughtMutation.mutate(submitData);
   };
 
   const selectedDistortion = selectedDistortions.length > 0 ? getCognitiveDistortionById(selectedDistortions[0]) : null;
@@ -128,6 +134,47 @@ export default function Track() {
                     <SelectContent className="app-surface border-slate-600">
                       {["anxiety", "sadness", "anger", "fear", "shame", "guilt", "hopelessness", "overwhelm", "frustration", "loneliness"].map((emotion) => (
                         <SelectItem
+                          key={emotion}
+                          value={emotion}
+                          className="text-gray-700 hover:app-surface-light focus:text-gray-700"
+                        >
+                          {emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Cognitive Distortions Selection */}
+            <FormField
+              control={form.control}
+              name="cognitiveDistortions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium app-text-primary">
+                    Cognitive Distortion Patterns (Optional)
+                  </FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      const newDistortions = [...selectedDistortions];
+                      if (!newDistortions.includes(value)) {
+                        newDistortions.push(value);
+                        setSelectedDistortions(newDistortions);
+                        field.onChange(newDistortions);
+                      }
+                    }}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="app-surface-light border-slate-600 text-gray-700 focus:border-primary">
+                        <SelectValue placeholder="Select cognitive distortions..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="app-surface border-slate-600">
+                      {cognitiveDistortions.map((distortion) => (
+                        <SelectItem
                           key={distortion.id}
                           value={distortion.id}
                           className="text-gray-700 hover:app-surface-light focus:text-gray-700"
@@ -137,6 +184,21 @@ export default function Track() {
                       ))}
                     </SelectContent>
                   </Select>
+                  {selectedDistortions.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedDistortions.map((distortionId) => {
+                        const distortion = getCognitiveDistortionById(distortionId);
+                        return distortion ? (
+                          <span
+                            key={distortionId}
+                            className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-lg"
+                          >
+                            {distortion.name}
+                          </span>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
