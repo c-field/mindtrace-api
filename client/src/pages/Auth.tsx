@@ -68,7 +68,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         {/* Logo and Welcome */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-2">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-1">
               <img src={mindtraceLogoPath} alt="MindTrace Logo" className="w-full h-full object-contain" />
             </div>
           </div>
