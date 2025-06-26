@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Router, Route, Switch } from "wouter";
 import Header from "@/components/Header";
 import BottomNavigation from "@/components/BottomNavigation";
 import Track from "@/pages/Track";
@@ -10,6 +11,8 @@ import Analyze from "@/pages/Analyze";
 import Export from "@/pages/Export";
 import Profile from "@/pages/Profile";
 import Auth from "@/pages/Auth";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ForgotUsername from "@/pages/ForgotUsername";
 
 function App() {
   const [activeTab, setActiveTab] = useState("track");
@@ -74,7 +77,19 @@ function App() {
     return (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Auth onAuthSuccess={() => setIsAuthenticated(true)} />
+          <Router>
+            <Switch>
+              <Route path="/forgot-password">
+                <ForgotPassword />
+              </Route>
+              <Route path="/forgot-username">
+                <ForgotUsername />
+              </Route>
+              <Route>
+                <Auth onAuthSuccess={() => setIsAuthenticated(true)} />
+              </Route>
+            </Switch>
+          </Router>
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>

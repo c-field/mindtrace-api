@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Brain } from "lucide-react";
+import { Link } from "wouter";
 
 const authSchema = z.object({
   username: z.string().email("Please enter a valid email address"),
@@ -149,6 +150,25 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
               </Button>
             </form>
           </Form>
+
+          {/* Forgot Links - Only show on login */}
+          {isLogin && (
+            <div className="text-center space-y-2">
+              <div className="flex justify-center space-x-4 text-sm">
+                <Link href="/forgot-password">
+                  <Button variant="link" className="app-primary hover:app-primary text-sm font-medium p-0 h-auto">
+                    Forgot password?
+                  </Button>
+                </Link>
+                <span className="app-text-secondary">•</span>
+                <Link href="/forgot-username">
+                  <Button variant="link" className="app-primary hover:app-primary text-sm font-medium p-0 h-auto">
+                    Forgot username?
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Toggle Auth Mode */}
           <div className="text-center pt-4 border-t border-slate-700">
