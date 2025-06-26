@@ -13,6 +13,7 @@ import Profile from "@/pages/Profile";
 import Auth from "@/pages/Auth";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ForgotUsername from "@/pages/ForgotUsername";
+import mindtraceLogoPath from "@assets/Screenshot 2025-06-09 at 22.02.36_1750939481522.png";
 
 function App() {
   const [activeTab, setActiveTab] = useState("track");

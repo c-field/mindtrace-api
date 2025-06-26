@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Brain, ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import { Link } from "wouter";
+import mindtraceLogoPath from "@assets/Screenshot 2025-06-09 at 22.02.36_1750939481522.png";
 
 const forgotUsernameSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -99,8 +100,8 @@ export default function ForgotUsername() {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="w-16 h-16 app-primary-bg rounded-full flex items-center justify-center">
-              <Brain className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-2">
+              <img src={mindtraceLogoPath} alt="MindTrace Logo" className="w-full h-full object-contain" />
             </div>
           </div>
           <div>
