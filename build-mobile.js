@@ -6,12 +6,12 @@ const path = require('path');
 
 console.log('Building MindTrace for mobile deployment...');
 
-// Step 1: Build the client
-console.log('1. Building client for production...');
+// Step 1: Build the client for mobile
+console.log('1. Building client for mobile deployment...');
 try {
-  execSync('npx vite build --outDir dist', { stdio: 'inherit', cwd: 'client' });
+  execSync('npx vite build --config vite.config.mobile.ts', { stdio: 'inherit', cwd: 'client' });
 } catch (error) {
-  console.error('Client build failed:', error.message);
+  console.error('Mobile build failed:', error.message);
   process.exit(1);
 }
 
