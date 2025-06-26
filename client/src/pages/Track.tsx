@@ -75,10 +75,11 @@ export default function Track() {
           Record and categorize negative thought patterns to gain insight into your mental health journey.
         </p>
       </div>
-      {/* Thought Input Form */}
-      <div className="app-surface rounded-2xl p-6">
+
+      {/* Thought Form */}
+      <div className="app-surface rounded-2xl p-6 space-y-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-[#333333]">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Thought Content */}
             <FormField
               control={form.control}
@@ -86,12 +87,12 @@ export default function Track() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium app-text-primary">
-                    What's on your mind?
+                    Your Thought
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Share your negative thought or worry here..."
-                      className="h-32 app-surface-light border-slate-600 text-gray-800 placeholder:text-gray-500 focus:border-primary resize-none"
+                      placeholder="Describe the negative thought you're experiencing..."
+                      className="app-surface-light border-slate-600 text-gray-700 placeholder:text-gray-500 focus:border-primary resize-none min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
@@ -107,7 +108,7 @@ export default function Track() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium app-text-primary">
-                    Cognitive Distortion Pattern
+                    Cognitive Distortion Pattern *
                   </FormLabel>
                   <Select
                     onValueChange={(value) => {
@@ -142,25 +143,24 @@ export default function Track() {
             {distortionDefinition && (
               <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl">
                 <p className="text-sm app-text-secondary">
-                  {distortionDefinition.definition}
+                  <strong>Definition:</strong> {distortionDefinition.definition}
                 </p>
               </div>
             )}
 
-            {/* Potential Triggers */}
+            {/* Trigger */}
             <FormField
               control={form.control}
               name="trigger"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium app-text-primary">
-                    Potential Triggers{" "}
-                    <span className="app-text-secondary text-xs">(Optional)</span>
+                    Trigger (Optional)
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="What might have triggered this thought?"
-                      className="app-surface-light border-slate-600 text-gray-800 placeholder:text-gray-500 focus:border-primary"
+                      placeholder="What triggered this thought?"
+                      className="app-surface-light border-slate-600 text-gray-700 placeholder:text-gray-500 focus:border-primary"
                       {...field}
                     />
                   </FormControl>
@@ -204,7 +204,7 @@ export default function Track() {
             <Button
               type="submit"
               disabled={createThoughtMutation.isPending}
-              className="w-full app-primary-bg hover:app-primary-bg-hover text-white font-medium py-4 rounded-xl transition-colors duration-200"
+              className="w-full app-primary-bg hover:app-primary-bg-hover text-white font-medium py-3 rounded-xl transition-colors duration-200"
             >
               {createThoughtMutation.isPending ? "Recording..." : "Record Thought"}
             </Button>

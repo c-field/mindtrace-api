@@ -72,7 +72,7 @@ export default function Analyze() {
     const avgIntensity = thoughts.reduce((sum, t) => sum + t.intensity, 0) / thoughts.length;
     
     const categoryCount = thoughts.reduce((acc, thought) => {
-      acc[thought.category] = (acc[thought.category] || 0) + 1;
+      acc[thought.cognitiveDistortion] = (acc[thought.cognitiveDistortion] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
     
@@ -102,8 +102,8 @@ export default function Analyze() {
 
   const categoryData = useMemo(() => {
     const categoryCount = thoughts.reduce((acc, thought) => {
-      const distortion = getCognitiveDistortionById(thought.category);
-      const name = distortion?.name || thought.category;
+      const distortion = getCognitiveDistortionById(thought.cognitiveDistortion);
+      const name = distortion?.name || thought.cognitiveDistortion;
       acc[name] = (acc[name] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -242,7 +242,7 @@ export default function Analyze() {
         ) : (
           <div className="space-y-3">
             {thoughts.slice(0, 10).map((thought) => {
-              const distortion = getCognitiveDistortionById(thought.category);
+              const distortion = getCognitiveDistortionById(thought.cognitiveDistortion);
               return (
                 <div key={thought.id} className="app-surface-light rounded-lg p-3 text-sm">
                   <div className="flex justify-between items-start mb-2">
@@ -254,7 +254,7 @@ export default function Analyze() {
                     </span>
                   </div>
                   <div className="font-medium mb-1 app-text-primary">
-                    {distortion?.name || thought.category}
+                    {distortion?.name || thought.cognitiveDistortion}
                   </div>
                   <div className="app-text-primary text-sm mb-2 line-clamp-2">
                     {thought.content}

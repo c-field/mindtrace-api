@@ -223,14 +223,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const thoughts = await storage.getThoughts(from, to, userId);
       
       // Create CSV content
-      const csvHeader = "Date,Emotion,Intensity,Cognitive Distortions,Trigger,Content\n";
+      const csvHeader = "Date,Intensity,Cognitive Distortion,Trigger,Content\n";
       const csvRows = thoughts.map(thought => {
         const date = new Date(thought.createdAt).toLocaleDateString();
         const content = `"${thought.content.replace(/"/g, '""')}"`;
         const trigger = thought.trigger ? `"${thought.trigger.replace(/"/g, '""')}"` : "";
-        const emotion = `"${thought.emotion}"`;
-        const distortions = `"${thought.cognitiveDistortions.join(', ')}"`;
-        return `${date},${emotion},${thought.intensity},${distortions},${trigger},${content}`;
+        const distortion = `"${thought.cognitiveDistortion}"`;
+        return `${date},${thought.intensity},${distortion},${trigger},${content}`;
       }).join("\n");
       
       const csv = csvHeader + csvRows;
