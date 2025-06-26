@@ -59,8 +59,8 @@ function App() {
         <TooltipProvider>
           <div className="min-h-screen app-container flex items-center justify-center">
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 app-primary-bg rounded-full flex items-center justify-center animate-pulse">
-                <div className="w-8 h-8 rounded-full bg-white opacity-20"></div>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center animate-pulse p-2">
+                <img src={mindtraceLogoPath} alt="MindTrace Logo" className="w-full h-full object-contain" />
               </div>
               <div className="space-y-2">
                 <h1 className="text-2xl font-serif font-bold app-primary">MindTrace</h1>
