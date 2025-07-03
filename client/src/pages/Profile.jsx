@@ -126,7 +126,7 @@ export default function Profile({ onLogout = () => {} }) {
       {/* Mental Health Summary */}
       {thoughts.length > 0 && (
         <Card className="app-surface border-slate-600">
-          <CardHeader>
+          <CardHeader className="bg-[#1f2937]">
             <CardTitle className="app-text-primary">Your Journey Summary</CardTitle>
             <CardDescription className="app-text-secondary">
               Key insights from your thought tracking
