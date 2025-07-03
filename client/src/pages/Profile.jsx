@@ -132,7 +132,7 @@ export default function Profile({ onLogout = () => {} }) {
               Key insights from your thought tracking
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="bg-[#1f2937]">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 app-surface-light rounded-lg">
                 <div className="text-2xl font-bold app-text-primary">
