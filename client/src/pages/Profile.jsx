@@ -88,7 +88,7 @@ export default function Profile({ onLogout = () => {} }) {
       </div>
       {/* Account Information */}
       <Card className="app-surface border-slate-600">
-        <CardHeader>
+        <CardHeader className="bg-[#1f2937]">
           <CardTitle className="app-text-primary">Account Information</CardTitle>
           <CardDescription className="app-text-secondary">
             Your account details and activity summary
