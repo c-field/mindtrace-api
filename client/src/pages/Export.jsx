@@ -205,7 +205,7 @@ export default function Export() {
           onClick={handleShare}
           disabled={thoughts.length === 0}
           variant="outline"
-          className="w-full bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 font-medium py-3 rounded-xl transition-colors duration-200"
+          className="w-full bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 font-medium py-3 rounded-xl transition-colors duration-200 text-[#ffffff]"
         >
           Share Data
         </Button>
