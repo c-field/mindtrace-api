@@ -98,13 +98,12 @@ export default function Export() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20">
+      <div className="from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20 bg-[#1f2937]">
         <h2 className="text-2xl font-semibold mb-2 app-text-primary">Export Your Data</h2>
         <p className="app-text-secondary text-sm">
           Download your thought records for personal review or to share with healthcare professionals.
         </p>
       </div>
-
       {/* Export Configuration */}
       <div className="app-surface rounded-2xl p-6 space-y-6">
         <h3 className="text-lg font-semibold app-text-primary">Export Settings</h3>
@@ -192,7 +191,6 @@ export default function Export() {
           )}
         </div>
       </div>
-
       {/* Export Actions */}
       <div className="space-y-3">
         <Button
@@ -212,7 +210,6 @@ export default function Export() {
           Share Data
         </Button>
       </div>
-
       {/* Export Info */}
       <div className="app-surface rounded-2xl p-4">
         <h4 className="text-sm font-medium app-text-primary mb-2">Export Information</h4>
