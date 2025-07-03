@@ -80,13 +80,12 @@ export default function Profile({ onLogout = () => {} }) {
   return (
     <div className="space-y-6">
       {/* Profile Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20">
+      <div className="from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20 bg-[#1f2937]">
         <h2 className="text-2xl font-semibold mb-2 app-text-primary">Your Profile</h2>
         <p className="app-text-secondary text-sm">
           Manage your account settings and view your mental health journey summary.
         </p>
       </div>
-
       {/* Account Information */}
       <Card className="app-surface border-slate-600">
         <CardHeader>
@@ -124,7 +123,6 @@ export default function Profile({ onLogout = () => {} }) {
           </div>
         </CardContent>
       </Card>
-
       {/* Mental Health Summary */}
       {thoughts.length > 0 && (
         <Card className="app-surface border-slate-600">
@@ -152,7 +150,6 @@ export default function Profile({ onLogout = () => {} }) {
           </CardContent>
         </Card>
       )}
-
       {/* Data Management */}
       <Card className="app-surface border-slate-600">
         <CardHeader>
@@ -178,7 +175,6 @@ export default function Profile({ onLogout = () => {} }) {
           </div>
         </CardContent>
       </Card>
-
       {/* Account Actions */}
       <Card className="app-surface border-slate-600">
         <CardHeader>
@@ -197,7 +193,6 @@ export default function Profile({ onLogout = () => {} }) {
           </Button>
         </CardContent>
       </Card>
-
       {/* App Information */}
       <Card className="app-surface border-slate-600">
         <CardHeader>
