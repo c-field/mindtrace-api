@@ -4,15 +4,12 @@ import { format, subDays, startOfDay, endOfDay } from "date-fns";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Thought } from "@shared/schema";
 import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiveDistortions";
 
-type DateFilter = "today" | "yesterday" | "7days" | "30days";
-
 export default function Analyze() {
-  const [dateFilter, setDateFilter] = useState<DateFilter>("7days");
+  const [dateFilter, setDateFilter] = useState("7days");
 
-  const getDateRange = (filter: DateFilter) => {
+  const getDateRange = (filter) => {
     const now = new Date();
     switch (filter) {
       case "today":
@@ -52,7 +49,7 @@ export default function Analyze() {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch thoughts");
-      return response.json() as Promise<Thought[]>;
+      return response.json();
     },
   });
 
@@ -74,7 +71,7 @@ export default function Analyze() {
     const categoryCount = thoughts.reduce((acc, thought) => {
       acc[thought.cognitiveDistortion] = (acc[thought.cognitiveDistortion] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>);
+    }, {});
     
     const topCategory = Object.entries(categoryCount)
       .sort(([,a], [,b]) => b - a)[0]?.[0] || "None";
@@ -92,7 +89,7 @@ export default function Analyze() {
       const date = format(new Date(thought.createdAt), 'MMM dd');
       acc[date] = (acc[date] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>);
+    }, {});
 
     return Object.entries(dailyCount).map(([date, count]) => ({
       date,
@@ -106,7 +103,7 @@ export default function Analyze() {
       const name = distortion?.name || thought.cognitiveDistortion;
       acc[name] = (acc[name] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>);
+    }, {});
 
     return Object.entries(categoryCount)
       .map(([name, count]) => ({ name, count }))
@@ -116,10 +113,10 @@ export default function Analyze() {
   const COLORS = ['#4FD1C7', '#2DD4BF', '#06B6D4', '#0891B2', '#0E7490'];
 
   const filterButtons = [
-    { id: "today" as DateFilter, label: "Today" },
-    { id: "yesterday" as DateFilter, label: "Yesterday" },
-    { id: "7days" as DateFilter, label: "Last 7 days" },
-    { id: "30days" as DateFilter, label: "Last 30 days" },
+    { id: "today", label: "Today" },
+    { id: "yesterday", label: "Yesterday" },
+    { id: "7days", label: "Last 7 days" },
+    { id: "30days", label: "Last 30 days" },
   ];
 
   if (isLoading) {
@@ -148,8 +145,8 @@ export default function Analyze() {
               variant={dateFilter === button.id ? "default" : "secondary"}
               className={
                 dateFilter === button.id
-                  ? "app-primary-bg text-white hover:app-primary-bg-hover"
-                  : "app-surface-light app-text-secondary hover:app-text-primary"
+                  ? "app-primary-bg hover:app-primary-bg-hover text-white"
+                  : "app-surface-light hover:app-surface-light app-text-primary"
               }
             >
               {button.label}
@@ -158,73 +155,73 @@ export default function Analyze() {
         </div>
       </div>
 
-      {/* Summary Statistics */}
+      {/* Statistics Cards */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="app-surface rounded-2xl p-4 text-center">
-          <div className="text-2xl font-bold app-primary">{stats.totalThoughts}</div>
-          <div className="text-sm app-text-secondary">Total Thoughts</div>
+        <div className="app-surface rounded-2xl p-4">
+          <h3 className="text-sm font-medium app-text-secondary mb-1">Total Thoughts</h3>
+          <p className="text-2xl font-bold app-text-primary">{stats.totalThoughts}</p>
         </div>
-        <div className="app-surface rounded-2xl p-4 text-center">
-          <div className="text-2xl font-bold app-primary">{stats.avgPerDay}</div>
-          <div className="text-sm app-text-secondary">Avg/Day</div>
+        <div className="app-surface rounded-2xl p-4">
+          <h3 className="text-sm font-medium app-text-secondary mb-1">Avg Per Day</h3>
+          <p className="text-2xl font-bold app-text-primary">{stats.avgPerDay}</p>
         </div>
-        <div className="app-surface rounded-2xl p-4 text-center">
-          <div className="text-2xl font-bold app-primary">{stats.avgIntensity}</div>
-          <div className="text-sm app-text-secondary">Avg Intensity</div>
+        <div className="app-surface rounded-2xl p-4">
+          <h3 className="text-sm font-medium app-text-secondary mb-1">Avg Intensity</h3>
+          <p className="text-2xl font-bold app-text-primary">{stats.avgIntensity}/10</p>
         </div>
-        <div className="app-surface rounded-2xl p-4 text-center">
-          <div className="text-sm app-text-secondary">Most Common</div>
-          <div className="text-sm font-medium app-primary truncate">{stats.topCategory}</div>
+        <div className="app-surface rounded-2xl p-4">
+          <h3 className="text-sm font-medium app-text-secondary mb-1">Top Pattern</h3>
+          <p className="text-xs font-medium app-text-primary leading-tight">{stats.topCategory}</p>
         </div>
       </div>
 
-      {/* Charts Section */}
-      {thoughts.length > 0 && (
-        <div className="space-y-4">
-          {/* Thoughts per Day Chart */}
-          <div className="app-surface rounded-2xl p-6">
-            <h3 className="text-lg font-semibold mb-4 app-text-primary">Thoughts per Day</h3>
-            <div className="h-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyData}>
-                  <XAxis dataKey="date" tick={{ fill: '#94A3B8', fontSize: 12 }} />
-                  <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} />
-                  <Bar dataKey="count" fill="#4FD1C7" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+      {/* Daily Trend Chart */}
+      {dailyData.length > 0 && (
+        <div className="app-surface rounded-2xl p-6">
+          <h3 className="text-lg font-semibold mb-4 app-text-primary">Daily Thoughts</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={dailyData}>
+              <XAxis dataKey="date" className="text-xs" />
+              <YAxis className="text-xs" />
+              <Bar dataKey="count" fill="#4FD1C7" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
-          {/* Category Breakdown Chart */}
-          <div className="app-surface rounded-2xl p-6">
-            <h3 className="text-lg font-semibold mb-4 app-text-primary">Category Breakdown</h3>
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                    dataKey="count"
-                  >
-                    {categoryData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 space-y-2">
+      {/* Cognitive Distortion Breakdown */}
+      {categoryData.length > 0 && (
+        <div className="app-surface rounded-2xl p-6">
+          <h3 className="text-lg font-semibold mb-4 app-text-primary">Cognitive Patterns</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={categoryData.slice(0, 5)}
+                  dataKey="count"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                >
+                  {categoryData.slice(0, 5).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="space-y-2">
               {categoryData.slice(0, 5).map((item, index) => (
-                <div key={item.name} className="flex items-center text-sm">
-                  <div
-                    className="w-3 h-3 rounded-full mr-2"
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="app-text-secondary flex-1 truncate">{item.name}</span>
-                  <span className="app-primary">{item.count}</span>
+                <div key={item.name} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    />
+                    <span className="text-sm app-text-primary truncate">{item.name}</span>
+                  </div>
+                  <span className="text-sm font-medium app-text-secondary">{item.count}</span>
                 </div>
               ))}
             </div>
@@ -232,7 +229,7 @@ export default function Analyze() {
         </div>
       )}
 
-      {/* Recent Thoughts Table */}
+      {/* Recent Thoughts */}
       <div className="app-surface rounded-2xl p-6">
         <h3 className="text-lg font-semibold mb-4 app-text-primary">Recent Thoughts</h3>
         {thoughts.length === 0 ? (

@@ -20,14 +20,12 @@ const thoughtFormSchema = z.object({
   intensity: z.number().min(1).max(10),
 });
 
-type ThoughtFormData = z.infer<typeof thoughtFormSchema>;
-
 export default function Track() {
-  const [selectedDistortion, setSelectedDistortion] = useState<string>("");
+  const [selectedDistortion, setSelectedDistortion] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<ThoughtFormData>({
+  const form = useForm({
     resolver: zodResolver(thoughtFormSchema),
     defaultValues: {
       content: "",
@@ -38,7 +36,7 @@ export default function Track() {
   });
 
   const createThoughtMutation = useMutation({
-    mutationFn: async (data: ThoughtFormData) => {
+    mutationFn: async (data) => {
       const response = await apiRequest("POST", "/api/thoughts", data);
       return response.json();
     },
@@ -60,7 +58,7 @@ export default function Track() {
     },
   });
 
-  const onSubmit = (data: ThoughtFormData) => {
+  const onSubmit = (data) => {
     createThoughtMutation.mutate(data);
   };
 
