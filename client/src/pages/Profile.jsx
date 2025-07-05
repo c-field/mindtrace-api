@@ -315,8 +315,7 @@ export default function Profile({ onLogout = () => {} }) {
 
         <Button
           onClick={handleLogout}
-          variant="outline"
-          className="w-full border-primary/20 app-text-primary hover:bg-primary/5 py-3 rounded-xl"
+          className="w-full bg-[#27c4b4] hover:bg-[#20a898] text-white font-medium py-3 rounded-xl transition-colors duration-200"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
