@@ -21,7 +21,7 @@ export default function Export() {
         dateFrom,
         dateTo,
       });
-      const response = await fetch(`/api/thoughts?${params}`, {
+      const response = await fetch(`https://mindtrace-api-sigma.vercel.app/api/thoughts?${params}`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch thoughts");
@@ -37,7 +37,7 @@ export default function Export() {
           dateTo,
         });
         
-        const response = await fetch(`/api/export/csv?${params}`, {
+        const response = await fetch(`https://mindtrace-api-sigma.vercel.app/api/export/csv?${params}`, {
           credentials: "include",
         });
         
@@ -73,7 +73,7 @@ export default function Export() {
         dateTo,
       });
       
-      const response = await fetch(`/api/export/csv?${params}`, {
+      const response = await fetch(`https://mindtrace-api-sigma.vercel.app/api/export/csv?${params}`, {
         credentials: "include",
       });
       

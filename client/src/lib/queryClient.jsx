@@ -38,16 +38,13 @@ export async function apiRequest(method, url, data) {
   console.log("URL:", url);
   console.log("Data:", data);
   
-  // Handle API URL for different environments
-  const isCapacitor = window.location.protocol === 'capacitor:';
-  const baseUrl = isCapacitor ? 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev' : '';
+  // Always use the production API base URL
+  const baseUrl = 'https://mindtrace-api-sigma.vercel.app';
   
   // Construct the full URL
-  const fullUrl = baseUrl ? `${baseUrl}${url}` : url;
+  const fullUrl = `${baseUrl}${url}`;
   
-  console.log("🔧 Environment detection:");
-  console.log("- Protocol:", window.location.protocol);
-  console.log("- Is Capacitor:", isCapacitor);
+  console.log("🔧 URL construction:");
   console.log("- Base URL:", baseUrl);
   console.log("- Original URL:", url);
   console.log("- Full URL:", fullUrl);
@@ -104,10 +101,9 @@ export const getQueryFn = (options) => {
   return async ({ queryKey }) => {
     const url = queryKey[0];
     
-    // Handle API URL for different environments  
-    const isCapacitor = window.location.protocol === 'capacitor:';
-    const baseUrl = isCapacitor ? 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev' : '';
-    const fullUrl = baseUrl ? `${baseUrl}${url}` : url;
+    // Always use the production API base URL
+    const baseUrl = 'https://mindtrace-api-sigma.vercel.app';
+    const fullUrl = `${baseUrl}${url}`;
     
     try {
       const response = await fetch(fullUrl, {

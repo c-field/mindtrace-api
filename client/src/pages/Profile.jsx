@@ -30,7 +30,7 @@ export default function Profile({ onLogout = () => {} }) {
   const { data: user } = useQuery({
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
-      const response = await fetch("/api/auth/me", {
+      const response = await fetch("https://mindtrace-api-sigma.vercel.app/api/auth/me", {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch user");
@@ -46,7 +46,7 @@ export default function Profile({ onLogout = () => {} }) {
   const { data: thoughts = [] } = useQuery({
     queryKey: ["/api/thoughts"],
     queryFn: async () => {
-      const response = await fetch("/api/thoughts", {
+      const response = await fetch("https://mindtrace-api-sigma.vercel.app/api/thoughts", {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch thoughts");
@@ -78,7 +78,7 @@ export default function Profile({ onLogout = () => {} }) {
 
   const deleteAllThoughtsMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/thoughts", {
+      const response = await fetch("https://mindtrace-api-sigma.vercel.app/api/thoughts", {
         method: "DELETE",
         credentials: "include",
       });
@@ -113,7 +113,7 @@ export default function Profile({ onLogout = () => {} }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", {
+      await fetch("https://mindtrace-api-sigma.vercel.app/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
