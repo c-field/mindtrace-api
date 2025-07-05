@@ -244,6 +244,18 @@ body {
 .safe-bottom-nav {
   padding-bottom: var(--safe-area-inset-bottom);
   min-height: var(--bottom-nav-height);
+  /* Prevent iOS toolbar conflicts */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  /* Ensure fixed positioning doesn't conflict with iOS constraints */
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Use transform instead of absolute positioning to reduce constraint conflicts */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Responsive viewport classes */

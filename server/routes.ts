@@ -160,10 +160,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Middleware to check authentication for protected routes
   const requireAuth = async (req: any, res: any, next: any) => {
+    console.log("=== DEBUG: requireAuth middleware ===");
+    console.log("Session:", req.session);
+    console.log("User ID from session:", req.session?.userId);
+    
     const userId = req.session?.userId;
     if (!userId) {
+      console.log("=== DEBUG: Authentication failed - no user ID ===");
+      // Ensure we always return JSON for auth failures
+      res.setHeader('Content-Type', 'application/json');
       return res.status(401).json({ message: "Authentication required" });
     }
+    
+    console.log("=== DEBUG: Authentication successful ===");
     req.userId = userId;
     next();
   };
@@ -191,6 +200,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ message: "Failed to retrieve thoughts" });
     }
+  });
+
+  // Debug route to test if API routing is working
+  app.all("/api/test", (req, res) => {
+    console.log("=== DEBUG: Test route hit ===");
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ message: "API routing is working", method: req.method });
   });
 
   // Create a new thought

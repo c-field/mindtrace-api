@@ -24,6 +24,14 @@ app.use((req, res, next) => {
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
+  // Debug logging for iOS API calls
+  if (path.startsWith("/api")) {
+    console.log(`=== DEBUG: ${req.method} ${path} ===`);
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+    console.log("Session:", req.session);
+  }
+
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
@@ -42,6 +50,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
+      console.log(`=== DEBUG: Response ${res.statusCode} ${res.get('content-type')} ===`);
       log(logLine);
     }
   });
