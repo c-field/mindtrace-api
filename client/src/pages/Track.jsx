@@ -9,9 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiveDistortions";
+import { Info } from "lucide-react";
 
 const thoughtFormSchema = z.object({
   content: z.string().min(1, "Please enter your thought"),
@@ -104,8 +106,18 @@ export default function Track() {
               name="cognitiveDistortion"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary">
+                  <FormLabel className="text-sm font-medium app-text-primary flex items-center gap-2">
                     Cognitive Distortion Pattern *
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="h-4 w-4 text-primary/70 hover:text-primary" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm">
+                          <p>Select the thinking pattern that best matches your negative thought. Each pattern represents a common way our minds can distort reality.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </FormLabel>
                   <Select
                     onValueChange={(value) => {
@@ -119,15 +131,30 @@ export default function Track() {
                         <SelectValue placeholder="Select a cognitive distortion..." />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="app-surface border-slate-600">
+                    <SelectContent className="app-surface border-slate-600 max-h-60 overflow-auto">
                       {cognitiveDistortions.map((distortion) => (
-                        <SelectItem
-                          key={distortion.id}
-                          value={distortion.id}
-                          className="text-gray-700 hover:app-surface-light focus:text-gray-700"
-                        >
-                          {distortion.name}
-                        </SelectItem>
+                        <TooltipProvider key={distortion.id}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <SelectItem
+                                value={distortion.id}
+                                className="text-gray-700 hover:app-surface-light focus:text-gray-700 cursor-pointer"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span>{distortion.name}</span>
+                                  <Info className="h-3 w-3 text-primary/50" />
+                                </div>
+                              </SelectItem>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-sm" side="left">
+                              <div className="space-y-1">
+                                <p className="font-medium">{distortion.name}</p>
+                                <p className="text-sm text-muted-foreground">{distortion.description}</p>
+                                <p className="text-sm italic text-muted-foreground">Example: {distortion.example}</p>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       ))}
                     </SelectContent>
                   </Select>
@@ -138,9 +165,12 @@ export default function Track() {
 
             {/* Definition Display */}
             {distortionDefinition && (
-              <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl">
+              <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl space-y-2">
                 <p className="text-sm app-text-secondary">
-                  <strong>Definition:</strong> {distortionDefinition.definition}
+                  <strong className="app-text-primary">Definition:</strong> {distortionDefinition.description}
+                </p>
+                <p className="text-sm app-text-secondary">
+                  <strong className="app-text-primary">Example:</strong> <em>{distortionDefinition.example}</em>
                 </p>
               </div>
             )}

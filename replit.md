@@ -128,6 +128,14 @@ Changelog:
   * Implemented touch target optimization (44px minimum) for accessibility
   * Updated all components to use safe-area classes and responsive containers
   * Enhanced Capacitor build with comprehensive responsive design
+- July 5, 2025. App icons and cognitive distortion UI implementation:
+  * Configured complete iOS app icon set with all required resolutions (20px to 1024px)
+  * Added proper AppIcon.appiconset with Contents.json for iPhone, iPad, and iOS marketing
+  * Created comprehensive cognitive distortion dropdown with 15 CBT-based patterns
+  * Implemented interactive tooltips showing definitions and examples for each distortion type
+  * Added info icons and expandable descriptions for accessibility
+  * Updated Track.jsx with enhanced cognitive distortion selection UI
+  * Ready for Xcode deployment with proper app icons
 ```
 
 ## User Preferences
