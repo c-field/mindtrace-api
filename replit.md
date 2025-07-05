@@ -154,6 +154,15 @@ Changelog:
   * Implemented profile update API with proper validation and error handling
   * Added user name field to database schema and migrated successfully
   * All TestFlight feedback addressed and tested - ready for new build submission
+- July 5, 2025. Critical iOS API and UI fixes completed:
+  * Fixed POST /api/thoughts returning HTML instead of JSON by adding explicit Content-Type headers
+  * Implemented comprehensive route validation to prevent fallthrough to static file handler
+  * Added defensive JSON response parsing with content-type checking in frontend
+  * Enhanced error handling with detailed validation and early return statements
+  * Resolved iOS AutoLayout constraint conflicts by optimizing bottom navigation CSS
+  * Added iOS-specific meta tags to prevent default toolbar conflicts
+  * Comprehensive debugging added to trace request/response flow in iOS environment
+  * All API routes now guaranteed to return JSON, never fall through to HTML serving
 ```
 
 ## User Preferences

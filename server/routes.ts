@@ -160,21 +160,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Middleware to check authentication for protected routes
   const requireAuth = async (req: any, res: any, next: any) => {
-    console.log("=== DEBUG: requireAuth middleware ===");
-    console.log("Session:", req.session);
-    console.log("User ID from session:", req.session?.userId);
-    
-    const userId = req.session?.userId;
-    if (!userId) {
-      console.log("=== DEBUG: Authentication failed - no user ID ===");
-      // Ensure we always return JSON for auth failures
+    try {
+      console.log("=== DEBUG: requireAuth middleware ===");
+      console.log("Session:", req.session);
+      console.log("User ID from session:", req.session?.userId);
+      
+      const userId = req.session?.userId;
+      if (!userId) {
+        console.log("=== DEBUG: Authentication failed - no user ID ===");
+        // Ensure we always return JSON for auth failures and NEVER fall through
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(401).json({ 
+          success: false,
+          message: "Authentication required",
+          error: "No valid session found"
+        });
+      }
+      
+      console.log("=== DEBUG: Authentication successful ===");
+      req.userId = userId;
+      next();
+    } catch (error) {
+      console.error("=== DEBUG: requireAuth middleware error ===", error);
+      // Even middleware errors should return JSON
       res.setHeader('Content-Type', 'application/json');
-      return res.status(401).json({ message: "Authentication required" });
+      return res.status(500).json({
+        success: false,
+        message: "Authentication error",
+        error: error instanceof Error ? error.message : "Unknown auth error"
+      });
     }
-    
-    console.log("=== DEBUG: Authentication successful ===");
-    req.userId = userId;
-    next();
   };
 
   // Get all thoughts with optional date filtering
@@ -211,7 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Create a new thought
   app.post("/api/thoughts", requireAuth, async (req, res) => {
-    // Ensure we always return JSON
+    // Ensure we ALWAYS return JSON and never fall through to static handler
     res.setHeader('Content-Type', 'application/json');
     
     try {
@@ -224,8 +239,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("User ID:", userId);
       console.log("Content-Type:", req.headers['content-type']);
       
-      // Validate required fields exist
+      // Early validation with warning log
       if (!req.body || typeof req.body !== 'object') {
+        console.warn("⚠️  Invalid request body received:", req.body);
         return res.status(400).json({ 
           success: false, 
           message: "Invalid request body",
@@ -233,16 +249,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Validate required fields
+      const { content, cognitiveDistortion, intensity, trigger } = req.body;
+      
+      if (!content || typeof content !== 'string') {
+        console.warn("⚠️  Missing or invalid content:", content);
+        return res.status(400).json({
+          success: false,
+          message: "Content is required and must be a string",
+          error: `Received content: ${typeof content}`
+        });
+      }
+      
+      if (!cognitiveDistortion || typeof cognitiveDistortion !== 'string') {
+        console.warn("⚠️  Missing or invalid cognitiveDistortion:", cognitiveDistortion);
+        return res.status(400).json({
+          success: false,
+          message: "Cognitive distortion is required and must be a string",
+          error: `Received cognitiveDistortion: ${typeof cognitiveDistortion}`
+        });
+      }
+      
+      if (intensity === undefined || typeof intensity !== 'number' || intensity < 1 || intensity > 10) {
+        console.warn("⚠️  Invalid intensity:", intensity);
+        return res.status(400).json({
+          success: false,
+          message: "Intensity must be a number between 1 and 10",
+          error: `Received intensity: ${intensity} (${typeof intensity})`
+        });
+      }
+      
       // Log individual properties and their types
       console.log("Body properties:", {
-        content: { value: req.body.content, type: typeof req.body.content },
-        cognitiveDistortion: { value: req.body.cognitiveDistortion, type: typeof req.body.cognitiveDistortion },
-        trigger: { value: req.body.trigger, type: typeof req.body.trigger },
-        intensity: { value: req.body.intensity, type: typeof req.body.intensity }
+        content: { value: content, type: typeof content },
+        cognitiveDistortion: { value: cognitiveDistortion, type: typeof cognitiveDistortion },
+        trigger: { value: trigger, type: typeof trigger },
+        intensity: { value: intensity, type: typeof intensity }
       });
       
       const dataToValidate = {
-        ...req.body,
+        content,
+        cognitiveDistortion,
+        intensity,
+        trigger: trigger || undefined,
         userId
       };
       
@@ -254,19 +303,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const thought = await storage.createThought(validatedData);
       console.log("Created thought:", thought);
       
-      // Return success response with proper structure
-      res.status(201).json({
+      // ALWAYS return JSON - never let this fall through
+      return res.status(201).json({
         success: true,
         thought,
         message: "Thought created successfully"
       });
+      
     } catch (error) {
       console.error("=== DEBUG: POST /api/thoughts ERROR ===");
       console.error("Error:", error);
+      console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
       
+      // ALWAYS return JSON even for unexpected errors
       if (error instanceof z.ZodError) {
         console.error("Zod validation errors:", error.errors);
-        res.status(400).json({ 
+        return res.status(400).json({ 
           success: false,
           message: "Invalid thought data", 
           errors: error.errors,
@@ -275,7 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         console.error("Other error:", errorMessage);
-        res.status(500).json({ 
+        return res.status(500).json({ 
           success: false,
           message: "Failed to create thought",
           error: errorMessage
