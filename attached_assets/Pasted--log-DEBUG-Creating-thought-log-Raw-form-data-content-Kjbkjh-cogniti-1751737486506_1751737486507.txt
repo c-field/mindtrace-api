@@ -1,0 +1,63 @@
+⚡️  [log] - === DEBUG: Creating thought ===
+⚡️  [log] - Raw form data: {"content":"Kjbkjh","cognitiveDistortion":"mental-filtering","trigger":"","intensity":5}
+⚡️  [log] - Data types: {"content":"string","cognitiveDistortion":"string","trigger":"string","intensity":"number"}
+⚡️  [log] - Sanitized payload: {"content":"Kjbkjh","cognitiveDistortion":"mental-filtering","intensity":5}
+⚡️  [log] - Payload types: {"content":"string","cognitiveDistortion":"string","trigger":"undefined","intensity":"number"}
+⚡️  [log] - JSON.stringify payload: {"content":"Kjbkjh","cognitiveDistortion":"mental-filtering","intensity":5}
+⚡️  [log] - 🚀 Making API request to POST /api/thoughts
+⚡️  [log] - === DEBUG: apiRequest ===
+⚡️  [log] - Method: POST
+⚡️  [log] - URL: /api/thoughts
+⚡️  [log] - Data: {"content":"Kjbkjh","cognitiveDistortion":"mental-filtering","intensity":5}
+⚡️  [log] - Request body: {"content":"Kjbkjh","cognitiveDistortion":"mental-filtering","intensity":5}
+⚡️  [log] - Request body type: string
+⚡️  [log] - Request options: {"method":"POST","credentials":"include","headers":{"Content-Type":"application/json"},"body":"{\"content\":\"Kjbkjh\",\"cognitiveDistortion\":\"mental-filtering\",\"intensity\":5}"}
+⚡️  [log] - 🌐 Making fetch request:
+⚡️  [log] - - Full URL: /api/thoughts
+⚡️  [log] - - Base URL origin: capacitor://localhost
+⚡️  [log] - - Is relative URL: true
+⚡️  [log] - 📥 Fetch response received:
+⚡️  [log] - - Status: 200
+⚡️  [log] - - Status text: 
+⚡️  [log] - - Headers: {"cache-control":"no-cache","content-type":"text/html"}
+⚡️  [log] - - URL after redirect: capacitor://localhost/api/thoughts
+⚡️  [log] - - Type: basic
+⚡️  [log] - 📡 Response received:
+⚡️  [log] - - Status: 200
+⚡️  [log] - - Headers: {"cache-control":"no-cache","content-type":"text/html"}
+⚡️  [log] - - URL: capacitor://localhost/api/thoughts
+⚡️  [log] - - Type: basic
+⚡️  [log] - - OK: true
+⚡️  [log] - Success response content-type: text/html
+⚡️  [error] - Non-JSON success response: <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- iOS specific meta tags to prevent toolbar conflicts -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MindTrace" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- Prevent iOS toolbar and navigation conflicts -->
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <title>MindTrace</title>
+    <script type="module" crossorigin src="/assets/index-BJS61fU_.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C2KyJaMz.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+  </body>
+</html>
+⚡️  [error] - === DEBUG: Mutation error ===
+⚡️  [error] - Error name: Error
+⚡️  [error] - Error message: Server returned non-JSON response: text/html
+⚡️  [error] - Error stack: @capacitor://localhost/assets/index-BJS61fU_.js:188:39839
+⚡️  [error] - Thought recording error: {}

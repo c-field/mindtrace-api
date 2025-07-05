@@ -38,6 +38,20 @@ export async function apiRequest(method, url, data) {
   console.log("URL:", url);
   console.log("Data:", data);
   
+  // Handle API URL for different environments
+  const isCapacitor = window.location.protocol === 'capacitor:';
+  const baseUrl = isCapacitor ? 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev' : '';
+  
+  // Construct the full URL
+  const fullUrl = baseUrl ? `${baseUrl}${url}` : url;
+  
+  console.log("🔧 Environment detection:");
+  console.log("- Protocol:", window.location.protocol);
+  console.log("- Is Capacitor:", isCapacitor);
+  console.log("- Base URL:", baseUrl);
+  console.log("- Original URL:", url);
+  console.log("- Full URL:", fullUrl);
+  
   const options = {
     method,
     credentials: "include",
@@ -62,11 +76,11 @@ export async function apiRequest(method, url, data) {
   try {
     // Log the actual fetch call details for iOS debugging
     console.log("🌐 Making fetch request:");
-    console.log("- Full URL:", url);
+    console.log("- Full URL:", fullUrl);
     console.log("- Base URL origin:", window.location.origin);
-    console.log("- Is relative URL:", !url.startsWith('http'));
+    console.log("- Is relative URL:", !fullUrl.startsWith('http'));
     
-    const res = await fetch(url, options);
+    const res = await fetch(fullUrl, options);
     console.log("📥 Fetch response received:");
     console.log("- Status:", res.status);
     console.log("- Status text:", res.statusText);
@@ -89,8 +103,14 @@ export const getQueryFn = (options) => {
   const { on401 } = options;
   return async ({ queryKey }) => {
     const url = queryKey[0];
+    
+    // Handle API URL for different environments  
+    const isCapacitor = window.location.protocol === 'capacitor:';
+    const baseUrl = isCapacitor ? 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev' : '';
+    const fullUrl = baseUrl ? `${baseUrl}${url}` : url;
+    
     try {
-      const response = await fetch(url, {
+      const response = await fetch(fullUrl, {
         credentials: "include",
       });
       
