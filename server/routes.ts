@@ -195,6 +195,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Create a new thought
   app.post("/api/thoughts", requireAuth, async (req, res) => {
+    // Ensure we always return JSON
+    res.setHeader('Content-Type', 'application/json');
+    
     try {
       const userId = (req.session as any).userId;
       
@@ -204,6 +207,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Request body type:", typeof req.body);
       console.log("User ID:", userId);
       console.log("Content-Type:", req.headers['content-type']);
+      
+      // Validate required fields exist
+      if (!req.body || typeof req.body !== 'object') {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid request body",
+          error: "Request body must be a valid object"
+        });
+      }
       
       // Log individual properties and their types
       console.log("Body properties:", {
@@ -226,17 +238,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const thought = await storage.createThought(validatedData);
       console.log("Created thought:", thought);
       
-      res.status(201).json(thought);
+      // Return success response with proper structure
+      res.status(201).json({
+        success: true,
+        thought,
+        message: "Thought created successfully"
+      });
     } catch (error) {
       console.error("=== DEBUG: POST /api/thoughts ERROR ===");
       console.error("Error:", error);
       
       if (error instanceof z.ZodError) {
         console.error("Zod validation errors:", error.errors);
-        res.status(400).json({ message: "Invalid thought data", errors: error.errors });
+        res.status(400).json({ 
+          success: false,
+          message: "Invalid thought data", 
+          errors: error.errors,
+          details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+        });
       } else {
-        console.error("Other error:", error.message);
-        res.status(500).json({ message: "Failed to create thought" });
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        console.error("Other error:", errorMessage);
+        res.status(500).json({ 
+          success: false,
+          message: "Failed to create thought",
+          error: errorMessage
+        });
       }
     }
   });

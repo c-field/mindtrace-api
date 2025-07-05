@@ -68,16 +68,53 @@ export default function Track() {
         
         const response = await apiRequest("POST", "/api/thoughts", payload);
         console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
         
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Server error response:", errorText);
-          throw new Error(`Server error: ${response.status} - ${errorText}`);
+          // Handle error responses with defensive parsing
+          const contentType = response.headers.get('content-type');
+          console.error("Error response content-type:", contentType);
+          
+          let errorMessage = `Server error: ${response.status}`;
+          
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await response.json();
+              console.error("JSON error response:", errorData);
+              errorMessage = errorData.message || errorMessage;
+            } catch (jsonError) {
+              console.error("Failed to parse JSON error response:", jsonError);
+              const errorText = await response.text();
+              console.error("Text error response:", errorText);
+              errorMessage = `${errorMessage} - ${errorText}`;
+            }
+          } else {
+            const errorText = await response.text();
+            console.error("Non-JSON error response:", errorText);
+            errorMessage = `${errorMessage} - ${errorText}`;
+          }
+          
+          throw new Error(errorMessage);
         }
         
-        const result = await response.json();
-        console.log("Success response:", result);
-        return result;
+        // Handle success responses with defensive parsing
+        const contentType = response.headers.get('content-type');
+        console.log("Success response content-type:", contentType);
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            const result = await response.json();
+            console.log("Success response:", result);
+            return result;
+          } catch (jsonError) {
+            console.error("Failed to parse JSON success response:", jsonError);
+            throw new Error('Server returned invalid JSON response');
+          }
+        } else {
+          const textResponse = await response.text();
+          console.error("Non-JSON success response:", textResponse);
+          throw new Error(`Server returned non-JSON response: ${contentType}`);
+        }
       } catch (error) {
         console.error("=== DEBUG: Mutation error ===");
         console.error("Error name:", error.name);
