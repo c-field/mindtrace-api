@@ -33,7 +33,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Handle OPTIONS preflight for login
+  app.options("/api/auth/login", (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "capacitor://localhost");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.status(200).end();
+  });
+
   app.post("/api/auth/login", async (req, res) => {
+    // Set CORS headers for Capacitor iOS app
+    res.setHeader("Access-Control-Allow-Origin", "capacitor://localhost");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    
     try {
       const validatedData = insertUserSchema.parse(req.body);
       
