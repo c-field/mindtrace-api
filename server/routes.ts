@@ -225,9 +225,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create a new thought
+  console.log("🔧 Registering POST /api/thoughts route...");
   app.post("/api/thoughts", requireAuth, async (req, res) => {
+    // FIRST: Log that we actually hit this route
+    console.log("🎯 POST /api/thoughts ROUTE HIT - This should NEVER serve HTML!");
+    console.log("Request method:", req.method);
+    console.log("Request URL:", req.url);
+    console.log("Request path:", req.path);
+    
     // Ensure we ALWAYS return JSON and never fall through to static handler
     res.setHeader('Content-Type', 'application/json');
+    console.log("✅ Content-Type set to application/json");
     
     try {
       const userId = (req.session as any).userId;
@@ -304,11 +312,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Created thought:", thought);
       
       // ALWAYS return JSON - never let this fall through
-      return res.status(201).json({
+      console.log("✅ About to send SUCCESS response");
+      console.log("Current Content-Type before response:", res.get('Content-Type'));
+      const response = {
         success: true,
         thought,
         message: "Thought created successfully"
-      });
+      };
+      console.log("Response object:", response);
+      return res.status(201).json(response);
       
     } catch (error) {
       console.error("=== DEBUG: POST /api/thoughts ERROR ===");
@@ -316,22 +328,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
       
       // ALWAYS return JSON even for unexpected errors
+      console.log("❌ About to send ERROR response");
+      console.log("Current Content-Type before error response:", res.get('Content-Type'));
+      
       if (error instanceof z.ZodError) {
         console.error("Zod validation errors:", error.errors);
-        return res.status(400).json({ 
+        const errorResponse = { 
           success: false,
           message: "Invalid thought data", 
           errors: error.errors,
           details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
-        });
+        };
+        console.log("Zod error response object:", errorResponse);
+        return res.status(400).json(errorResponse);
       } else {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         console.error("Other error:", errorMessage);
-        return res.status(500).json({ 
+        const errorResponse = { 
           success: false,
           message: "Failed to create thought",
           error: errorMessage
-        });
+        };
+        console.log("General error response object:", errorResponse);
+        return res.status(500).json(errorResponse);
       }
     }
   });

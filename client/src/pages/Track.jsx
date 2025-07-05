@@ -66,9 +66,14 @@ export default function Track() {
         });
         console.log("JSON.stringify payload:", JSON.stringify(payload));
         
+        console.log("🚀 Making API request to POST /api/thoughts");
         const response = await apiRequest("POST", "/api/thoughts", payload);
-        console.log("Response status:", response.status);
-        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+        console.log("📡 Response received:");
+        console.log("- Status:", response.status);
+        console.log("- Headers:", Object.fromEntries(response.headers.entries()));
+        console.log("- URL:", response.url);
+        console.log("- Type:", response.type);
+        console.log("- OK:", response.ok);
         
         if (!response.ok) {
           // Handle error responses with defensive parsing
