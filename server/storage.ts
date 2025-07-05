@@ -1,4 +1,4 @@
-import { users, thoughts, type User, type InsertUser, type Thought, type InsertThought } from "@shared/schema";
+import { users, thoughts, type User, type InsertUser, type UpdateUser, type Thought, type InsertThought } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 
@@ -6,6 +6,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: UpdateUser): Promise<User>;
   
   // Thought operations
   createThought(thought: InsertThought): Promise<Thought>;
@@ -28,6 +29,15 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db
       .insert(users)
       .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: number, updates: UpdateUser): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
       .returning();
     return user;
   }

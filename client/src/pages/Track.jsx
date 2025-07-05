@@ -13,7 +13,6 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiveDistortions";
-import { Info } from "lucide-react";
 
 const thoughtFormSchema = z.object({
   content: z.string().min(1, "Please enter your thought"),
@@ -39,8 +38,19 @@ export default function Track() {
 
   const createThoughtMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await apiRequest("POST", "/api/thoughts", data);
-      return response.json();
+      try {
+        const response = await apiRequest("POST", "/api/thoughts", data);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Server error: ${response.status} - ${errorText}`);
+        }
+        return response.json();
+      } catch (error) {
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          throw new Error('No internet connection. Please check your connection and try again.');
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/thoughts"] });
@@ -51,10 +61,12 @@ export default function Track() {
         description: "Your thought has been successfully logged and categorized.",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Thought recording error:', error);
+      const isNetworkError = error.message.includes('No internet connection');
       toast({
-        title: "Error",
-        description: "Failed to record thought. Please try again.",
+        title: isNetworkError ? "No Internet Connection" : "Error",
+        description: isNetworkError ? error.message : "Failed to record thought. Please check your connection and try again.",
         variant: "destructive",
       });
     },
@@ -106,9 +118,8 @@ export default function Track() {
               name="cognitiveDistortion"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary flex items-center gap-2">
+                  <FormLabel className="text-sm font-medium app-text-primary">
                     Cognitive Distortion Pattern *
-                    <Info className="h-4 w-4 text-primary/70" />
                   </FormLabel>
                   <Select
                     onValueChange={(value) => {
@@ -129,10 +140,7 @@ export default function Track() {
                           value={distortion.id}
                           className="text-gray-700 hover:app-surface-light focus:text-gray-700 cursor-pointer"
                         >
-                          <div className="flex items-center gap-2">
-                            <span>{distortion.name}</span>
-                            <Info className="h-3 w-3 text-primary/50" />
-                          </div>
+                          {distortion.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

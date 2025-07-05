@@ -6,6 +6,7 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  name: text("name"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -34,5 +35,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: z.string().email("Username must be a valid email address"),
 });
 
+export const updateUserSchema = createInsertSchema(users).pick({
+  name: true,
+}).extend({
+  name: z.string().optional(),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type User = typeof users.$inferSelect;

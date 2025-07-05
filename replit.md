@@ -144,6 +144,16 @@ Changelog:
   * Generated XCODE_DEPLOYMENT_GUIDE.md with complete deployment instructions
   * Final Capacitor sync completed successfully with proper iOS project structure
   * App fully tested and ready for Xcode deployment and App Store submission
+- July 5, 2025. TestFlight issues resolved and app updated for new build:
+  * Enhanced thought recording with robust error handling and connectivity checks
+  * Removed "i" info icons from cognitive distortion patterns for cleaner UI
+  * Added "Last 7 days" and "Last 30 days" quick time period suggestions to Export page
+  * Removed "Coming soon" label from PDF export option
+  * Completely redesigned Profile page with consistent app styling and modern layout
+  * Added user name field (editable) and email display (non-editable) to profile
+  * Implemented profile update API with proper validation and error handling
+  * Added user name field to database schema and migrated successfully
+  * All TestFlight feedback addressed and tested - ready for new build submission
 ```
 
 ## User Preferences

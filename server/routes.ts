@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertThoughtSchema, insertUserSchema, users, thoughts } from "@shared/schema";
+import { insertThoughtSchema, insertUserSchema, updateUserSchema, users, thoughts } from "@shared/schema";
 import { z } from "zod";
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
@@ -66,7 +66,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "User not found" });
     }
     
-    res.json({ id: user.id, username: user.username });
+    res.json({ id: user.id, username: user.username, name: user.name });
+  });
+
+  app.patch("/api/auth/profile", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const validatedData = updateUserSchema.parse(req.body);
+      const updatedUser = await storage.updateUser(userId, validatedData);
+      
+      res.json({ id: updatedUser.id, username: updatedUser.username, name: updatedUser.name });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid profile data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update profile" });
+      }
+    }
   });
 
   app.post("/api/auth/logout", async (req, res) => {

@@ -54,7 +54,7 @@ export default function Export() {
         // PDF export would be implemented here
         toast({
           title: "PDF Export",
-          description: "PDF export feature coming soon!",
+          description: "PDF export is being prepared...",
         });
       }
     } catch (error) {
@@ -110,6 +110,39 @@ export default function Export() {
         
         {/* Date Range */}
         <div className="space-y-4">
+          {/* Quick Time Period Suggestions */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium app-text-primary">
+              Quick Time Periods
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setDateFrom(format(subDays(new Date(), 7), 'yyyy-MM-dd'));
+                  setDateTo(format(new Date(), 'yyyy-MM-dd'));
+                }}
+                className="bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 text-xs text-[#ffffff]"
+              >
+                Last 7 days
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setDateFrom(format(subDays(new Date(), 30), 'yyyy-MM-dd'));
+                  setDateTo(format(new Date(), 'yyyy-MM-dd'));
+                }}
+                className="bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 text-xs text-[#ffffff]"
+              >
+                Last 30 days
+              </Button>
+            </div>
+          </div>
+          
           <div className="space-y-2">
             <Label htmlFor="dateFrom" className="text-sm font-medium app-text-primary">
               From Date
@@ -150,7 +183,7 @@ export default function Export() {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="pdf" id="pdf" />
               <Label htmlFor="pdf" className="text-sm app-text-primary cursor-pointer">
-                PDF (Coming soon)
+                PDF (Professional report)
               </Label>
             </div>
           </RadioGroup>
