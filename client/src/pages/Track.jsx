@@ -39,15 +39,57 @@ export default function Track() {
   const createThoughtMutation = useMutation({
     mutationFn: async (data) => {
       try {
-        const response = await apiRequest("POST", "/api/thoughts", data);
+        // Debug logging for iOS
+        console.log("=== DEBUG: Creating thought ===");
+        console.log("Raw form data:", data);
+        console.log("Data types:", {
+          content: typeof data.content,
+          cognitiveDistortion: typeof data.cognitiveDistortion,
+          trigger: typeof data.trigger,
+          intensity: typeof data.intensity
+        });
+        
+        // Ensure proper data structure
+        const payload = {
+          content: String(data.content || ''),
+          cognitiveDistortion: String(data.cognitiveDistortion || ''),
+          trigger: data.trigger ? String(data.trigger) : undefined,
+          intensity: parseInt(data.intensity, 10)
+        };
+        
+        console.log("Sanitized payload:", payload);
+        console.log("Payload types:", {
+          content: typeof payload.content,
+          cognitiveDistortion: typeof payload.cognitiveDistortion,
+          trigger: typeof payload.trigger,
+          intensity: typeof payload.intensity
+        });
+        console.log("JSON.stringify payload:", JSON.stringify(payload));
+        
+        const response = await apiRequest("POST", "/api/thoughts", payload);
+        console.log("Response status:", response.status);
+        
         if (!response.ok) {
           const errorText = await response.text();
+          console.error("Server error response:", errorText);
           throw new Error(`Server error: ${response.status} - ${errorText}`);
         }
-        return response.json();
+        
+        const result = await response.json();
+        console.log("Success response:", result);
+        return result;
       } catch (error) {
+        console.error("=== DEBUG: Mutation error ===");
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+        
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
           throw new Error('No internet connection. Please check your connection and try again.');
+        }
+        if (error.name === 'SyntaxError') {
+          console.error("SyntaxError detected - likely JSON parsing issue");
+          throw new Error('Data format error. Please try again or contact support.');
         }
         throw error;
       }

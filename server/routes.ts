@@ -197,16 +197,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/thoughts", requireAuth, async (req, res) => {
     try {
       const userId = (req.session as any).userId;
-      const validatedData = insertThoughtSchema.parse({
+      
+      // Debug logging for iOS
+      console.log("=== DEBUG: POST /api/thoughts ===");
+      console.log("Request body:", req.body);
+      console.log("Request body type:", typeof req.body);
+      console.log("User ID:", userId);
+      console.log("Content-Type:", req.headers['content-type']);
+      
+      // Log individual properties and their types
+      console.log("Body properties:", {
+        content: { value: req.body.content, type: typeof req.body.content },
+        cognitiveDistortion: { value: req.body.cognitiveDistortion, type: typeof req.body.cognitiveDistortion },
+        trigger: { value: req.body.trigger, type: typeof req.body.trigger },
+        intensity: { value: req.body.intensity, type: typeof req.body.intensity }
+      });
+      
+      const dataToValidate = {
         ...req.body,
         userId
-      });
+      };
+      
+      console.log("Data to validate:", dataToValidate);
+      
+      const validatedData = insertThoughtSchema.parse(dataToValidate);
+      console.log("Validated data:", validatedData);
+      
       const thought = await storage.createThought(validatedData);
+      console.log("Created thought:", thought);
+      
       res.status(201).json(thought);
     } catch (error) {
+      console.error("=== DEBUG: POST /api/thoughts ERROR ===");
+      console.error("Error:", error);
+      
       if (error instanceof z.ZodError) {
+        console.error("Zod validation errors:", error.errors);
         res.status(400).json({ message: "Invalid thought data", errors: error.errors });
       } else {
+        console.error("Other error:", error.message);
         res.status(500).json({ message: "Failed to create thought" });
       }
     }

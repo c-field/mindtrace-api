@@ -15,6 +15,12 @@ async function throwIfResNotOk(res) {
 }
 
 export async function apiRequest(method, url, data) {
+  // Debug logging for iOS
+  console.log("=== DEBUG: apiRequest ===");
+  console.log("Method:", method);
+  console.log("URL:", url);
+  console.log("Data:", data);
+  
   const options = {
     method,
     credentials: "include",
@@ -24,12 +30,29 @@ export async function apiRequest(method, url, data) {
   };
 
   if (data) {
-    options.body = JSON.stringify(data);
+    try {
+      options.body = JSON.stringify(data);
+      console.log("Request body:", options.body);
+      console.log("Request body type:", typeof options.body);
+    } catch (jsonError) {
+      console.error("JSON.stringify error:", jsonError);
+      throw new Error("Failed to serialize request data");
+    }
   }
+  
+  console.log("Request options:", options);
 
-  const res = await fetch(url, options);
-  await throwIfResNotOk(res);
-  return res;
+  try {
+    const res = await fetch(url, options);
+    console.log("Fetch response status:", res.status);
+    console.log("Fetch response headers:", Object.fromEntries(res.headers.entries()));
+    
+    await throwIfResNotOk(res);
+    return res;
+  } catch (fetchError) {
+    console.error("Fetch error:", fetchError);
+    throw fetchError;
+  }
 }
 
 export const getQueryFn = (options) => {
