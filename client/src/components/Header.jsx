@@ -1,7 +1,7 @@
 export default function Header() {
   return (
-    <header className="app-surface border-b border-slate-600 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
+    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 safe-header">
+      <div className="safe-container py-4">
         <div className="flex items-center justify-center">
           <div className="flex items-center space-x-3">
             {/* Custom MindTrace Brain Network Logo */}

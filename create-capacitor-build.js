@@ -23,39 +23,58 @@ const indexHtml = `<!DOCTYPE html>
     <title>MindTrace</title>
     <style>
       :root {
+        /* Safe area insets for iOS devices */
+        --safe-area-inset-top: env(safe-area-inset-top);
+        --safe-area-inset-right: env(safe-area-inset-right);
+        --safe-area-inset-bottom: env(safe-area-inset-bottom);
+        --safe-area-inset-left: env(safe-area-inset-left);
+        
+        /* App colors */
         --bg-primary: #1f2937;
         --bg-secondary: #374151;
         --text-primary: #f3f4f6;
         --text-secondary: #9ca3af;
         --accent: #27c4b4;
         --accent-hover: #22b8aa;
+        
+        /* Responsive spacing */
+        --content-padding-x: max(16px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+        --content-padding-y: 16px;
       }
       
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
       }
       
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         background: var(--bg-primary);
         color: var(--text-primary);
-        height: 100vh;
+        height: 100dvh;
         overflow: hidden;
+        padding-top: var(--safe-area-inset-top);
+        padding-right: var(--safe-area-inset-right);
+        padding-bottom: var(--safe-area-inset-bottom);
+        padding-left: var(--safe-area-inset-left);
       }
       
       .app-container {
-        height: 100vh;
+        height: 100dvh;
         display: flex;
         flex-direction: column;
+        max-width: 100%;
+        overflow: hidden;
       }
       
       .header {
-        padding: 1rem;
+        padding: var(--content-padding-y) var(--content-padding-x);
         background: var(--bg-secondary);
         text-align: center;
         border-bottom: 1px solid #4b5563;
+        flex-shrink: 0;
       }
       
       .logo {
@@ -76,12 +95,14 @@ const indexHtml = `<!DOCTYPE html>
       
       .main-content {
         flex: 1;
-        padding: 2rem 1rem;
+        padding: 2rem var(--content-padding-x);
         text-align: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       
       .welcome-message {
@@ -117,18 +138,61 @@ const indexHtml = `<!DOCTYPE html>
       }
       
       .footer {
-        padding: 1rem;
+        padding: var(--content-padding-y) var(--content-padding-x);
         text-align: center;
         font-size: 0.8rem;
         color: var(--text-secondary);
         border-top: 1px solid #4b5563;
+        flex-shrink: 0;
       }
       
-      @media (max-width: 640px) {
-        .header { padding: 0.75rem; }
-        .main-content { padding: 1.5rem 1rem; }
-        .logo { font-size: 1.3rem; }
-        .welcome-message { font-size: 1.1rem; }
+      /* Responsive breakpoints */
+      @media screen and (min-width: 768px) {
+        :root {
+          --content-padding-x: max(24px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+          --content-padding-y: 24px;
+        }
+        
+        .app-container {
+          max-width: 768px;
+          margin: 0 auto;
+        }
+        
+        .main-content {
+          padding: 3rem var(--content-padding-x);
+        }
+      }
+      
+      @media screen and (min-width: 1024px) {
+        :root {
+          --content-padding-x: max(32px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+          --content-padding-y: 32px;
+        }
+        
+        .app-container {
+          max-width: 1024px;
+        }
+      }
+      
+      /* Orientation handling */
+      @media screen and (orientation: landscape) and (max-height: 600px) {
+        .header {
+          padding: 12px var(--content-padding-x);
+        }
+        
+        .main-content {
+          padding: 1rem var(--content-padding-x);
+        }
+        
+        .logo {
+          font-size: 1.2rem;
+        }
+      }
+      
+      /* Touch target optimization */
+      button, [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
       }
     </style>
   </head>

@@ -67,7 +67,7 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="viewport-height bg-background flex items-center justify-center safe-area-p">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
@@ -79,7 +79,7 @@ function App() {
   if (!isAuthenticated) {
     return (
       <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen bg-background">
+        <div className="viewport-height bg-background safe-area-p">
           <Switch>
             <Route path="/forgot-password">
               <ForgotPassword />
@@ -99,11 +99,11 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background">
-        <div className="flex flex-col h-screen">
+      <div className="viewport-height bg-background">
+        <div className="flex flex-col h-full">
           <Header />
-          <main className="flex-1 overflow-y-auto">
-            <div className="container mx-auto px-4 py-6 pb-20">
+          <main className="flex-1 overflow-y-auto content-area">
+            <div className="safe-container py-6">
               <Switch>
                 <Route path="/" component={Track} />
                 <Route path="/track" component={Track} />

@@ -86,8 +86,11 @@ export default function Profile({ onLogout = () => {} }) {
           Manage your account settings and view your mental health journey summary.
         </p>
       </div>
-      {/* Account Information */}
-      <Card className="app-surface border-slate-600">
+      
+      {/* Responsive Card Grid */}
+      <div className="card-grid space-y-6">
+        {/* Account Information */}
+        <Card className="app-surface border-slate-600">
         <CardHeader className="bg-[#1f2937]">
           <CardTitle className="app-text-primary">Account Information</CardTitle>
           <CardDescription className="app-text-secondary">
@@ -122,10 +125,10 @@ export default function Profile({ onLogout = () => {} }) {
             )}
           </div>
         </CardContent>
-      </Card>
-      {/* Mental Health Summary */}
-      {thoughts.length > 0 && (
-        <Card className="app-surface border-slate-600">
+        </Card>
+        {/* Mental Health Summary */}
+        {thoughts.length > 0 && (
+          <Card className="app-surface border-slate-600">
           <CardHeader className="bg-[#1f2937]">
             <CardTitle className="app-text-primary">Your Journey Summary</CardTitle>
             <CardDescription className="app-text-secondary">
@@ -148,68 +151,69 @@ export default function Profile({ onLogout = () => {} }) {
               </div>
             </div>
           </CardContent>
+          </Card>
+        )}
+        {/* Data Management */}
+        <Card className="app-surface border-slate-600">
+          <CardHeader>
+            <CardTitle className="app-text-primary">Data Management</CardTitle>
+            <CardDescription className="app-text-secondary">
+              Manage your stored thought records
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">Danger Zone</h4>
+              <p className="text-sm text-red-700 dark:text-red-300 mb-3">
+                Permanently delete all your thought records. This action cannot be undone.
+              </p>
+              <Button
+                onClick={handleDeleteAllThoughts}
+                disabled={deleteAllThoughtsMutation.isPending || thoughts.length === 0}
+                variant="destructive"
+                size="sm"
+              >
+                {deleteAllThoughtsMutation.isPending ? "Deleting..." : "Delete All Thoughts"}
+              </Button>
+            </div>
+          </CardContent>
         </Card>
-      )}
-      {/* Data Management */}
-      <Card className="app-surface border-slate-600">
-        <CardHeader>
-          <CardTitle className="app-text-primary">Data Management</CardTitle>
-          <CardDescription className="app-text-secondary">
-            Manage your stored thought records
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">Danger Zone</h4>
-            <p className="text-sm text-red-700 dark:text-red-300 mb-3">
-              Permanently delete all your thought records. This action cannot be undone.
-            </p>
+        {/* Account Actions */}
+        <Card className="app-surface border-slate-600">
+          <CardHeader>
+            <CardTitle className="app-text-primary">Account Actions</CardTitle>
+            <CardDescription className="app-text-secondary">
+              Manage your session and account access
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Button
-              onClick={handleDeleteAllThoughts}
-              disabled={deleteAllThoughtsMutation.isPending || thoughts.length === 0}
-              variant="destructive"
-              size="sm"
+              onClick={handleLogout}
+              variant="outline"
+              className="w-full border-primary/20 app-text-primary hover:bg-primary/5"
             >
-              {deleteAllThoughtsMutation.isPending ? "Deleting..." : "Delete All Thoughts"}
+              Sign Out
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-      {/* Account Actions */}
-      <Card className="app-surface border-slate-600">
-        <CardHeader>
-          <CardTitle className="app-text-primary">Account Actions</CardTitle>
-          <CardDescription className="app-text-secondary">
-            Manage your session and account access
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="w-full border-primary/20 app-text-primary hover:bg-primary/5"
-          >
-            Sign Out
-          </Button>
-        </CardContent>
-      </Card>
-      {/* App Information */}
-      <Card className="app-surface border-slate-600">
-        <CardHeader>
-          <CardTitle className="app-text-primary">About MindTrace</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm app-text-secondary">
-            MindTrace is a mental health tracking app that helps you identify and understand
-            negative thought patterns using cognitive behavioral therapy (CBT) principles.
-          </p>
-          <div className="text-xs app-text-secondary space-y-1">
-            <div>Version: 1.0.0</div>
-            <div>Built with React, Express, and PostgreSQL</div>
-            <div>Optimized for mobile and desktop</div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        {/* App Information */}
+        <Card className="app-surface border-slate-600">
+          <CardHeader>
+            <CardTitle className="app-text-primary">About MindTrace</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm app-text-secondary">
+              MindTrace is a mental health tracking app that helps you identify and understand
+              negative thought patterns using cognitive behavioral therapy (CBT) principles.
+            </p>
+            <div className="text-xs app-text-secondary space-y-1">
+              <div>Version: 1.0.0</div>
+              <div>Built with React, Express, and PostgreSQL</div>
+              <div>Optimized for mobile and desktop</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

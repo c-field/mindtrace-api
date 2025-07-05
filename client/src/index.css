@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS Safe Area Support */
+:root {
+  /* Safe area insets for iOS devices */
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
+  
+  /* Responsive spacing variables */
+  --header-height: calc(64px + var(--safe-area-inset-top));
+  --bottom-nav-height: calc(80px + var(--safe-area-inset-bottom));
+  --content-padding-x: max(16px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+  --content-padding-y: 16px;
+}
+
 /* Mobile optimization */
 * {
   -webkit-tap-highlight-color: transparent;
@@ -29,6 +44,15 @@ input[type="text"], input[type="email"], input[type="password"], textarea {
 html {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  /* Prevent horizontal overflow */
+  overflow-x: hidden;
+}
+
+/* Full viewport height handling for mobile browsers */
+body {
+  /* Use dynamic viewport units for better mobile support */
+  min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 :root {
@@ -180,4 +204,129 @@ html {
 /* Tab active styling */
 .tab-active {
   color: hsl(174, 77%, 56%);
+}
+
+/* iOS Safe Area Utilities */
+.safe-area-pt {
+  padding-top: var(--safe-area-inset-top);
+}
+
+.safe-area-pr {
+  padding-right: var(--safe-area-inset-right);
+}
+
+.safe-area-pb {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.safe-area-pl {
+  padding-left: var(--safe-area-inset-left);
+}
+
+.safe-area-p {
+  padding-top: var(--safe-area-inset-top);
+  padding-right: var(--safe-area-inset-right);
+  padding-bottom: var(--safe-area-inset-bottom);
+  padding-left: var(--safe-area-inset-left);
+}
+
+/* Layout containers with safe areas */
+.safe-container {
+  padding-left: var(--content-padding-x);
+  padding-right: var(--content-padding-x);
+}
+
+.safe-header {
+  padding-top: var(--safe-area-inset-top);
+  min-height: var(--header-height);
+}
+
+.safe-bottom-nav {
+  padding-bottom: var(--safe-area-inset-bottom);
+  min-height: var(--bottom-nav-height);
+}
+
+/* Responsive viewport classes */
+.viewport-height {
+  height: 100dvh;
+}
+
+.content-area {
+  min-height: calc(100dvh - var(--header-height) - var(--bottom-nav-height));
+  padding-bottom: var(--bottom-nav-height);
+}
+
+/* Responsive breakpoints for tablets and larger screens */
+@media screen and (min-width: 768px) {
+  :root {
+    --content-padding-x: max(24px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+    --content-padding-y: 24px;
+  }
+  
+  .safe-container {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  :root {
+    --content-padding-x: max(32px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+    --content-padding-y: 32px;
+  }
+  
+  .safe-container {
+    max-width: 1024px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  :root {
+    --content-padding-x: max(40px, var(--safe-area-inset-left), var(--safe-area-inset-right));
+    --content-padding-y: 40px;
+  }
+  
+  .safe-container {
+    max-width: 1200px;
+  }
+}
+
+/* Orientation-specific adjustments */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+  :root {
+    --header-height: calc(48px + var(--safe-area-inset-top));
+    --bottom-nav-height: calc(60px + var(--safe-area-inset-bottom));
+    --content-padding-y: 12px;
+  }
+}
+
+/* iPad specific adjustments */
+@media screen and (min-width: 768px) and (min-height: 1024px) {
+  .content-area {
+    padding: var(--content-padding-y) 0;
+  }
+  
+  /* Center content on larger screens */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* Touch target sizing for better accessibility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Prevent content from hiding behind notch or home indicator */
+.notch-safe {
+  margin-top: var(--safe-area-inset-top);
+}
+
+.home-indicator-safe {
+  margin-bottom: var(--safe-area-inset-bottom);
 }

@@ -20,31 +20,33 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const isActive = (path) => location === path || (location === "/" && path === "/track");
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 app-surface border-t border-slate-600 px-4 py-2 safe-area-pb z-50">
-      <div className="flex justify-around items-center max-w-md mx-auto">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const active = isActive(tab.path);
-          
-          return (
-            <Button
-              key={tab.id}
-              variant="ghost"
-              size="sm"
-              onClick={() => handleTabClick(tab)}
-              className={`flex flex-col items-center space-y-1 px-2 py-3 h-auto transition-colors duration-200 ${
-                active
-                  ? "app-primary text-white bg-primary/20"
-                  : "app-text-secondary hover:app-text-primary hover:bg-primary/5"
-              }`}
-            >
-              <Icon className={`w-5 h-5 ${active ? "text-primary" : ""}`} />
-              <span className={`text-xs font-medium ${active ? "text-primary" : ""}`}>
-                {tab.label}
-              </span>
-            </Button>
-          );
-        })}
+    <nav className="fixed bottom-0 left-0 right-0 app-surface border-t border-slate-600 safe-bottom-nav z-50">
+      <div className="safe-container py-2">
+        <div className="flex justify-around items-center max-w-md mx-auto">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const active = isActive(tab.path);
+            
+            return (
+              <Button
+                key={tab.id}
+                variant="ghost"
+                size="sm"
+                onClick={() => handleTabClick(tab)}
+                className={`touch-target flex flex-col items-center space-y-1 px-2 py-3 h-auto transition-colors duration-200 ${
+                  active
+                    ? "app-primary text-white bg-primary/20"
+                    : "app-text-secondary hover:app-text-primary hover:bg-primary/5"
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${active ? "text-primary" : ""}`} />
+                <span className={`text-xs font-medium ${active ? "text-primary" : ""}`}>
+                  {tab.label}
+                </span>
+              </Button>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );
