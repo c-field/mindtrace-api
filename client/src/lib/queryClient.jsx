@@ -38,8 +38,8 @@ export async function apiRequest(method, url, data) {
   console.log("URL:", url);
   console.log("Data:", data);
   
-  // Always use the production API base URL
-  const baseUrl = 'https://mindtrace-api-sigma.vercel.app';
+  // Always use the Replit backend URL
+  const baseUrl = 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev';
   
   // Construct the full URL
   const fullUrl = `${baseUrl}${url}`;
@@ -101,8 +101,8 @@ export const getQueryFn = (options) => {
   return async ({ queryKey }) => {
     const url = queryKey[0];
     
-    // Always use the production API base URL
-    const baseUrl = 'https://mindtrace-api-sigma.vercel.app';
+    // Always use the Replit backend URL
+    const baseUrl = 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev';
     const fullUrl = `${baseUrl}${url}`;
     
     try {

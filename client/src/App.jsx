@@ -32,11 +32,11 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log("🔍 Checking authentication with Vercel API...");
-        console.log("Request URL:", "https://mindtrace-api-sigma.vercel.app/api/auth/me");
+        console.log("🔍 Checking authentication with Replit backend...");
+        console.log("Request URL:", "https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/auth/me");
         console.log("Current origin:", window.location.origin);
         
-        const response = await fetch("https://mindtrace-api-sigma.vercel.app/api/auth/me", {
+        const response = await fetch("https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/auth/me", {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
