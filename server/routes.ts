@@ -51,15 +51,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = req.body;
       
+      console.log("=== DEBUG: Login attempt ===");
+      console.log("Username:", username);
+      console.log("Password length:", password?.length);
+      
       // Authenticate with Supabase
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: username,
         password: password
       });
       
+      console.log("Supabase auth response:", { authData, authError });
+      
       if (authError || !authData.user) {
         console.error("Supabase auth error:", authError);
-        return res.status(401).json({ message: "Invalid credentials" });
+        // Fallback to local authentication if Supabase fails
+        console.log("Falling back to local authentication...");
+        const user = await storage.getUserByUsername(username);
+        if (!user || user.password !== password) {
+          return res.status(401).json({ message: "Invalid credentials" });
+        }
+        
+        // Store local user info and generate a UUID for compatibility
+        (req.session as any).userId = user.id;
+        (req.session as any).supabaseUserId = `00000000-0000-0000-0000-${user.id.toString().padStart(12, '0')}`;
+        
+        console.log("✅ Local authentication successful");
+        console.log("Generated UUID:", (req.session as any).supabaseUserId);
+        
+        return res.json({ id: user.id, username: user.username });
       }
       
       // Store both numeric ID and Supabase UUID in session
@@ -67,8 +87,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       (req.session as any).supabaseUserId = authData.user.id; // Store Supabase UUID
       
       console.log("✅ Supabase authentication successful");
-      console.log("User ID:", authData.user.id);
+      console.log("User UUID:", authData.user.id);
       console.log("User email:", authData.user.email);
+      console.log("Session after setting supabaseUserId:", req.session);
       
       res.json({ id: authData.user.id, username: authData.user.email });
     } catch (error) {
