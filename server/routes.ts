@@ -55,7 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Username:", username);
       console.log("Password length:", password?.length);
       
-      // Authenticate with Supabase
+      // First, authenticate with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: username,
         password: password
@@ -65,33 +65,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (authError || !authData.user) {
         console.error("Supabase auth error:", authError);
-        // Fallback to local authentication if Supabase fails
-        console.log("Falling back to local authentication...");
-        const user = await storage.getUserByUsername(username);
-        if (!user || user.password !== password) {
-          return res.status(401).json({ message: "Invalid credentials" });
-        }
-        
-        // Store local user info and generate a UUID for compatibility
-        (req.session as any).userId = user.id;
-        (req.session as any).supabaseUserId = `00000000-0000-0000-0000-${user.id.toString().padStart(12, '0')}`;
-        
-        console.log("✅ Local authentication successful");
-        console.log("Generated UUID:", (req.session as any).supabaseUserId);
-        
-        return res.json({ id: user.id, username: user.username });
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      
+      // Query the users table to get the user record with the UUID
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id, username, email')
+        .eq('email', username)
+        .single();
+      
+      console.log("Supabase users table query result:", { userData, userError });
+      
+      if (userError || !userData) {
+        console.error("Failed to fetch user from users table:", userError);
+        return res.status(401).json({ message: "User not found in database" });
       }
       
       // Store both numeric ID and Supabase UUID in session
-      (req.session as any).userId = 1; // Keep for backward compatibility
-      (req.session as any).supabaseUserId = authData.user.id; // Store Supabase UUID
+      (req.session as any).userId = 1; // Keep for backward compatibility  
+      (req.session as any).supabaseUserId = userData.id; // Store real Supabase UUID from users table
       
       console.log("✅ Supabase authentication successful");
-      console.log("User UUID:", authData.user.id);
-      console.log("User email:", authData.user.email);
+      console.log("Real User UUID from users table:", userData.id);
+      console.log("User email:", userData.email);
+      console.log("Username:", userData.username);
       console.log("Session after setting supabaseUserId:", req.session);
       
-      res.json({ id: authData.user.id, username: authData.user.email });
+      res.json({ id: userData.id, username: userData.username || userData.email });
     } catch (error) {
       console.error("Login error:", error);
       res.status(500).json({ message: "Login failed" });
@@ -302,6 +303,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Map camelCase to snake_case for Supabase
+      console.log("Attempting to insert thought with UUID:", supabaseUserId);
+      
       const { data, error } = await supabase.from("thoughts").insert([
         {
           user_id: supabaseUserId,
@@ -312,13 +315,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       ]).select();
 
+      console.log("Supabase insert response:", { data, error });
+
       if (error) {
         console.error("Supabase insert error:", error);
         console.error("Error details:", JSON.stringify(error, null, 2));
+        
+        // Check if it's an RLS policy violation
+        if (error.code === '42501') {
+          console.error("RLS Policy violation - the user_id may not exist in the users table");
+          console.error("Trying to insert with user_id:", supabaseUserId);
+          
+          // Verify the user exists in the users table
+          const { data: userCheck, error: userCheckError } = await supabase
+            .from('users')
+            .select('id')
+            .eq('id', supabaseUserId)
+            .single();
+            
+          console.log("User existence check:", { userCheck, userCheckError });
+        }
+        
         return res.status(500).json({ success: false, error: error.message || "Database insert failed" });
       }
 
-      console.log("✅ Supabase insert successful:", data);
+      console.log("✅ Thought inserted successfully:", data);
       res.status(200).json({ success: true, data });
     } catch (error) {
       console.error("=== DEBUG: POST /api/thoughts ERROR ===");
