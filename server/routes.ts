@@ -253,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   console.log("🔧 Registering POST /api/thoughts route...");
   app.post("/api/thoughts", requireAuth, async (req, res) => {
     try {
-      const { content, cognitiveDistortion, intensity, trigger } = req.body;
+      const { content, cognitiveDistortion, intensity } = req.body;
       const userId = req.session?.userId;
 
       console.log("=== DEBUG: POST /api/thoughts ===");
@@ -261,31 +261,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("User ID:", userId);
 
       if (!content || !cognitiveDistortion || typeof intensity !== "number") {
-        return res.status(400).json({ error: "Missing or invalid fields" });
+        return res.status(400).json({ success: false, error: "Missing or invalid fields" });
       }
 
+      // Map camelCase to snake_case for Supabase
       const { data, error } = await supabase.from("thoughts").insert([
         {
-          content,
-          cognitiveDistortion,
-          intensity,
-          trigger: trigger || null,
-          userId,
-          createdAt: new Date().toISOString()
+          user_id: userId,
+          content: content,
+          cognitive_distortion: cognitiveDistortion,
+          intensity: intensity,
+          created_at: new Date().toISOString()
         }
       ]).select();
 
       if (error) {
         console.error("Supabase insert error:", error);
-        return res.status(500).json({ error: error.message || "Database insert failed" });
+        console.error("Error details:", JSON.stringify(error, null, 2));
+        return res.status(500).json({ success: false, error: error.message || "Database insert failed" });
       }
 
       console.log("✅ Supabase insert successful:", data);
-      res.status(200).json({ message: "Thought recorded", data });
+      res.status(200).json({ success: true, data });
     } catch (error) {
       console.error("=== DEBUG: POST /api/thoughts ERROR ===");
       console.error("Error:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ success: false, error: "Internal server error" });
     }
   });
 
