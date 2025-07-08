@@ -49,23 +49,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     
     try {
-      const validatedData = insertUserSchema.parse(req.body);
+      const { username, password } = req.body;
       
-      const user = await storage.getUserByUsername(validatedData.username);
-      if (!user || user.password !== validatedData.password) {
+      // Authenticate with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: username,
+        password: password
+      });
+      
+      if (authError || !authData.user) {
+        console.error("Supabase auth error:", authError);
         return res.status(401).json({ message: "Invalid credentials" });
       }
       
-      // Set session
-      (req.session as any).userId = user.id;
+      // Store both numeric ID and Supabase UUID in session
+      (req.session as any).userId = 1; // Keep for backward compatibility
+      (req.session as any).supabaseUserId = authData.user.id; // Store Supabase UUID
       
-      res.json({ id: user.id, username: user.username });
+      console.log("✅ Supabase authentication successful");
+      console.log("User ID:", authData.user.id);
+      console.log("User email:", authData.user.email);
+      
+      res.json({ id: authData.user.id, username: authData.user.email });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Invalid login data", errors: error.errors });
-      } else {
-        res.status(500).json({ message: "Login failed" });
-      }
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Login failed" });
     }
   });
 
@@ -119,7 +127,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const allUsers = await db.select({
         id: users.id,
         username: users.username,
-        createdAt: users.createdAt
+        created_at: users.created_at
       }).from(users);
       
       res.json(allUsers);
@@ -178,9 +186,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("=== DEBUG: requireAuth middleware ===");
       console.log("Session:", req.session);
       console.log("User ID from session:", req.session?.userId);
+      console.log("Supabase User ID from session:", req.session?.supabaseUserId);
       
       const userId = req.session?.userId;
-      if (!userId) {
+      const supabaseUserId = req.session?.supabaseUserId;
+      
+      if (!userId && !supabaseUserId) {
         console.log("=== DEBUG: Authentication failed - no user ID ===");
         // Ensure we always return JSON for auth failures and NEVER fall through
         res.setHeader('Content-Type', 'application/json');
@@ -193,6 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log("=== DEBUG: Authentication successful ===");
       req.userId = userId;
+      req.supabaseUserId = supabaseUserId;
       next();
     } catch (error) {
       console.error("=== DEBUG: requireAuth middleware error ===", error);
@@ -254,20 +266,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/thoughts", requireAuth, async (req, res) => {
     try {
       const { content, cognitiveDistortion, intensity } = req.body;
-      const userId = req.session?.userId;
+      const supabaseUserId = req.session?.supabaseUserId;
 
       console.log("=== DEBUG: POST /api/thoughts ===");
       console.log("Request body:", req.body);
-      console.log("User ID:", userId);
+      console.log("Supabase User ID:", supabaseUserId);
 
       if (!content || !cognitiveDistortion || typeof intensity !== "number") {
         return res.status(400).json({ success: false, error: "Missing or invalid fields" });
       }
 
+      if (!supabaseUserId) {
+        return res.status(401).json({ success: false, error: "Supabase user ID not found in session" });
+      }
+
       // Map camelCase to snake_case for Supabase
       const { data, error } = await supabase.from("thoughts").insert([
         {
-          user_id: userId,
+          user_id: supabaseUserId,
           content: content,
           cognitive_distortion: cognitiveDistortion,
           intensity: intensity,
@@ -323,7 +339,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create CSV content
       const csvHeader = "Date,Intensity,Cognitive Distortion,Trigger,Content\n";
       const csvRows = thoughts.map(thought => {
-        const date = new Date(thought.createdAt).toLocaleDateString();
+        const date = new Date(thought.created_at).toLocaleDateString();
         const content = `"${thought.content.replace(/"/g, '""')}"`;
         const trigger = thought.trigger ? `"${thought.trigger.replace(/"/g, '""')}"` : "";
         const distortion = `"${thought.cognitiveDistortion}"`;
