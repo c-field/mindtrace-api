@@ -85,6 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Store both numeric ID and Supabase UUID in session
       (req.session as any).userId = 1; // Keep for backward compatibility  
+      console.log("auth.uid() equivalent:", userData.id);
       (req.session as any).supabaseUserId = userData.id; // Store real Supabase UUID from users table
       
       console.log("✅ Supabase authentication successful");
@@ -286,6 +287,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new thought
   console.log("🔧 Registering POST /api/thoughts route...");
   app.post("/api/thoughts", requireAuth, async (req, res) => {
+    console.log("🧪 DEBUG: /api/thoughts session check");
+    console.log("Session supabaseUserId:", req.session?.supabaseUserId);
+    
     try {
       const { content, cognitiveDistortion, intensity } = req.body;
       const supabaseUserId = req.session?.supabaseUserId;
