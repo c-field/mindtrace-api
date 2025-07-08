@@ -238,29 +238,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ message: "API routing is working", method: req.method });
   });
 
+  // Debug route to return authenticated user info
+  app.get("/api/me", requireAuth, async (req, res) => {
+    console.log("🔐 Authenticated user ID:", req.session?.userId);
+    console.log("🔐 Full session:", req.session);
+    res.status(200).json({ 
+      userId: req.session?.userId,
+      authenticated: true,
+      session: req.session 
+    });
+  });
+
   // Create a new thought
   console.log("🔧 Registering POST /api/thoughts route...");
   app.post("/api/thoughts", requireAuth, async (req, res) => {
-    const { content, cognitiveDistortion, intensity } = req.body;
+    try {
+      const { content, cognitiveDistortion, intensity, trigger } = req.body;
+      const userId = req.session?.userId;
 
-    if (!content || !cognitiveDistortion || typeof intensity !== "number") {
-      return res.status(400).json({ error: "Missing or invalid fields" });
-    }
+      console.log("=== DEBUG: POST /api/thoughts ===");
+      console.log("Request body:", req.body);
+      console.log("User ID:", userId);
 
-    const { error } = await supabase.from("thoughts").insert([
-      {
-        content,
-        cognitiveDistortion,
-        intensity,
+      if (!content || !cognitiveDistortion || typeof intensity !== "number") {
+        return res.status(400).json({ error: "Missing or invalid fields" });
       }
-    ]);
 
-    if (error) {
-      console.error("Supabase insert error:", error.message);
-      return res.status(500).json({ error: error.message });
+      const { data, error } = await supabase.from("thoughts").insert([
+        {
+          content,
+          cognitiveDistortion,
+          intensity,
+          trigger: trigger || null,
+          userId,
+          createdAt: new Date().toISOString()
+        }
+      ]).select();
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        return res.status(500).json({ error: error.message || "Database insert failed" });
+      }
+
+      console.log("✅ Supabase insert successful:", data);
+      res.status(200).json({ message: "Thought recorded", data });
+    } catch (error) {
+      console.error("=== DEBUG: POST /api/thoughts ERROR ===");
+      console.error("Error:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-
-    res.status(200).json({ message: "Thought recorded" });
   });
 
   // Delete all thoughts
