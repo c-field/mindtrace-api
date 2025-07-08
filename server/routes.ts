@@ -69,13 +69,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Query the users table to get the user record with the UUID
-      const { data: userData, error: userError } = await supabase
+      // First try with 'username' field to match the POST body
+      let { data: userData, error: userError } = await supabase
         .from('users')
         .select('id, username, email')
-        .eq('email', username)
+        .eq('username', username)
         .single();
       
-      console.log("Supabase users table query result:", { userData, userError });
+      console.log("Supabase users query result:", userData);
+      console.log("Supabase users query error:", userError);
+      
+      // If no user found with username, try with email field
+      if (userError && userError.code === 'PGRST116') {
+        console.log("No user found with username, trying email field...");
+        const { data: userDataEmail, error: userErrorEmail } = await supabase
+          .from('users')
+          .select('id, username, email')
+          .eq('email', username)
+          .single();
+          
+        console.log("Supabase users email query result:", userDataEmail);
+        console.log("Supabase users email query error:", userErrorEmail);
+        
+        if (userErrorEmail || !userDataEmail) {
+          console.error("Failed to fetch user from users table with both username and email:", userErrorEmail);
+          return res.status(401).json({ message: "User not found in database" });
+        }
+        
+        // Use email query results
+        userData = userDataEmail;
+        userError = userErrorEmail;
+      }
       
       if (userError || !userData) {
         console.error("Failed to fetch user from users table:", userError);
