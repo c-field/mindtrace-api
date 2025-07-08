@@ -178,6 +178,12 @@ Changelog:
   * Implemented proper field mapping: cognitiveDistortion → cognitive_distortion
   * Session now stores real Supabase UUID for authenticated database operations
   * Ready for production deployment with proper UUID-based authentication
+- July 8, 2025. Fixed Supabase service role key configuration:
+  * Identified root cause: server was using SUPABASE_ANON_KEY instead of SUPABASE_SERVICE_ROLE_KEY
+  * Updated server/lib/supabase.ts to use proper service role key for bypassing RLS
+  * Added debug logging to verify correct key usage (eyJhbGci prefix)
+  * Server restarted with service role authentication for database operations
+  * Authentication and thoughts insertion now properly authenticated with service role privileges
 ```
 
 ## User Preferences
