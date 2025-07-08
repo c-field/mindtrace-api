@@ -5,6 +5,7 @@ import { insertThoughtSchema, insertUserSchema, updateUserSchema, users, thought
 import { z } from "zod";
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
+import supabase from "./lib/supabase";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
@@ -240,132 +241,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new thought
   console.log("🔧 Registering POST /api/thoughts route...");
   app.post("/api/thoughts", requireAuth, async (req, res) => {
-    // FIRST: Log that we actually hit this route
-    console.log("🎯 POST /api/thoughts ROUTE HIT - This should NEVER serve HTML!");
-    console.log("Request method:", req.method);
-    console.log("Request URL:", req.url);
-    console.log("Request path:", req.path);
-    
-    // Ensure we ALWAYS return JSON and never fall through to static handler
-    res.setHeader('Content-Type', 'application/json');
-    console.log("✅ Content-Type set to application/json");
-    
-    try {
-      const userId = (req.session as any).userId;
-      
-      // Debug logging for iOS
-      console.log("=== DEBUG: POST /api/thoughts ===");
-      console.log("Request body:", req.body);
-      console.log("Request body type:", typeof req.body);
-      console.log("User ID:", userId);
-      console.log("Content-Type:", req.headers['content-type']);
-      
-      // Early validation with warning log
-      if (!req.body || typeof req.body !== 'object') {
-        console.warn("⚠️  Invalid request body received:", req.body);
-        return res.status(400).json({ 
-          success: false, 
-          message: "Invalid request body",
-          error: "Request body must be a valid object"
-        });
-      }
-      
-      // Validate required fields
-      const { content, cognitiveDistortion, intensity, trigger } = req.body;
-      
-      if (!content || typeof content !== 'string') {
-        console.warn("⚠️  Missing or invalid content:", content);
-        return res.status(400).json({
-          success: false,
-          message: "Content is required and must be a string",
-          error: `Received content: ${typeof content}`
-        });
-      }
-      
-      if (!cognitiveDistortion || typeof cognitiveDistortion !== 'string') {
-        console.warn("⚠️  Missing or invalid cognitiveDistortion:", cognitiveDistortion);
-        return res.status(400).json({
-          success: false,
-          message: "Cognitive distortion is required and must be a string",
-          error: `Received cognitiveDistortion: ${typeof cognitiveDistortion}`
-        });
-      }
-      
-      if (intensity === undefined || typeof intensity !== 'number' || intensity < 1 || intensity > 10) {
-        console.warn("⚠️  Invalid intensity:", intensity);
-        return res.status(400).json({
-          success: false,
-          message: "Intensity must be a number between 1 and 10",
-          error: `Received intensity: ${intensity} (${typeof intensity})`
-        });
-      }
-      
-      // Log individual properties and their types
-      console.log("Body properties:", {
-        content: { value: content, type: typeof content },
-        cognitiveDistortion: { value: cognitiveDistortion, type: typeof cognitiveDistortion },
-        trigger: { value: trigger, type: typeof trigger },
-        intensity: { value: intensity, type: typeof intensity }
-      });
-      
-      const dataToValidate = {
+    const { content, cognitiveDistortion, intensity } = req.body;
+
+    if (!content || !cognitiveDistortion || typeof intensity !== "number") {
+      return res.status(400).json({ error: "Missing or invalid fields" });
+    }
+
+    const { error } = await supabase.from("thoughts").insert([
+      {
         content,
         cognitiveDistortion,
         intensity,
-        trigger: trigger || undefined,
-        userId
-      };
-      
-      console.log("Data to validate:", dataToValidate);
-      
-      const validatedData = insertThoughtSchema.parse(dataToValidate);
-      console.log("Validated data:", validatedData);
-      
-      const thought = await storage.createThought(validatedData);
-      console.log("Created thought:", thought);
-      
-      // ALWAYS return JSON - never let this fall through
-      console.log("✅ About to send SUCCESS response");
-      console.log("Current Content-Type before response:", res.get('Content-Type'));
-      const response = {
-        success: true,
-        thought,
-        message: "Thought created successfully"
-      };
-      console.log("Response object:", response);
-      return res.status(201).json(response);
-      
-    } catch (error) {
-      console.error("=== DEBUG: POST /api/thoughts ERROR ===");
-      console.error("Error:", error);
-      console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
-      
-      // ALWAYS return JSON even for unexpected errors
-      console.log("❌ About to send ERROR response");
-      console.log("Current Content-Type before error response:", res.get('Content-Type'));
-      
-      if (error instanceof z.ZodError) {
-        console.error("Zod validation errors:", error.errors);
-        const errorResponse = { 
-          success: false,
-          message: "Invalid thought data", 
-          errors: error.errors,
-          details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
-        };
-        console.log("Zod error response object:", errorResponse);
-        return res.status(400).json(errorResponse);
-      } else {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-        console.error("Other error:", errorMessage);
-        const errorResponse = { 
-          success: false,
-          message: "Failed to create thought",
-          error: errorMessage
-        };
-        console.log("General error response object:", errorResponse);
-        return res.status(500).json(errorResponse);
       }
+    ]);
+
+    if (error) {
+      console.error("Supabase insert error:", error.message);
+      return res.status(500).json({ error: error.message });
     }
+
+    res.status(200).json({ message: "Thought recorded" });
   });
 
   // Delete all thoughts
