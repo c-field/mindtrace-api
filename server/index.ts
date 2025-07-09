@@ -1,11 +1,18 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// CORS configuration for Capacitor iOS app
+app.use(cors({
+  origin: ['capacitor://localhost', 'http://localhost'],
+  credentials: true
+}));
 
 // Session configuration
 app.use(session({

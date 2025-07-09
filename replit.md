@@ -184,6 +184,13 @@ Changelog:
   * Added debug logging to verify correct key usage (eyJhbGci prefix)
   * Server restarted with service role authentication for database operations
   * Authentication and thoughts insertion now properly authenticated with service role privileges
+- July 9, 2025. Added CORS support for Capacitor iOS app:
+  * Added cors package import to server/index.ts
+  * Configured CORS middleware with origins: ['capacitor://localhost', 'http://localhost']
+  * Enabled credentials support for cross-origin requests
+  * Positioned CORS middleware before session configuration and route handlers
+  * Updated frontend API client to use full Replit backend URL for all API calls
+  * Resolved "Failed to fetch" errors for iOS Capacitor app communication
 ```
 
 ## User Preferences
