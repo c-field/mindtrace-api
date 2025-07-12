@@ -262,23 +262,23 @@ export default function Export() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 mobile-space-y-4">
       {/* Header */}
-      <div className="from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20 bg-[#1f2937]">
-        <h2 className="text-2xl font-semibold mb-2 app-text-primary">Export Your Data</h2>
-        <p className="app-text-secondary text-sm">
+      <div className="from-primary/10 to-primary/20 card-compact border border-primary/20 bg-[#1f2937]">
+        <h2 className="text-responsive-xl font-semibold card-compact-header app-text-primary">Export Your Data</h2>
+        <p className="app-text-secondary text-responsive-sm card-compact-content">
           Download your thought records for personal review or to share with healthcare professionals.
         </p>
       </div>
       {/* Export Configuration */}
-      <div className="app-surface rounded-2xl p-6 space-y-6">
-        <h3 className="text-lg font-semibold app-text-primary">Export Settings</h3>
+      <div className="app-surface card-compact form-compact">
+        <h3 className="text-responsive-lg font-semibold card-compact-header app-text-primary">Export Settings</h3>
         
         {/* Date Range */}
         <div className="space-y-4">
           {/* Quick Time Period Suggestions */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium app-text-primary">
+            <Label className="text-responsive-sm font-medium app-text-primary">
               Quick Time Periods
             </Label>
             <div className="flex flex-wrap gap-2">
@@ -290,7 +290,7 @@ export default function Export() {
                   setDateFrom(format(subDays(new Date(), 7), 'yyyy-MM-dd'));
                   setDateTo(format(new Date(), 'yyyy-MM-dd'));
                 }}
-                className="bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 text-xs text-[#ffffff]"
+                className="btn-compact bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 text-[#ffffff]"
               >
                 Last 7 days
               </Button>
@@ -302,7 +302,7 @@ export default function Export() {
                   setDateFrom(format(subDays(new Date(), 30), 'yyyy-MM-dd'));
                   setDateTo(format(new Date(), 'yyyy-MM-dd'));
                 }}
-                className="bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 text-xs text-[#ffffff]"
+                className="btn-compact bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 text-[#ffffff]"
               >
                 Last 30 days
               </Button>
@@ -310,7 +310,7 @@ export default function Export() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="dateFrom" className="text-sm font-medium app-text-primary">
+            <Label htmlFor="dateFrom" className="text-responsive-sm font-medium app-text-primary">
               From Date
             </Label>
             <Input
@@ -318,12 +318,12 @@ export default function Export() {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary touch-target"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="dateTo" className="text-sm font-medium app-text-primary">
+            <Label htmlFor="dateTo" className="text-responsive-sm font-medium app-text-primary">
               To Date
             </Label>
             <Input
@@ -331,24 +331,24 @@ export default function Export() {
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary"
+              className="app-surface-light border-slate-600 text-gray-700 focus:border-primary touch-target"
             />
           </div>
         </div>
 
         {/* Export Format */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium app-text-primary">Export Format</Label>
+          <Label className="text-responsive-sm font-medium app-text-primary">Export Format</Label>
           <RadioGroup value={exportFormat} onValueChange={setExportFormat}>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 touch-target">
               <RadioGroupItem value="csv" id="csv" />
-              <Label htmlFor="csv" className="text-sm app-text-primary cursor-pointer">
+              <Label htmlFor="csv" className="text-responsive-sm app-text-primary cursor-pointer">
                 CSV (Spreadsheet compatible)
               </Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 touch-target">
               <RadioGroupItem value="pdf" id="pdf" />
-              <Label htmlFor="pdf" className="text-sm app-text-primary cursor-pointer">
+              <Label htmlFor="pdf" className="text-responsive-sm app-text-primary cursor-pointer">
                 PDF (Professional report)
               </Label>
             </div>
@@ -424,7 +424,7 @@ export default function Export() {
         <Button
           onClick={handleExport}
           disabled={thoughts.length === 0 || isExporting}
-          className="w-full app-primary-bg hover:app-primary-bg-hover text-white font-medium py-3 rounded-xl transition-colors duration-200"
+          className="w-full btn-compact app-primary-bg hover:app-primary-bg-hover text-white font-medium transition-smooth layout-stable"
         >
           {isExporting ? "Exporting..." : "Download Export"}
         </Button>
@@ -433,7 +433,7 @@ export default function Export() {
           onClick={handleShare}
           disabled={thoughts.length === 0 || isExporting}
           variant="outline"
-          className="w-full bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 font-medium py-3 rounded-xl transition-colors duration-200 text-[#ffffff]"
+          className="w-full btn-compact bg-[#27c4b4] border-primary/20 hover:bg-primary/5 font-medium transition-smooth layout-stable text-[#ffffff]"
         >
           Share Data
         </Button>

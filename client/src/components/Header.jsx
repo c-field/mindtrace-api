@@ -1,14 +1,14 @@
 export default function Header() {
   return (
-    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 safe-area-pt">
-      <div className="safe-container py-4">
+    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 compact-header">
+      <div className="safe-container">
         <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-3">
-            {/* Custom MindTrace Brain Network Logo */}
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center relative">
+          <div className="flex items-center space-x-2">
+            {/* Custom MindTrace Brain Network Logo - Compact */}
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center relative">
               <svg
                 viewBox="0 0 24 24"
-                className="w-5 h-5 text-white"
+                className="w-4 h-4 text-white"
                 fill="currentColor"
               >
                 {/* Brain outline */}
@@ -29,7 +29,7 @@ export default function Header() {
                 <line x1="16" y1="11" x2="12" y2="13" stroke="currentColor" strokeWidth="0.5" opacity="0.7"/>
               </svg>
             </div>
-            <h1 className="text-xl font-bold app-text-primary">MindTrace</h1>
+            <h1 style={{ fontSize: 'var(--text-lg)' }} className="font-bold app-text-primary">MindTrace</h1>
           </div>
         </div>
       </div>

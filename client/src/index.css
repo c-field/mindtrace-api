@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* iOS Safe Area Support */
+/* iOS Safe Area Support with Responsive Design */
 :root {
   /* Safe area insets for iOS devices */
   --safe-area-inset-top: env(safe-area-inset-top);
@@ -10,12 +10,21 @@
   --safe-area-inset-bottom: env(safe-area-inset-bottom);
   --safe-area-inset-left: env(safe-area-inset-left);
   
-  /* Responsive spacing variables with fallbacks */
-  --header-height: calc(64px + max(env(safe-area-inset-top), 20px));
-  --bottom-nav-height: calc(80px + max(env(safe-area-inset-bottom), 20px));
-  --content-padding-x: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
-  --content-padding-y: max(20px, env(safe-area-inset-top));
-  --content-padding-bottom: max(20px, env(safe-area-inset-bottom));
+  /* Responsive spacing variables with clamp for better scaling */
+  --header-height: clamp(60px, 12vh, 80px);
+  --bottom-nav-height: clamp(60px, 12vh, 80px);
+  --content-padding-x: clamp(12px, 4vw, 24px);
+  --content-padding-y: clamp(8px, 2vh, 16px);
+  --content-padding-bottom: clamp(12px, 3vh, 20px);
+  --card-gap: clamp(8px, 2vw, 16px);
+  
+  /* Typography scaling */
+  --text-xs: clamp(0.7rem, 2vw, 0.75rem);
+  --text-sm: clamp(0.8rem, 2.5vw, 0.875rem);
+  --text-base: clamp(0.9rem, 3vw, 1rem);
+  --text-lg: clamp(1rem, 3.5vw, 1.125rem);
+  --text-xl: clamp(1.1rem, 4vw, 1.25rem);
+  --text-2xl: clamp(1.2rem, 5vw, 1.5rem);
 }
 
 /* Mobile optimization */
@@ -228,7 +237,16 @@ body {
   padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
 }
 
-/* Main app container utilities */
+/* CSS Grid Layout for Better Space Distribution */
+.app-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  max-height: 100vh;
+  max-height: 100dvh;
+}
+
 .viewport-height {
   height: 100vh;
   height: 100dvh; /* Dynamic viewport height for mobile */
@@ -244,9 +262,32 @@ body {
 }
 
 .content-area {
-  /* Add minimum spacing from top and bottom */
-  padding-top: max(16px, env(safe-area-inset-top));
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  /* Optimized content area with minimal padding */
+  padding-top: var(--content-padding-y);
+  padding-bottom: var(--content-padding-bottom);
+  overflow-y: auto;
+  /* Enable momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+.compact-header {
+  /* Compressed header for better space utilization */
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-bottom: 8px;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compact-nav {
+  /* Compressed bottom navigation */
+  padding-top: 8px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  height: var(--bottom-nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Touch Target Optimization */
@@ -256,16 +297,78 @@ body {
   touch-action: manipulation;
 }
 
-/* Mobile responsive breakpoints */
-@media (max-width: 768px) {
-  .safe-container {
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
+/* Device-Specific Responsive Breakpoints */
+
+/* iPhone SE and smaller devices (320px - 568px height) */
+@media (max-height: 568px) {
+  :root {
+    --header-height: clamp(50px, 10vh, 60px);
+    --bottom-nav-height: clamp(50px, 10vh, 60px);
+    --content-padding-y: clamp(4px, 1vh, 8px);
+    --card-gap: clamp(4px, 1vw, 8px);
   }
   
-  /* Increase spacing on small screens */
+  .safe-container {
+    padding-top: var(--content-padding-y);
+    padding-bottom: var(--content-padding-y);
+  }
+  
   .mobile-space-y-4 > * + * {
+    margin-top: 0.5rem;
+  }
+  
+  .mobile-space-y-6 > * + * {
+    margin-top: 0.75rem;
+  }
+}
+
+/* iPhone 13 mini specific optimizations (375px width, 812px height) */
+@media (max-height: 812px) and (max-width: 375px) {
+  :root {
+    --header-height: clamp(55px, 11vh, 65px);
+    --bottom-nav-height: clamp(55px, 11vh, 65px);
+    --content-padding-x: clamp(10px, 3vw, 16px);
+    --content-padding-y: clamp(6px, 1.5vh, 12px);
+  }
+  
+  .safe-container {
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+  }
+  
+  /* Optimize card spacing for iPhone 13 mini */
+  .space-y-6 > * + * {
     margin-top: 1rem;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Standard mobile devices */
+@media (max-width: 768px) {
+  .safe-container {
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+  }
+  
+  .mobile-space-y-4 > * + * {
+    margin-top: var(--card-gap);
+  }
+  
+  .mobile-space-y-6 > * + * {
+    margin-top: calc(var(--card-gap) * 1.5);
+  }
+}
+
+/* Larger iPhones (iPhone 13/14/15 Plus, Pro Max) */
+@media (min-height: 900px) {
+  :root {
+    --header-height: clamp(70px, 14vh, 90px);
+    --bottom-nav-height: clamp(70px, 14vh, 90px);
+    --content-padding-y: clamp(12px, 3vh, 20px);
+    --card-gap: clamp(12px, 3vw, 20px);
   }
   
   .mobile-space-y-6 > * + * {
@@ -273,21 +376,71 @@ body {
   }
 }
 
-/* iPhone 13 mini specific adjustments */
-@media (max-width: 375px) {
-  .safe-container {
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
-  }
-  
-  /* Slightly reduce font sizes for better fit */
-  .text-xl {
-    font-size: 1.125rem;
-  }
-  
-  .text-lg {
-    font-size: 1rem;
-  }
+/* Responsive Typography Utilities */
+.text-responsive-xs {
+  font-size: var(--text-xs);
+}
+
+.text-responsive-sm {
+  font-size: var(--text-sm);
+}
+
+.text-responsive-base {
+  font-size: var(--text-base);
+}
+
+.text-responsive-lg {
+  font-size: var(--text-lg);
+}
+
+.text-responsive-xl {
+  font-size: var(--text-xl);
+}
+
+.text-responsive-2xl {
+  font-size: var(--text-2xl);
+}
+
+/* Compact Cards for Mobile */
+.card-compact {
+  padding: var(--card-gap);
+  margin-bottom: var(--card-gap);
+  border-radius: clamp(8px, 2vw, 12px);
+}
+
+.card-compact-header {
+  margin-bottom: calc(var(--card-gap) * 0.75);
+}
+
+.card-compact-content {
+  line-height: 1.4;
+}
+
+/* Optimized form spacing */
+.form-compact .space-y-4 > * + * {
+  margin-top: var(--card-gap);
+}
+
+.form-compact .space-y-6 > * + * {
+  margin-top: calc(var(--card-gap) * 1.5);
+}
+
+/* Button optimization for mobile */
+.btn-compact {
+  padding: calc(var(--card-gap) * 0.75) var(--card-gap);
+  font-size: var(--text-sm);
+  min-height: 44px;
+  border-radius: clamp(6px, 1.5vw, 8px);
+}
+
+/* Prevent layout shift */
+.layout-stable {
+  contain: layout;
+}
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 0.2s ease-in-out;
 }
 
 .safe-area-p {

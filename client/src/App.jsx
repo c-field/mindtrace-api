@@ -132,7 +132,7 @@ function App() {
         <div className="flex flex-col h-full">
           <Header />
           <main className="flex-1 overflow-y-auto content-area">
-            <div className="safe-container mobile-space-y-6">
+            <div className="safe-container space-y-4 mobile-space-y-4">
               <Switch>
                 <Route path="/" component={Track} />
                 <Route path="/track" component={Track} />

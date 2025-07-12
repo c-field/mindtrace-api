@@ -20,8 +20,8 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const isActive = (path) => location === path || (location === "/" && path === "/track");
 
   return (
-    <nav className="app-surface border-t border-slate-600 safe-area-pb">
-      <div className="safe-container py-2">
+    <nav className="app-surface border-t border-slate-600 compact-nav">
+      <div className="safe-container">
         <div className="flex justify-around items-center max-w-md mx-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -33,7 +33,7 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleTabClick(tab)}
-                className={`touch-target flex flex-col items-center space-y-1 px-2 py-3 h-auto transition-colors duration-200 ${
+                className={`touch-target flex flex-col items-center space-y-0.5 px-2 py-2 h-auto transition-colors duration-200 ${
                   active
                     ? "app-primary text-white bg-primary/20"
                     : "app-text-secondary hover:app-text-primary hover:bg-primary/5"
@@ -46,8 +46,8 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
                   outline: 'none'
                 }}
               >
-                <Icon className={`w-5 h-5 ${active ? "text-primary" : ""}`} />
-                <span className={`text-xs font-medium ${active ? "text-primary" : ""}`}>
+                <Icon className={`w-4 h-4 ${active ? "text-primary" : ""}`} />
+                <span style={{ fontSize: 'var(--text-xs)' }} className={`font-medium ${active ? "text-primary" : ""}`}>
                   {tab.label}
                 </span>
               </Button>
