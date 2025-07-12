@@ -245,23 +245,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/thoughts", requireAuth, async (req, res) => {
     try {
       const { dateFrom, dateTo } = req.query;
+      const supabaseUserId = req.session?.supabaseUserId;
       
-      let from: Date | undefined;
-      let to: Date | undefined;
+      console.log("=== DEBUG: GET /api/thoughts ===");
+      console.log("Raw query params:", req.query);
+      console.log("dateFrom:", dateFrom);
+      console.log("dateTo:", dateTo);
+      console.log("Supabase User ID:", supabaseUserId);
+      
+      if (!supabaseUserId) {
+        return res.status(401).json({ message: "Supabase user ID not found in session" });
+      }
+      
+      let query = supabase.from("thoughts").select("*").eq("user_id", supabaseUserId);
       
       if (dateFrom && typeof dateFrom === 'string') {
-        from = new Date(dateFrom);
+        console.log("Adding dateFrom filter:", dateFrom);
+        query = query.gte("created_at", dateFrom);
       }
       if (dateTo && typeof dateTo === 'string') {
-        to = new Date(dateTo);
-        // Set end of day for 'to' date
-        to.setHours(23, 59, 59, 999);
+        console.log("Adding dateTo filter:", dateTo);
+        query = query.lte("created_at", dateTo);
       }
       
-      const userId = (req.session as any).userId;
-      const thoughts = await storage.getThoughts(from, to, userId);
-      res.json(thoughts);
+      console.log("Executing Supabase query...");
+      const { data, error } = await query.order("created_at", { ascending: false });
+      
+      console.log("Supabase query result:", { data, error });
+      console.log("Number of thoughts found:", data?.length || 0);
+      
+      if (error) {
+        console.error("Supabase query error:", error);
+        return res.status(500).json({ message: "Failed to retrieve thoughts from database" });
+      }
+      
+      res.json(data || []);
     } catch (error) {
+      console.error("GET /api/thoughts error:", error);
       res.status(500).json({ message: "Failed to retrieve thoughts" });
     }
   });
