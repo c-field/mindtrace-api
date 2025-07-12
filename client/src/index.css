@@ -291,6 +291,16 @@ body {
   overflow: hidden;
 }
 
+/* Header content container - simplified centering */
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  /* Remove any additional margins or positioning */
+}
+
 .compact-nav {
   /* Modern bottom navigation with optimized spacing */
   padding: 8px max(env(safe-area-inset-left), 16px) 
@@ -353,28 +363,20 @@ body {
   padding: 0 clamp(8px, 2vw, 16px);
 }
 
-/* iOS-optimized logo container */
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  margin-top: 8px;
-  width: 100%;
-  max-width: 100%;
-  /* Ensure logo container doesn't overflow */
-  box-sizing: border-box;
-}
-
+/* iOS-optimized logo - simplified structure */
 .logo {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: clamp(18px, 4vw, 22px);
   font-weight: 600;
+  /* Perfect centering without manual margins */
+  justify-content: center;
   /* Prevent logo from breaking out of container */
   max-width: 100%;
   white-space: nowrap;
+  /* Ensure proper alignment */
+  line-height: 1;
 }
 
 .logo-text {
@@ -383,6 +385,9 @@ body {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  /* Perfect vertical alignment */
+  line-height: 1;
+  margin: 0;
 }
 
 /* Navigation icon and text sizing */
@@ -654,20 +659,55 @@ body {
   width: 100%;
   max-width: 100%;
   overflow: visible; /* Allow date picker dropdown to show */
+  /* Ensure proper padding for iOS */
+  padding-right: 0;
+  margin-right: 0;
 }
 
-/* Input field container fixes */
-.input-field-wrapper {
+/* Date input wrapper with iOS-specific fixes */
+.date-input-wrapper {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   position: relative;
+  /* iOS-specific right padding fix */
+  padding-right: 8px;
+  margin-right: -8px;
 }
 
-.input-field-wrapper input {
+/* Date input field styling */
+.date-input {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+  /* iOS date picker text color override */
+  color: #f1f5f9 !important; /* app-text-primary equivalent */
+  -webkit-text-fill-color: #f1f5f9 !important;
+  /* Fix for iOS date picker appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  /* Ensure proper padding */
+  padding-right: 12px !important;
+}
+
+/* iOS-specific date input fixes */
+.date-input::-webkit-datetime-edit {
+  color: #f1f5f9 !important;
+}
+
+.date-input::-webkit-datetime-edit-text {
+  color: #f1f5f9 !important;
+}
+
+.date-input::-webkit-datetime-edit-month-field,
+.date-input::-webkit-datetime-edit-day-field,
+.date-input::-webkit-datetime-edit-year-field {
+  color: #f1f5f9 !important;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.8;
 }
 
 /* Responsive layout improvements */

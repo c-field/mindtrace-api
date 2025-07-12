@@ -256,6 +256,15 @@ Changelog:
   * Created debug mode with visual indicators for safe area testing in development
   * Fixed logo positioning with proper iOS-safe spacing and touch target optimization
   * Ensured professional header appearance across all iOS devices in Xcode simulator and real hardware
+- July 12, 2025. Fixed header logo alignment and date picker layout issues:
+  * Removed manual margin-top from logo container that caused iOS alignment problems
+  * Simplified header structure with .header-content wrapper for perfect centering
+  * Fixed dual justify-content conflicts between header and logo container
+  * Enhanced date input fields with proper iOS text color (#f1f5f9) instead of text-gray-700
+  * Added iOS-specific date picker fixes with webkit datetime styling
+  * Implemented date-input-wrapper with padding compensation to prevent right-side cutoff
+  * Added comprehensive webkit appearance fixes for iOS date picker functionality
+  * Ensured date inputs are fully visible and properly styled across all iOS devices
 ```
 
 ## User Preferences

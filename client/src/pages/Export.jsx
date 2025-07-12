@@ -313,13 +313,13 @@ export default function Export() {
             <Label htmlFor="dateFrom" className="text-responsive-sm font-medium app-text-primary">
               From Date
             </Label>
-            <div className="input-field-wrapper">
+            <div className="date-input-wrapper">
               <Input
                 id="dateFrom"
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary touch-target"
+                className="date-input app-surface-light border-slate-600 app-text-primary focus:border-primary touch-target"
               />
             </div>
           </div>
@@ -328,13 +328,13 @@ export default function Export() {
             <Label htmlFor="dateTo" className="text-responsive-sm font-medium app-text-primary">
               To Date
             </Label>
-            <div className="input-field-wrapper">
+            <div className="date-input-wrapper">
               <Input
                 id="dateTo"
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="app-surface-light border-slate-600 text-gray-700 focus:border-primary touch-target"
+                className="date-input app-surface-light border-slate-600 app-text-primary focus:border-primary touch-target"
               />
             </div>
           </div>
