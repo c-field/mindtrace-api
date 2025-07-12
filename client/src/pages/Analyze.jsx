@@ -45,8 +45,9 @@ export default function Analyze() {
         dateFrom: dateRange.from,
         dateTo: dateRange.to,
       });
-      const response = await fetch(`/api/thoughts?${params}`, {
+      const response = await fetch(`https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/thoughts?${params}`, {
         credentials: "include",
+        cache: "no-cache",
       });
       if (!response.ok) throw new Error("Failed to fetch thoughts");
       return response.json();

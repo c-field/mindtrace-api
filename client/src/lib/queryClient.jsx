@@ -108,6 +108,7 @@ export const getQueryFn = (options) => {
     try {
       const response = await fetch(fullUrl, {
         credentials: "include",
+        cache: "no-cache",
       });
       
       if (response.status === 401) {
