@@ -129,29 +129,25 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="viewport-height bg-background app-container">
-        <div className="flex flex-col h-full">
-          <Header />
-          <main className="flex-1 overflow-y-auto content-area">
-            <div className="safe-container space-y-4 mobile-space-y-4">
-              <Switch>
-                <Route path="/" component={Track} />
-                <Route path="/track" component={Track} />
-                <Route path="/analyze" component={Analyze} />
-                <Route path="/export" component={Export} />
-                <Route path="/profile">
-                  <Profile onLogout={handleLogout} />
-                </Route>
-                <Route component={NotFound} />
-              </Switch>
-            </div>
-          </main>
-          {isMobile && (
-            <BottomNavigation
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-            />
-          )}
-        </div>
+        <Header />
+        <main className="flex-1 overflow-y-auto content-area">
+          <div className="safe-container space-y-4 mobile-space-y-4">
+            <Switch>
+              <Route path="/" component={Track} />
+              <Route path="/track" component={Track} />
+              <Route path="/analyze" component={Analyze} />
+              <Route path="/export" component={Export} />
+              <Route path="/profile">
+                <Profile onLogout={handleLogout} />
+              </Route>
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+        </main>
+        <BottomNavigation
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
         <Toaster />
       </div>
     </QueryClientProvider>
