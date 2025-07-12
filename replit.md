@@ -199,6 +199,13 @@ Changelog:
   * Enhanced iOS configuration with proper content inset and scroll settings
   * Successfully synced configuration with npx cap sync command
   * Mobile app now properly configured to communicate with Replit backend and Supabase
+- July 12, 2025. Fixed date range queries and browser caching for thoughts API:
+  * Updated all useQuery hooks in Analyze.jsx, Export.jsx, and Profile.jsx to use cache: "no-cache"
+  * Fixed date range parameters to send full timestamps: dateFrom + "T00:00:00.000Z" and dateTo + "T23:59:59.999Z"
+  * Resolved 304 Not Modified responses that were returning empty arrays due to browser caching
+  * Updated remaining Vercel URLs to use Replit backend URL consistently across all API calls
+  * Enhanced query client default configuration to prevent caching issues
+  * Date range queries now properly match Supabase timestamp format for accurate data retrieval
 ```
 
 ## User Preferences

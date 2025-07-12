@@ -18,8 +18,8 @@ export default function Export() {
     queryKey: ["/api/thoughts", dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams({
-        dateFrom,
-        dateTo,
+        dateFrom: dateFrom + "T00:00:00.000Z",
+        dateTo: dateTo + "T23:59:59.999Z",
       });
       const response = await fetch(`https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/thoughts?${params}`, {
         credentials: "include",
@@ -34,11 +34,11 @@ export default function Export() {
     try {
       if (exportFormat === "csv") {
         const params = new URLSearchParams({
-          dateFrom,
-          dateTo,
+          dateFrom: dateFrom + "T00:00:00.000Z",
+          dateTo: dateTo + "T23:59:59.999Z",
         });
         
-        const response = await fetch(`https://mindtrace-api-sigma.vercel.app/api/export/csv?${params}`, {
+        const response = await fetch(`https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/export/csv?${params}`, {
           credentials: "include",
         });
         

@@ -42,8 +42,8 @@ export default function Analyze() {
     queryKey: ["/api/thoughts", dateRange.from, dateRange.to],
     queryFn: async () => {
       const params = new URLSearchParams({
-        dateFrom: dateRange.from,
-        dateTo: dateRange.to,
+        dateFrom: dateRange.from + "T00:00:00.000Z",
+        dateTo: dateRange.to + "T23:59:59.999Z",
       });
       const response = await fetch(`https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/thoughts?${params}`, {
         credentials: "include",
