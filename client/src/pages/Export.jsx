@@ -7,11 +7,14 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { downloadCSV, shareData } from "@/lib/exportUtils";
+import { jsPDF } from "jspdf";
 
 export default function Export() {
   const [dateFrom, setDateFrom] = useState(format(subDays(new Date(), 30), 'yyyy-MM-dd'));
   const [dateTo, setDateTo] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [exportFormat, setExportFormat] = useState("csv");
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportStatus, setExportStatus] = useState("");
   const { toast } = useToast();
 
   const { data: thoughts = [] } = useQuery({
@@ -32,7 +35,12 @@ export default function Export() {
 
   const handleExport = async () => {
     try {
+      setIsExporting(true);
+      setExportStatus("");
+
       if (exportFormat === "csv") {
+        setExportStatus("Preparing CSV export...");
+        
         const params = new URLSearchParams({
           dateFrom: dateFrom + "T00:00:00.000Z",
           dateTo: dateTo + "T23:59:59.999Z",
@@ -47,34 +55,137 @@ export default function Export() {
         const csvContent = await response.text();
         downloadCSV(csvContent);
         
+        setExportStatus("CSV export completed successfully!");
         toast({
           title: "Export Complete",
           description: "Your thoughts have been exported successfully.",
         });
-      } else {
-        // PDF export would be implemented here
+      } else if (exportFormat === "pdf") {
+        setExportStatus("Preparing PDF export...");
+        
+        // Get the filtered thoughts for PDF export
+        const filteredThoughts = thoughts.filter(thought => {
+          const thoughtDate = new Date(thought.created_at);
+          const fromDate = new Date(dateFrom);
+          const toDate = new Date(dateTo);
+          return thoughtDate >= fromDate && thoughtDate <= toDate;
+        });
+
+        if (filteredThoughts.length === 0) {
+          throw new Error("No thoughts found in the selected date range");
+        }
+
+        // Create PDF
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+        const margin = 20;
+        const maxWidth = pageWidth - 2 * margin;
+        
+        // Add title
+        doc.setFontSize(20);
+        doc.setFont("helvetica", "bold");
+        doc.text("MindTrace - Thought Records Export", margin, 30);
+        
+        // Add export date
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Export Date: ${format(new Date(), 'PPP')}`, margin, 40);
+        doc.text(`Date Range: ${format(new Date(dateFrom), 'PPP')} - ${format(new Date(dateTo), 'PPP')}`, margin, 50);
+        doc.text(`Total Thoughts: ${filteredThoughts.length}`, margin, 60);
+        
+        let yPosition = 80;
+        
+        filteredThoughts.forEach((thought, index) => {
+          // Check if we need a new page
+          if (yPosition > pageHeight - 60) {
+            doc.addPage();
+            yPosition = 30;
+          }
+          
+          // Thought header
+          doc.setFontSize(14);
+          doc.setFont("helvetica", "bold");
+          doc.text(`Thought ${index + 1}`, margin, yPosition);
+          yPosition += 10;
+          
+          // Date
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "normal");
+          try {
+            const thoughtDate = new Date(thought.created_at);
+            doc.text(`Date: ${format(thoughtDate, 'PPP p')}`, margin, yPosition);
+          } catch (error) {
+            doc.text(`Date: ${thought.created_at}`, margin, yPosition);
+          }
+          yPosition += 10;
+          
+          // Content
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "normal");
+          const contentLines = doc.splitTextToSize(`Content: ${thought.content}`, maxWidth);
+          doc.text(contentLines, margin, yPosition);
+          yPosition += contentLines.length * 6;
+          
+          // Intensity
+          doc.text(`Intensity: ${thought.intensity}/10`, margin, yPosition);
+          yPosition += 10;
+          
+          // Cognitive Distortion
+          const distortionText = thought.cognitive_distortion 
+            ? thought.cognitive_distortion.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+            : 'None';
+          doc.text(`Cognitive Distortion: ${distortionText}`, margin, yPosition);
+          yPosition += 10;
+          
+          // Trigger if exists
+          if (thought.trigger) {
+            const triggerLines = doc.splitTextToSize(`Trigger: ${thought.trigger}`, maxWidth);
+            doc.text(triggerLines, margin, yPosition);
+            yPosition += triggerLines.length * 6;
+          }
+          
+          // Add separator line
+          yPosition += 5;
+          doc.setDrawColor(200, 200, 200);
+          doc.line(margin, yPosition, pageWidth - margin, yPosition);
+          yPosition += 15;
+        });
+        
+        // Create filename
+        const filename = `mindtrace_thoughts_${format(new Date(dateFrom), 'yyyy-MM-dd')}_to_${format(new Date(dateTo), 'yyyy-MM-dd')}.pdf`;
+        
+        // Save PDF
+        doc.save(filename);
+        
+        setExportStatus("PDF export completed successfully!");
         toast({
-          title: "PDF Export",
-          description: "PDF export is being prepared...",
+          title: "PDF Export Complete",
+          description: `Your thoughts have been exported as ${filename}`,
         });
       }
     } catch (error) {
+      console.error("Export failed:", error);
+      setExportStatus(`Export failed: ${error.message}`);
       toast({
         title: "Export Failed",
-        description: "Failed to export your thoughts. Please try again.",
+        description: error.message || "Failed to export your thoughts. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsExporting(false);
+      setTimeout(() => setExportStatus(""), 5000);
     }
   };
 
   const handleShare = async () => {
     try {
       const params = new URLSearchParams({
-        dateFrom,
-        dateTo,
+        dateFrom: dateFrom + "T00:00:00.000Z",
+        dateTo: dateTo + "T23:59:59.999Z",
       });
       
-      const response = await fetch(`https://mindtrace-api-sigma.vercel.app/api/export/csv?${params}`, {
+      const response = await fetch(`https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/export/csv?${params}`, {
         credentials: "include",
       });
       
@@ -243,21 +354,51 @@ export default function Export() {
       <div className="space-y-3">
         <Button
           onClick={handleExport}
-          disabled={thoughts.length === 0}
+          disabled={thoughts.length === 0 || isExporting}
           className="w-full app-primary-bg hover:app-primary-bg-hover text-white font-medium py-3 rounded-xl transition-colors duration-200"
         >
-          Download Export
+          {isExporting ? "Exporting..." : "Download Export"}
         </Button>
         
         <Button
           onClick={handleShare}
-          disabled={thoughts.length === 0}
+          disabled={thoughts.length === 0 || isExporting}
           variant="outline"
           className="w-full bg-[#27c4b4] border-primary/20 app-text-primary hover:bg-primary/5 font-medium py-3 rounded-xl transition-colors duration-200 text-[#ffffff]"
         >
           Share Data
         </Button>
       </div>
+
+      {/* Export Status */}
+      {(isExporting || exportStatus) && (
+        <div className="app-surface rounded-2xl p-4">
+          <div className="flex items-center gap-2">
+            {isExporting && (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+            )}
+            <span className={`text-sm font-medium ${
+              exportStatus.includes('failed') || exportStatus.includes('error') 
+                ? 'text-red-600' 
+                : exportStatus.includes('completed') || exportStatus.includes('success')
+                  ? 'text-green-600'
+                  : 'app-text-primary'
+            }`}>
+              {exportStatus}
+            </span>
+          </div>
+          {isExporting && (
+            <Button
+              onClick={() => setIsExporting(false)}
+              variant="outline"
+              size="sm"
+              className="mt-2 text-xs"
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
+      )}
       {/* Export Info */}
       <div className="app-surface rounded-2xl p-4">
         <h4 className="text-sm font-medium app-text-primary mb-2">Export Information</h4>
