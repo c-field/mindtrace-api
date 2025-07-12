@@ -70,7 +70,7 @@ export default function Analyze() {
     const avgIntensity = thoughts.reduce((sum, t) => sum + t.intensity, 0) / thoughts.length;
     
     const categoryCount = thoughts.reduce((acc, thought) => {
-      acc[thought.cognitiveDistortion] = (acc[thought.cognitiveDistortion] || 0) + 1;
+      acc[thought.cognitive_distortion] = (acc[thought.cognitive_distortion] || 0) + 1;
       return acc;
     }, {});
     
@@ -87,8 +87,15 @@ export default function Analyze() {
 
   const dailyData = useMemo(() => {
     const dailyCount = thoughts.reduce((acc, thought) => {
-      const date = format(new Date(thought.createdAt), 'MMM dd');
-      acc[date] = (acc[date] || 0) + 1;
+      // Use created_at field from Supabase and add validation
+      if (!thought.created_at) return acc;
+      
+      try {
+        const date = format(new Date(thought.created_at), 'MMM dd');
+        acc[date] = (acc[date] || 0) + 1;
+      } catch (error) {
+        console.warn('Invalid date format for thought:', thought.id, thought.created_at);
+      }
       return acc;
     }, {});
 
@@ -100,8 +107,8 @@ export default function Analyze() {
 
   const categoryData = useMemo(() => {
     const categoryCount = thoughts.reduce((acc, thought) => {
-      const distortion = getCognitiveDistortionById(thought.cognitiveDistortion);
-      const name = distortion?.name || thought.cognitiveDistortion;
+      const distortion = getCognitiveDistortionById(thought.cognitive_distortion);
+      const name = distortion?.name || thought.cognitive_distortion;
       acc[name] = (acc[name] || 0) + 1;
       return acc;
     }, {});
@@ -240,19 +247,19 @@ export default function Analyze() {
         ) : (
           <div className="space-y-3">
             {thoughts.slice(0, 10).map((thought) => {
-              const distortion = getCognitiveDistortionById(thought.cognitiveDistortion);
+              const distortion = getCognitiveDistortionById(thought.cognitive_distortion);
               return (
                 <div key={thought.id} className="app-surface-light rounded-lg p-3 text-sm">
                   <div className="flex justify-between items-start mb-2">
                     <span className="app-text-secondary">
-                      {format(new Date(thought.createdAt), "MMM d, h:mm a")}
+                      {thought.created_at ? format(new Date(thought.created_at), "MMM d, h:mm a") : "Date unavailable"}
                     </span>
                     <span className="bg-primary/20 app-primary px-2 py-1 rounded-full text-xs">
                       {thought.intensity}/10
                     </span>
                   </div>
                   <div className="font-medium mb-1 app-text-primary">
-                    {distortion?.name || thought.cognitiveDistortion}
+                    {distortion?.name || thought.cognitive_distortion}
                   </div>
                   <div className="app-text-primary text-sm mb-2 line-clamp-2">
                     {thought.content}
