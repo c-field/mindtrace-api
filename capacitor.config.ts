@@ -6,7 +6,13 @@ const config: CapacitorConfig = {
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',
-    cleartext: true
+    cleartext: true,
+    // Add these network settings
+    allowNavigation: [
+      "https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev",
+      "https://*.replit.dev",
+      "https://*.supabase.co"
+    ]
   },
   plugins: {
     SplashScreen: {
@@ -29,6 +35,10 @@ const config: CapacitorConfig = {
     },
     App: {
       launchUrl: ""
+    },
+    // Add HTTP plugin configuration
+    CapacitorHttp: {
+      enabled: true
     }
   },
   ios: {
@@ -39,7 +49,9 @@ const config: CapacitorConfig = {
   android: {
     backgroundColor: "#374151",
     allowMixedContent: true,
-    captureInput: true
+    captureInput: true,
+    // Add network security config
+    usesCleartextTraffic: true
   }
 };
 

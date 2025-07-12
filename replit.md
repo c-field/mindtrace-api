@@ -191,6 +191,14 @@ Changelog:
   * Positioned CORS middleware before session configuration and route handlers
   * Updated frontend API client to use full Replit backend URL for all API calls
   * Resolved "Failed to fetch" errors for iOS Capacitor app communication
+- July 12, 2025. Enhanced Capacitor network configuration for mobile connectivity:
+  * Updated capacitor.config.ts with comprehensive network settings for Replit server communication
+  * Added allowNavigation for Replit domains: ['*.replit.dev', '*.supabase.co']
+  * Configured CapacitorHttp plugin with enabled: true for native HTTP requests
+  * Added Android network security config with usesCleartextTraffic: true
+  * Enhanced iOS configuration with proper content inset and scroll settings
+  * Successfully synced configuration with npx cap sync command
+  * Mobile app now properly configured to communicate with Replit backend and Supabase
 ```
 
 ## User Preferences
