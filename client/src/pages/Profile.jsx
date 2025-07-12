@@ -265,10 +265,9 @@ export default function Profile({ onLogout = () => {} }) {
                   className="app-surface-light border-slate-600 text-gray-700 cursor-not-allowed"
                 />
                 <Button
-                  variant="outline"
                   size="sm"
                   onClick={() => setIsEditing(true)}
-                  className="border-primary/20 app-text-primary hover:bg-primary/5"
+                  className="bg-[#27c4b4] hover:bg-[#22a693] text-white font-medium transition-colors duration-200"
                 >
                   Edit
                 </Button>
