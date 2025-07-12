@@ -286,6 +286,9 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  /* Ensure header content stays within bounds */
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .compact-nav {
@@ -357,6 +360,10 @@ body {
   justify-content: center;
   min-height: 44px;
   margin-top: 8px;
+  width: 100%;
+  max-width: 100%;
+  /* Ensure logo container doesn't overflow */
+  box-sizing: border-box;
 }
 
 .logo {
@@ -365,6 +372,17 @@ body {
   gap: 8px;
   font-size: clamp(18px, 4vw, 22px);
   font-weight: 600;
+  /* Prevent logo from breaking out of container */
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.logo-text {
+  font-size: clamp(18px, 4vw, 22px);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* Navigation icon and text sizing */
@@ -613,8 +631,76 @@ body {
   right: 0;
   bottom: 0;
   /* Use transform instead of absolute positioning to reduce constraint conflicts */
-  transform: translateZ(0);
-  will-change: transform;
+}
+
+/* Container boundary fixes */
+.container-bounded {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Form input container fixes */
+.form-input-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Date picker specific fixes */
+.date-picker-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: visible; /* Allow date picker dropdown to show */
+}
+
+/* Input field container fixes */
+.input-field-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+.input-field-wrapper input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Responsive layout improvements */
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Ensure all containers respect boundaries */
+* {
+  box-sizing: border-box;
+}
+
+/* Form and card layout fixes */
+.card-compact {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.form-compact {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.form-compact > * {
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 /* Responsive viewport classes */
