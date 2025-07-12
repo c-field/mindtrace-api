@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 safe-header">
+    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 safe-area-pt">
       <div className="safe-container py-4">
         <div className="flex items-center justify-center">
           <div className="flex items-center space-x-3">

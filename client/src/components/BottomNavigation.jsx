@@ -20,7 +20,7 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const isActive = (path) => location === path || (location === "/" && path === "/track");
 
   return (
-    <nav className="app-surface border-t border-slate-600 safe-bottom-nav">
+    <nav className="app-surface border-t border-slate-600 safe-area-pb">
       <div className="safe-container py-2">
         <div className="flex justify-around items-center max-w-md mx-auto">
           {tabs.map((tab) => {

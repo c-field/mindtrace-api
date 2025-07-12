@@ -10,11 +10,12 @@
   --safe-area-inset-bottom: env(safe-area-inset-bottom);
   --safe-area-inset-left: env(safe-area-inset-left);
   
-  /* Responsive spacing variables */
-  --header-height: calc(64px + var(--safe-area-inset-top));
-  --bottom-nav-height: calc(80px + var(--safe-area-inset-bottom));
-  --content-padding-x: max(16px, var(--safe-area-inset-left), var(--safe-area-inset-right));
-  --content-padding-y: 16px;
+  /* Responsive spacing variables with fallbacks */
+  --header-height: calc(64px + max(env(safe-area-inset-top), 20px));
+  --bottom-nav-height: calc(80px + max(env(safe-area-inset-bottom), 20px));
+  --content-padding-x: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+  --content-padding-y: max(20px, env(safe-area-inset-top));
+  --content-padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
 /* Mobile optimization */
@@ -208,19 +209,85 @@ body {
 
 /* iOS Safe Area Utilities */
 .safe-area-pt {
-  padding-top: var(--safe-area-inset-top);
+  padding-top: max(20px, env(safe-area-inset-top));
 }
 
 .safe-area-pr {
-  padding-right: var(--safe-area-inset-right);
+  padding-right: max(20px, env(safe-area-inset-right));
 }
 
 .safe-area-pb {
-  padding-bottom: var(--safe-area-inset-bottom);
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
 .safe-area-pl {
-  padding-left: var(--safe-area-inset-left);
+  padding-left: max(20px, env(safe-area-inset-left));
+}
+
+.safe-area-p {
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+}
+
+/* Main app container utilities */
+.viewport-height {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
+.safe-container {
+  padding-left: var(--content-padding-x);
+  padding-right: var(--content-padding-x);
+  padding-top: var(--content-padding-y);
+  padding-bottom: var(--content-padding-bottom);
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.content-area {
+  /* Add minimum spacing from top and bottom */
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* Touch Target Optimization */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+/* Mobile responsive breakpoints */
+@media (max-width: 768px) {
+  .safe-container {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  
+  /* Increase spacing on small screens */
+  .mobile-space-y-4 > * + * {
+    margin-top: 1rem;
+  }
+  
+  .mobile-space-y-6 > * + * {
+    margin-top: 1.5rem;
+  }
+}
+
+/* iPhone 13 mini specific adjustments */
+@media (max-width: 375px) {
+  .safe-container {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  
+  /* Slightly reduce font sizes for better fit */
+  .text-xl {
+    font-size: 1.125rem;
+  }
+  
+  .text-lg {
+    font-size: 1rem;
+  }
 }
 
 .safe-area-p {

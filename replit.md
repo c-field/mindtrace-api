@@ -214,6 +214,15 @@ Changelog:
   * Fixed field mappings in Profile.jsx: thought.createdAt → thought.created_at with null checks
   * Added defensive programming: try-catch blocks for date formatting, null validation, fallback values
   * All pages now loading correctly with proper data display and robust error handling
+- July 12, 2025. Enhanced iOS-compatible PDF export with Web Share API and safe area mobile improvements:
+  * Fixed PDF export not working on iOS devices by implementing Web Share API for native Files app integration
+  * Added three-tier fallback system: Web Share API → new tab method → data URI download
+  * Enhanced mobile safe area support with proper CSS env(safe-area-inset-*) implementation
+  * Added comprehensive responsive design for iPhone 13 mini and other small devices
+  * Implemented touch target optimization with minimum 44px touch areas
+  * Added iOS-specific user instructions and visual guidance for PDF saving
+  * Enhanced mobile viewport handling with 100dvh and proper safe area padding
+  * Added responsive breakpoints for mobile devices with optimized spacing and font sizes
 ```
 
 ## User Preferences

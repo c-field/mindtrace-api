@@ -128,11 +128,11 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="viewport-height bg-background">
+      <div className="viewport-height bg-background app-container">
         <div className="flex flex-col h-full">
           <Header />
           <main className="flex-1 overflow-y-auto content-area">
-            <div className="safe-container py-6">
+            <div className="safe-container mobile-space-y-6">
               <Switch>
                 <Route path="/" component={Track} />
                 <Route path="/track" component={Track} />
