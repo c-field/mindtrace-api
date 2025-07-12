@@ -206,6 +206,14 @@ Changelog:
   * Updated remaining Vercel URLs to use Replit backend URL consistently across all API calls
   * Enhanced query client default configuration to prevent caching issues
   * Date range queries now properly match Supabase timestamp format for accurate data retrieval
+- July 12, 2025. Fixed critical field mapping issues causing "Invalid time value" errors:
+  * Root cause: Frontend using camelCase field names (createdAt, cognitiveDistortion) while Supabase returns snake_case (created_at, cognitive_distortion)
+  * Updated GET /api/thoughts endpoint to use direct Supabase queries instead of old storage system
+  * Fixed field mappings in Analyze.jsx: thought.createdAt → thought.created_at, thought.cognitiveDistortion → thought.cognitive_distortion
+  * Fixed field mappings in Export.jsx: thought.createdAt → thought.created_at with comprehensive date validation
+  * Fixed field mappings in Profile.jsx: thought.createdAt → thought.created_at with null checks
+  * Added defensive programming: try-catch blocks for date formatting, null validation, fallback values
+  * All pages now loading correctly with proper data display and robust error handling
 ```
 
 ## User Preferences

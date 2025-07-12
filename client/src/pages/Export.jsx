@@ -197,21 +197,35 @@ export default function Export() {
           </h4>
           {thoughts.length > 0 ? (
             <div className="space-y-2 max-h-48 overflow-y-auto">
-              {thoughts.slice(0, 5).map((thought) => (
-                <div key={thought.id} className="app-surface-light rounded-lg p-3 text-xs">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="app-text-secondary">
-                      {format(new Date(thought.createdAt), "MMM d, yyyy")}
-                    </span>
-                    <span className="app-text-secondary">
-                      Intensity: {thought.intensity}/10
-                    </span>
+              {thoughts.slice(0, 5).map((thought) => {
+                // Safe date formatting with validation
+                const formatSafeDate = (dateValue) => {
+                  if (!dateValue) return 'Date unavailable';
+                  try {
+                    const date = new Date(dateValue);
+                    return isNaN(date.getTime()) ? 'Invalid date' : format(date, "MMM d, yyyy");
+                  } catch (error) {
+                    console.warn('Date formatting error:', error, dateValue);
+                    return 'Date error';
+                  }
+                };
+
+                return (
+                  <div key={thought.id} className="app-surface-light rounded-lg p-3 text-xs">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="app-text-secondary">
+                        {formatSafeDate(thought.created_at)}
+                      </span>
+                      <span className="app-text-secondary">
+                        Intensity: {thought.intensity}/10
+                      </span>
+                    </div>
+                    <div className="app-text-primary truncate">
+                      {thought.content}
+                    </div>
                   </div>
-                  <div className="app-text-primary truncate">
-                    {thought.content}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               {thoughts.length > 5 && (
                 <div className="text-center app-text-secondary text-xs">
                   ... and {thoughts.length - 5} more thoughts

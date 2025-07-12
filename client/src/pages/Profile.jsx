@@ -257,13 +257,15 @@ export default function Profile({ onLogout = () => {} }) {
             </div>
             <div className="text-center p-4 app-surface-light rounded-xl">
               <div className="text-2xl font-bold app-text-primary">
-                {thoughts.length > 0 ? format(new Date(thoughts[thoughts.length - 1].createdAt), "MMM d") : "—"}
+                {thoughts.length > 0 && thoughts[thoughts.length - 1].created_at ? 
+                  format(new Date(thoughts[thoughts.length - 1].created_at), "MMM d") : "—"}
               </div>
               <div className="text-sm app-text-secondary">First Entry</div>
             </div>
             <div className="text-center p-4 app-surface-light rounded-xl">
               <div className="text-2xl font-bold app-text-primary">
-                {thoughts.length > 0 ? format(new Date(thoughts[0].createdAt), "MMM d") : "—"}
+                {thoughts.length > 0 && thoughts[0].created_at ? 
+                  format(new Date(thoughts[0].created_at), "MMM d") : "—"}
               </div>
               <div className="text-sm app-text-secondary">Last Entry</div>
             </div>
