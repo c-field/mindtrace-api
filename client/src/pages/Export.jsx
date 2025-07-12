@@ -17,6 +17,9 @@ export default function Export() {
   const [exportStatus, setExportStatus] = useState("");
   const { toast } = useToast();
 
+  // Detect iOS device
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
   const { data: thoughts = [] } = useQuery({
     queryKey: ["/api/thoughts", dateFrom, dateTo],
     queryFn: async () => {
@@ -155,14 +158,65 @@ export default function Export() {
         // Create filename
         const filename = `mindtrace_thoughts_${format(new Date(dateFrom), 'yyyy-MM-dd')}_to_${format(new Date(dateTo), 'yyyy-MM-dd')}.pdf`;
         
-        // Save PDF
-        doc.save(filename);
-        
-        setExportStatus("PDF export completed successfully!");
-        toast({
-          title: "PDF Export Complete",
-          description: `Your thoughts have been exported as ${filename}`,
-        });
+        // iOS-compatible PDF export
+        if (isIOS) {
+          // Method 1: Try Web Share API first (iOS 14+)
+          try {
+            const pdfBlob = doc.output('blob');
+            const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+            
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'MindTrace Thought Records Export',
+                text: 'Your exported thought records from MindTrace',
+                files: [file]
+              });
+              setExportStatus("PDF shared successfully! You can save it to Files app.");
+              toast({
+                title: "PDF Shared",
+                description: "PDF has been shared. You can save it to Files app.",
+              });
+              return;
+            }
+          } catch (shareError) {
+            console.log('Web Share API not supported, trying alternative method');
+          }
+          
+          // Method 2: Open PDF in new tab (iOS fallback)
+          const pdfDataUri = doc.output('datauristring');
+          const newWindow = window.open(pdfDataUri, '_blank');
+          
+          if (newWindow) {
+            setExportStatus("PDF opened in new tab. Use Share button to save to Files app.");
+            toast({
+              title: "PDF Opened",
+              description: "PDF opened in new tab. Tap Share > Save to Files to download.",
+            });
+          } else {
+            // Method 3: Force download with data URI (last resort)
+            const link = document.createElement('a');
+            link.href = pdfDataUri;
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            setExportStatus("PDF download initiated. Check your Downloads folder.");
+            toast({
+              title: "PDF Download",
+              description: "PDF download initiated. Check your Downloads folder.",
+            });
+          }
+        } else {
+          // Standard download for non-iOS devices
+          doc.save(filename);
+          setExportStatus("PDF export completed successfully!");
+          toast({
+            title: "PDF Export Complete",
+            description: `Your thoughts have been exported as ${filename}`,
+          });
+        }
       }
     } catch (error) {
       console.error("Export failed:", error);
@@ -300,6 +354,21 @@ export default function Export() {
             </div>
           </RadioGroup>
         </div>
+
+        {/* iOS-specific instructions */}
+        {isIOS && exportFormat === "pdf" && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
+            <div className="flex items-start gap-2">
+              <div className="text-blue-600 font-medium text-sm">📱 iOS Instructions:</div>
+            </div>
+            <div className="text-sm text-blue-800 space-y-1">
+              <p>• PDF will open in a new tab or sharing dialog</p>
+              <p>• Tap the Share button (📤) at the bottom of the screen</p>
+              <p>• Select "Save to Files" to download to your device</p>
+              <p>• Or choose "Copy to [App]" to save in another app</p>
+            </div>
+          </div>
+        )}
 
         {/* Data Preview */}
         <div className="border-t pt-4">
