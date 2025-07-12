@@ -27,20 +27,30 @@ export default function Profile({ onLogout = () => {} }) {
     },
   });
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading: userLoading, error: userError } = useQuery({
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
-      const response = await fetch("https://mindtrace-api-sigma.vercel.app/api/auth/me", {
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Failed to fetch user");
-      return response.json();
+      try {
+        const response = await fetch("https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/auth/me", {
+          credentials: "include",
+          cache: "no-cache",
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+        throw error;
+      }
     },
     onSuccess: (userData) => {
       form.reset({
         name: userData.name || "",
       });
     },
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const { data: thoughts = [] } = useQuery({
@@ -79,7 +89,7 @@ export default function Profile({ onLogout = () => {} }) {
 
   const deleteAllThoughtsMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("https://mindtrace-api-sigma.vercel.app/api/thoughts", {
+      const response = await fetch("https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/thoughts", {
         method: "DELETE",
         credentials: "include",
       });
@@ -114,7 +124,7 @@ export default function Profile({ onLogout = () => {} }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("https://mindtrace-api-sigma.vercel.app/api/auth/logout", {
+      await fetch("https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -127,6 +137,45 @@ export default function Profile({ onLogout = () => {} }) {
       });
     }
   };
+
+  // Handle loading and error states
+  if (userLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20 bg-[#1f2937]">
+          <h2 className="text-2xl font-semibold mb-2 app-text-primary">Your Profile</h2>
+          <p className="app-text-secondary text-sm">Loading your profile...</p>
+        </div>
+        <div className="app-surface rounded-2xl p-6 flex items-center justify-center">
+          <div className="animate-pulse space-y-3">
+            <div className="h-4 bg-gray-300 rounded w-48"></div>
+            <div className="h-4 bg-gray-300 rounded w-32"></div>
+            <div className="h-4 bg-gray-300 rounded w-64"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (userError) {
+    return (
+      <div className="space-y-6">
+        <div className="from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20 bg-[#1f2937]">
+          <h2 className="text-2xl font-semibold mb-2 app-text-primary">Your Profile</h2>
+          <p className="app-text-secondary text-sm">Error loading your profile</p>
+        </div>
+        <div className="app-surface rounded-2xl p-6 text-center">
+          <p className="text-red-600 mb-4">Failed to load profile data. Please try again.</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="app-primary-bg hover:app-primary-bg-hover text-white"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
