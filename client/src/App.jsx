@@ -32,10 +32,6 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log("🔍 Checking authentication with Replit backend...");
-        console.log("Request URL:", "https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/auth/me");
-        console.log("Current origin:", window.location.origin);
-        
         const response = await fetch("https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev/api/auth/me", {
           credentials: "include",
           headers: {
@@ -43,31 +39,16 @@ function App() {
           },
         });
         
-        console.log("Response status:", response.status);
-        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
-        
         if (response.ok) {
           const userData = await response.json();
-          console.log("✅ Authentication successful:", userData);
           setIsAuthenticated(true);
-        } else {
-          console.log("❌ Authentication failed - not logged in");
         }
       } catch (error) {
-        console.error("💥 Auth check failed - Network or CORS error:");
-        console.error("Error name:", error.name);
-        console.error("Error message:", error.message);
-        console.error("Full error:", error);
-        
         // Check if we're running in Replit development environment
         const isReplitDev = window.location.hostname.includes('replit.dev');
         if (isReplitDev) {
-          console.log("🔧 Running in Replit development - skipping auth for now");
-          console.log("💡 Note: CORS needs to be configured on Vercel for this domain");
           // Set authenticated to true for development in Replit
           setIsAuthenticated(true);
-        } else {
-          console.log("🔧 Continuing without authentication...");
         }
       } finally {
         setIsLoading(false);

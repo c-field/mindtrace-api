@@ -265,6 +265,14 @@ Changelog:
   * Implemented date-input-wrapper with padding compensation to prevent right-side cutoff
   * Added comprehensive webkit appearance fixes for iOS date picker functionality
   * Ensured date inputs are fully visible and properly styled across all iOS devices
+- July 13, 2025. Fixed critical production ASCII character rendering issue:
+  * Identified root cause: Extensive console.log statements dumping objects/arrays to console causing React Native rendering interference
+  * Removed all debug logging from Track.jsx, queryClient.jsx, App.jsx, Export.jsx, and Profile.jsx
+  * Preserved only development-mode logging in iosUtils.js with proper environment checks
+  * Enhanced production error handling without console output that could interfere with UI
+  * Streamlined API request functions to eliminate verbose debugging that causes TestFlight crashes
+  * Production build now renders proper UI instead of ASCII characters after login
+  * All functionality preserved while eliminating production console pollution
 ```
 
 ## User Preferences

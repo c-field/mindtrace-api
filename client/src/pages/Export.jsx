@@ -389,7 +389,6 @@ export default function Export() {
                     const date = new Date(dateValue);
                     return isNaN(date.getTime()) ? 'Invalid date' : format(date, "MMM d, yyyy");
                   } catch (error) {
-                    console.warn('Date formatting error:', error, dateValue);
                     return 'Date error';
                   }
                 };

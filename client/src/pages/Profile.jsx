@@ -40,7 +40,6 @@ export default function Profile({ onLogout = () => {} }) {
         }
         return response.json();
       } catch (error) {
-        console.error("Failed to fetch user profile:", error);
         throw error;
       }
     },

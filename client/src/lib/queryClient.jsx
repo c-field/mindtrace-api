@@ -32,22 +32,11 @@ async function throwIfResNotOk(res) {
 }
 
 export async function apiRequest(method, url, data) {
-  // Debug logging for iOS
-  console.log("=== DEBUG: apiRequest ===");
-  console.log("Method:", method);
-  console.log("URL:", url);
-  console.log("Data:", data);
-  
   // Always use the Replit backend URL
   const baseUrl = 'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev';
   
   // Construct the full URL
   const fullUrl = `${baseUrl}${url}`;
-  
-  console.log("🔧 URL construction:");
-  console.log("- Base URL:", baseUrl);
-  console.log("- Original URL:", url);
-  console.log("- Full URL:", fullUrl);
   
   const options = {
     method,
@@ -60,38 +49,16 @@ export async function apiRequest(method, url, data) {
   if (data) {
     try {
       options.body = JSON.stringify(data);
-      console.log("Request body:", options.body);
-      console.log("Request body type:", typeof options.body);
     } catch (jsonError) {
-      console.error("JSON.stringify error:", jsonError);
       throw new Error("Failed to serialize request data");
     }
   }
-  
-  console.log("Request options:", options);
 
   try {
-    // Log the actual fetch call details for iOS debugging
-    console.log("🌐 Making fetch request:");
-    console.log("- Full URL:", fullUrl);
-    console.log("- Base URL origin:", window.location.origin);
-    console.log("- Is relative URL:", !fullUrl.startsWith('http'));
-    
     const res = await fetch(fullUrl, options);
-    console.log("📥 Fetch response received:");
-    console.log("- Status:", res.status);
-    console.log("- Status text:", res.statusText);
-    console.log("- Headers:", Object.fromEntries(res.headers.entries()));
-    console.log("- URL after redirect:", res.url);
-    console.log("- Type:", res.type);
-    
     await throwIfResNotOk(res);
     return res;
   } catch (fetchError) {
-    console.error("💥 Fetch error details:");
-    console.error("- Error name:", fetchError.name);
-    console.error("- Error message:", fetchError.message);
-    console.error("- Full error:", fetchError);
     throw fetchError;
   }
 }

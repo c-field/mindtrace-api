@@ -39,16 +39,6 @@ export default function Track() {
   const createThoughtMutation = useMutation({
     mutationFn: async (data) => {
       try {
-        // Debug logging for iOS
-        console.log("=== DEBUG: Creating thought ===");
-        console.log("Raw form data:", data);
-        console.log("Data types:", {
-          content: typeof data.content,
-          cognitiveDistortion: typeof data.cognitiveDistortion,
-          trigger: typeof data.trigger,
-          intensity: typeof data.intensity
-        });
-        
         // Ensure proper data structure
         const payload = {
           content: String(data.content || ''),
@@ -57,45 +47,23 @@ export default function Track() {
           intensity: parseInt(data.intensity, 10)
         };
         
-        console.log("Sanitized payload:", payload);
-        console.log("Payload types:", {
-          content: typeof payload.content,
-          cognitiveDistortion: typeof payload.cognitiveDistortion,
-          trigger: typeof payload.trigger,
-          intensity: typeof payload.intensity
-        });
-        console.log("JSON.stringify payload:", JSON.stringify(payload));
-        
-        console.log("🚀 Making API request to POST /api/thoughts");
         const response = await apiRequest("POST", "/api/thoughts", payload);
-        console.log("📡 Response received:");
-        console.log("- Status:", response.status);
-        console.log("- Headers:", Object.fromEntries(response.headers.entries()));
-        console.log("- URL:", response.url);
-        console.log("- Type:", response.type);
-        console.log("- OK:", response.ok);
         
         if (!response.ok) {
           // Handle error responses with defensive parsing
           const contentType = response.headers.get('content-type');
-          console.error("Error response content-type:", contentType);
-          
           let errorMessage = `Server error: ${response.status}`;
           
           if (contentType && contentType.includes('application/json')) {
             try {
               const errorData = await response.json();
-              console.error("JSON error response:", errorData);
               errorMessage = errorData.message || errorMessage;
             } catch (jsonError) {
-              console.error("Failed to parse JSON error response:", jsonError);
               const errorText = await response.text();
-              console.error("Text error response:", errorText);
               errorMessage = `${errorMessage} - ${errorText}`;
             }
           } else {
             const errorText = await response.text();
-            console.error("Non-JSON error response:", errorText);
             errorMessage = `${errorMessage} - ${errorText}`;
           }
           
@@ -104,33 +72,22 @@ export default function Track() {
         
         // Handle success responses with defensive parsing
         const contentType = response.headers.get('content-type');
-        console.log("Success response content-type:", contentType);
         
         if (contentType && contentType.includes('application/json')) {
           try {
             const result = await response.json();
-            console.log("Success response:", result);
             return result;
           } catch (jsonError) {
-            console.error("Failed to parse JSON success response:", jsonError);
             throw new Error('Server returned invalid JSON response');
           }
         } else {
-          const textResponse = await response.text();
-          console.error("Non-JSON success response:", textResponse);
           throw new Error(`Server returned non-JSON response: ${contentType}`);
         }
       } catch (error) {
-        console.error("=== DEBUG: Mutation error ===");
-        console.error("Error name:", error.name);
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
-        
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
           throw new Error('No internet connection. Please check your connection and try again.');
         }
         if (error.name === 'SyntaxError') {
-          console.error("SyntaxError detected - likely JSON parsing issue");
           throw new Error('Data format error. Please try again or contact support.');
         }
         throw error;
@@ -146,7 +103,6 @@ export default function Track() {
       });
     },
     onError: (error) => {
-      console.error('Thought recording error:', error);
       const isNetworkError = error.message.includes('No internet connection');
       toast({
         title: isNetworkError ? "No Internet Connection" : "Error",

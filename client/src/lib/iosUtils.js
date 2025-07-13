@@ -70,20 +70,23 @@ function getDeviceType() {
   return 'Unknown iOS device';
 }
 
-// Log device info for debugging
+// Log device info for debugging (production-safe)
 export function logDeviceInfo() {
-  const deviceInfo = detectIOSDevice();
-  console.log('🔍 iOS Device Detection:', deviceInfo);
-  
-  const safeAreaValues = {
-    top: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-top'),
-    bottom: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-bottom'),
-    left: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-left'),
-    right: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-right')
-  };
-  
-  console.log('📱 Safe Area Values:', safeAreaValues);
-  
-  const headerPadding = getComputedStyle(document.documentElement).getPropertyValue('--header-padding-top');
-  console.log('🎨 Header Padding:', headerPadding);
+  // Only log in development environment
+  if (process.env.NODE_ENV === 'development') {
+    const deviceInfo = detectIOSDevice();
+    console.log('🔍 iOS Device Detection:', deviceInfo);
+    
+    const safeAreaValues = {
+      top: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-top'),
+      bottom: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-bottom'),
+      left: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-left'),
+      right: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-right')
+    };
+    
+    console.log('📱 Safe Area Values:', safeAreaValues);
+    
+    const headerPadding = getComputedStyle(document.documentElement).getPropertyValue('--header-padding-top');
+    console.log('🎨 Header Padding:', headerPadding);
+  }
 }
