@@ -112,7 +112,10 @@ textarea::-ms-input-placeholder {
 /* Additional form element text color standardization */
 .date-input, 
 .date-input:focus, 
-.date-input:active {
+.date-input:active,
+input[type="date"],
+input[type="date"]:focus,
+input[type="date"]:active {
   color: #333333 !important;
 }
 

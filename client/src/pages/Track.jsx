@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiveDistortions";
+import { forceScrollToTop } from "@/lib/navigationUtils";
 
 const thoughtFormSchema = z.object({
   content: z.string().min(1, "Please enter your thought"),
@@ -25,6 +26,11 @@ export default function Track() {
   const [selectedDistortion, setSelectedDistortion] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Ensure page starts at top when mounted
+  useEffect(() => {
+    forceScrollToTop();
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(thoughtFormSchema),

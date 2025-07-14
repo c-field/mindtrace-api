@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { PenTool, BarChart3, Download, User } from "lucide-react";
+import { forceScrollToTop } from "@/lib/navigationUtils";
 
 export default function BottomNavigation({ activeTab, onTabChange }) {
   const [location, setLocation] = useLocation();
@@ -15,8 +16,8 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const handleTabClick = (tab) => {
     onTabChange(tab.id);
     setLocation(tab.path);
-    // Scroll to top on navigation
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Force scroll to top on navigation
+    forceScrollToTop();
   };
 
   const isActive = (path) => location === path || (location === "/" && path === "/track");

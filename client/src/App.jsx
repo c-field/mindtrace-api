@@ -31,9 +31,24 @@ function App() {
   const isMobile = useIsMobile();
   const [location] = useLocation();
 
-  // Scroll to top on page navigation
+  // Scroll to top on page navigation - more robust implementation
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Force immediate scroll to top
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Additional scroll reset after a brief delay for stubborn cases
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 10);
+    
+    // Final scroll reset after component render
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   }, [location]);
 
   // Initialize comprehensive navigation scroll reset

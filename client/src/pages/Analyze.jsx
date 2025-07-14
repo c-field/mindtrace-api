@@ -1,13 +1,19 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format, subDays, startOfDay, endOfDay } from "date-fns";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cognitiveDistortions, getCognitiveDistortionById } from "@/lib/cognitiveDistortions";
+import { forceScrollToTop } from "@/lib/navigationUtils";
 
 export default function Analyze() {
   const [dateFilter, setDateFilter] = useState("7days");
+
+  // Ensure page starts at top when mounted
+  useEffect(() => {
+    forceScrollToTop();
+  }, []);
 
   const getDateRange = (filter) => {
     const now = new Date();

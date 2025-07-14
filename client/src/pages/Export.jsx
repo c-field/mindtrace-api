@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format, subDays } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { downloadCSV, shareData } from "@/lib/exportUtils";
 import { jsPDF } from "jspdf";
+import { forceScrollToTop } from "@/lib/navigationUtils";
 
 export default function Export() {
   const [dateFrom, setDateFrom] = useState(format(subDays(new Date(), 30), 'yyyy-MM-dd'));
@@ -16,6 +17,11 @@ export default function Export() {
   const [isExporting, setIsExporting] = useState(false);
   const [exportStatus, setExportStatus] = useState("");
   const { toast } = useToast();
+
+  // Ensure page starts at top when mounted
+  useEffect(() => {
+    forceScrollToTop();
+  }, []);
 
   // Detect iOS device
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -319,7 +325,8 @@ export default function Export() {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="date-input app-surface-light border-slate-600 focus:border-primary touch-target"
+                className="date-input app-surface-light border-slate-600 focus:border-primary touch-target text-[#333333] placeholder:text-[#666666]"
+                style={{ color: '#333333' }}
               />
             </div>
           </div>
@@ -334,7 +341,8 @@ export default function Export() {
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="date-input app-surface-light border-slate-600 focus:border-primary touch-target"
+                className="date-input app-surface-light border-slate-600 focus:border-primary touch-target text-[#333333] placeholder:text-[#666666]"
+                style={{ color: '#333333' }}
               />
             </div>
           </div>

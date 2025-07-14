@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
 import { User, Settings, Heart, BarChart3, Trash2, LogOut } from "lucide-react";
+import { forceScrollToTop } from "@/lib/navigationUtils";
 
 const profileUpdateSchema = z.object({
   name: z.string().optional(),
@@ -19,6 +20,11 @@ export default function Profile({ onLogout = () => {} }) {
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Ensure page starts at top when mounted
+  useEffect(() => {
+    forceScrollToTop();
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(profileUpdateSchema),

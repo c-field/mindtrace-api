@@ -311,6 +311,17 @@ Changelog:
   * Ensured dropdown menu items and select options maintain consistent #333333 text color
   * Comprehensive testing across all pages: Auth, Track, Analyze, Export, Profile, ForgotPassword, ForgotUsername
   * All text input fields now have consistent dark grey text with good contrast against backgrounds
+- July 14, 2025. Fixed critical Export page date field text color and scroll-to-top issues:
+  * CRITICAL FIX: Export page date input fields now display correct #333333 text color
+  * Added explicit text color styling and inline style attributes to both "From Date" and "To Date" fields
+  * Enhanced CSS rules to target input[type="date"] elements with !important declarations
+  * CRITICAL FIX: Implemented robust scroll-to-top functionality across all page transitions
+  * Added forceScrollToTop() utility function with multiple scroll reset methods for maximum compatibility
+  * Updated App.jsx with triple-layered scroll reset: immediate, 10ms delay, and 100ms delay
+  * Added useEffect hooks to all page components (Track, Analyze, Export, Profile) for scroll reset on mount
+  * Enhanced BottomNavigation component to use forceScrollToTop() on tab clicks
+  * Comprehensive scroll reset now works for all navigation methods: menu clicks, route changes, browser back/forward
+  * Both critical user experience issues resolved and tested for consistent behavior
 ```
 
 ## User Preferences

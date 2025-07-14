@@ -15,6 +15,28 @@ export function scrollToTopInstant() {
 }
 
 /**
+ * Force scroll to top - most robust method
+ */
+export function forceScrollToTop() {
+  // Multiple methods to ensure scroll works
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  
+  // For mobile devices
+  if (window.pageYOffset !== 0) {
+    window.pageYOffset = 0;
+  }
+  
+  // Additional fallback for stubborn cases
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, 10);
+}
+
+/**
  * Enhanced navigation with scroll reset
  * @param {Function} navigateFunction - The navigation function to call
  * @param {*} args - Arguments to pass to the navigation function
