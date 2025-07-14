@@ -50,6 +50,107 @@ input[type="text"], input[type="email"], input[type="password"], textarea {
   font-size: 16px;
 }
 
+/* Standardized Text Input Colors */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="date"], 
+input[type="datetime-local"], 
+input[type="search"], 
+textarea, 
+select {
+  color: #333333 !important;
+}
+
+input[type="text"]::placeholder, 
+input[type="email"]::placeholder, 
+input[type="password"]::placeholder, 
+input[type="date"]::placeholder, 
+input[type="datetime-local"]::placeholder, 
+input[type="search"]::placeholder, 
+textarea::placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+/* Webkit placeholder styling */
+input[type="text"]::-webkit-input-placeholder,
+input[type="email"]::-webkit-input-placeholder,
+input[type="password"]::-webkit-input-placeholder,
+input[type="date"]::-webkit-input-placeholder,
+input[type="datetime-local"]::-webkit-input-placeholder,
+input[type="search"]::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+/* Mozilla placeholder styling */
+input[type="text"]::-moz-placeholder,
+input[type="email"]::-moz-placeholder,
+input[type="password"]::-moz-placeholder,
+input[type="date"]::-moz-placeholder,
+input[type="datetime-local"]::-moz-placeholder,
+input[type="search"]::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+/* MS Edge placeholder styling */
+input[type="text"]::-ms-input-placeholder,
+input[type="email"]::-ms-input-placeholder,
+input[type="password"]::-ms-input-placeholder,
+input[type="date"]::-ms-input-placeholder,
+input[type="datetime-local"]::-ms-input-placeholder,
+input[type="search"]::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+/* Additional form element text color standardization */
+.date-input, 
+.date-input:focus, 
+.date-input:active {
+  color: #333333 !important;
+}
+
+/* Radio button and checkbox labels */
+label[for] {
+  color: inherit;
+}
+
+/* Ensure consistent color for all form controls */
+input, textarea, select, button[type="button"], button[type="submit"] {
+  color: #333333;
+}
+
+/* Select dropdown items text color */
+[role="option"], 
+[role="menuitem"] {
+  color: #333333 !important;
+}
+
+/* Date picker specific styling for iOS */
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+  color: #333333 !important;
+}
+
+/* Focus states maintain dark text */
+input:focus, textarea:focus, select:focus {
+  color: #333333 !important;
+}
+
+/* Disabled input text color */
+input:disabled, textarea:disabled, select:disabled {
+  color: #666666 !important;
+  opacity: 0.6;
+}
+
 /* Smooth scrolling for mobile */
 html {
   scroll-behavior: smooth;
