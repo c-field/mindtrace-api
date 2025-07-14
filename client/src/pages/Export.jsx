@@ -23,6 +23,59 @@ export default function Export() {
     forceScrollToTop();
   }, []);
 
+  // Force date input text color after component mounts
+  useEffect(() => {
+    const setDateInputColors = () => {
+      const dateFromInput = document.getElementById('dateFrom');
+      const dateToInput = document.getElementById('dateTo');
+      
+      if (dateFromInput) {
+        dateFromInput.style.color = '#333333';
+        dateFromInput.style.webkitTextFillColor = '#333333';
+      }
+      
+      if (dateToInput) {
+        dateToInput.style.color = '#333333';
+        dateToInput.style.webkitTextFillColor = '#333333';
+      }
+    };
+    
+    // Set colors immediately
+    setDateInputColors();
+    
+    // Set colors after a short delay to ensure DOM is ready
+    setTimeout(setDateInputColors, 100);
+    
+    // Set colors when values change
+    const handleDateChange = () => {
+      setTimeout(setDateInputColors, 10);
+    };
+    
+    const dateFromInput = document.getElementById('dateFrom');
+    const dateToInput = document.getElementById('dateTo');
+    
+    if (dateFromInput) {
+      dateFromInput.addEventListener('change', handleDateChange);
+      dateFromInput.addEventListener('input', handleDateChange);
+    }
+    
+    if (dateToInput) {
+      dateToInput.addEventListener('change', handleDateChange);
+      dateToInput.addEventListener('input', handleDateChange);
+    }
+    
+    return () => {
+      if (dateFromInput) {
+        dateFromInput.removeEventListener('change', handleDateChange);
+        dateFromInput.removeEventListener('input', handleDateChange);
+      }
+      if (dateToInput) {
+        dateToInput.removeEventListener('change', handleDateChange);
+        dateToInput.removeEventListener('input', handleDateChange);
+      }
+    };
+  }, [dateFrom, dateTo]);
+
   // Detect iOS device
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -326,7 +379,11 @@ export default function Export() {
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
                 className="date-input app-surface-light border-slate-600 focus:border-primary touch-target text-[#333333] placeholder:text-[#666666]"
-                style={{ color: '#333333' }}
+                style={{ 
+                  color: '#333333',
+                  WebkitTextFillColor: '#333333',
+                  opacity: '1'
+                }}
               />
             </div>
           </div>
@@ -342,7 +399,11 @@ export default function Export() {
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
                 className="date-input app-surface-light border-slate-600 focus:border-primary touch-target text-[#333333] placeholder:text-[#666666]"
-                style={{ color: '#333333' }}
+                style={{ 
+                  color: '#333333',
+                  WebkitTextFillColor: '#333333',
+                  opacity: '1'
+                }}
               />
             </div>
           </div>

@@ -119,6 +119,50 @@ input[type="date"]:active {
   color: #333333 !important;
 }
 
+/* Webkit-specific date input styling for Safari/Chrome */
+input[type="date"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
+  opacity: 1 !important;
+}
+
+/* Firefox-specific date input styling */
+input[type="date"]::-moz-date-text {
+  color: #333333 !important;
+}
+
+/* Additional aggressive date input text color targeting */
+input[type="date"][id="dateFrom"],
+input[type="date"][id="dateTo"] {
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
+}
+
+/* Super specific targeting for Export page date inputs */
+#dateFrom, #dateTo {
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
+}
+
+#dateFrom::-webkit-datetime-edit,
+#dateFrom::-webkit-datetime-edit-text,
+#dateFrom::-webkit-datetime-edit-month-field,
+#dateFrom::-webkit-datetime-edit-day-field,
+#dateFrom::-webkit-datetime-edit-year-field,
+#dateTo::-webkit-datetime-edit,
+#dateTo::-webkit-datetime-edit-text,
+#dateTo::-webkit-datetime-edit-month-field,
+#dateTo::-webkit-datetime-edit-day-field,
+#dateTo::-webkit-datetime-edit-year-field {
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
+  opacity: 1 !important;
+}
+
 /* Radio button and checkbox labels */
 label[for] {
   color: inherit;
@@ -135,13 +179,7 @@ input, textarea, select, button[type="button"], button[type="submit"] {
   color: #333333 !important;
 }
 
-/* Date picker specific styling for iOS */
-input[type="date"]::-webkit-datetime-edit-text,
-input[type="date"]::-webkit-datetime-edit-month-field,
-input[type="date"]::-webkit-datetime-edit-day-field,
-input[type="date"]::-webkit-datetime-edit-year-field {
-  color: #333333 !important;
-}
+
 
 /* Focus states maintain dark text */
 input:focus, textarea:focus, select:focus {
@@ -152,6 +190,31 @@ input:focus, textarea:focus, select:focus {
 input:disabled, textarea:disabled, select:disabled {
   color: #666666 !important;
   opacity: 0.6;
+}
+
+/* Nuclear option - force date input text color with maximum specificity */
+div.date-input-wrapper input[type="date"]#dateFrom,
+div.date-input-wrapper input[type="date"]#dateTo {
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
+  text-shadow: none !important;
+  font-weight: normal !important;
+}
+
+div.date-input-wrapper input[type="date"]#dateFrom::-webkit-datetime-edit,
+div.date-input-wrapper input[type="date"]#dateFrom::-webkit-datetime-edit-text,
+div.date-input-wrapper input[type="date"]#dateFrom::-webkit-datetime-edit-month-field,
+div.date-input-wrapper input[type="date"]#dateFrom::-webkit-datetime-edit-day-field,
+div.date-input-wrapper input[type="date"]#dateFrom::-webkit-datetime-edit-year-field,
+div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit,
+div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-text,
+div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-month-field,
+div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-day-field,
+div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-year-field {
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 }
 
 /* Smooth scrolling for mobile */
