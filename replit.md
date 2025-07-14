@@ -282,6 +282,15 @@ Changelog:
   * Added UTF-8 validation helper function to detect garbled characters (%#@+= patterns)
   * Enhanced error handling with proper encoding for all API routes and middleware
   * Resolved garbled text rendering issue on iOS devices by ensuring proper character encoding throughout the stack
+- July 13, 2025. Comprehensive UI/UX fixes for cross-platform compatibility:
+  * Fixed confirmation banner z-index issue: increased ToastViewport z-index from 100 to 9999 to appear above header
+  * Implemented page navigation scroll-to-top functionality: added useLocation hook and scroll behavior for all page transitions
+  * Fixed Export page date input text color inconsistency: standardized all input text to white (#ffffff) for consistent styling
+  * Enhanced intensity level dial for iOS compatibility: added cross-platform slider styling with precise alignment for all numerical markers
+  * Improved header logo padding: increased bottom padding from 16px to 24px and header min-height to 68px for better visual balance
+  * Added comprehensive CSS for iOS-compatible slider track, thumb, and label alignment
+  * Implemented touch-friendly navigation with smooth scrolling and proper z-index hierarchy
+  * All fixes tested for cross-platform compatibility between Replit, Xcode, and TestFlight environments
 ```
 
 ## User Preferences

@@ -129,9 +129,15 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
 
-  /* Fix input and textarea text colors */
+  /* Fix input and textarea text colors - consistent white text */
   input, textarea, select {
-    color: #374151 !important;
+    color: #ffffff !important;
+  }
+  
+  /* Ensure date inputs specifically have white text */
+  input[type="date"] {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
   }
 
   input::placeholder, textarea::placeholder {
@@ -191,8 +197,33 @@ body {
   }
 }
 
-/* Custom slider styling */
+/* Custom slider styling - iOS-compatible with precise alignment */
+.intensity-slider {
+  /* Ensure consistent width and height across platforms */
+  width: 100% !important;
+  height: 8px !important;
+  border-radius: 4px !important;
+  background: hsl(215, 25%, 27%) !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  /* Cross-platform consistency */
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.intensity-slider::-webkit-slider-track {
+  width: 100%;
+  height: 8px;
+  background: hsl(215, 25%, 27%);
+  border-radius: 4px;
+  border: none;
+  outline: none;
+}
+
 .intensity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
@@ -201,6 +232,19 @@ body {
   cursor: pointer;
   border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  /* Perfect center alignment */
+  margin-top: -6px;
+  position: relative;
+  z-index: 2;
+}
+
+.intensity-slider::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  background: hsl(215, 25%, 27%);
+  border-radius: 4px;
+  border: none;
+  outline: none;
 }
 
 .intensity-slider::-moz-range-thumb {
@@ -211,6 +255,40 @@ body {
   cursor: pointer;
   border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  /* Remove default Mozilla styles */
+  -moz-appearance: none;
+  appearance: none;
+  margin-top: 0;
+}
+
+/* Ensure slider container has proper alignment */
+.intensity-slider-container {
+  position: relative;
+  width: 100%;
+  padding: 10px 0;
+}
+
+/* Number alignment fixes for cross-platform compatibility */
+.intensity-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.intensity-labels span {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(215, 20%, 65%);
+  text-align: center;
+  position: relative;
+}
+
+.intensity-labels .current-value {
+  color: hsl(174, 77%, 56%);
+  font-weight: 600;
 }
 
 /* Tab active styling */
@@ -277,8 +355,8 @@ body {
   padding-top: max(env(safe-area-inset-top), 44px);
   padding-left: max(env(safe-area-inset-left), 16px);
   padding-right: max(env(safe-area-inset-right), 16px);
-  padding-bottom: 16px;
-  min-height: 60px;
+  padding-bottom: 24px; /* Increased from 16px for better logo spacing */
+  min-height: 68px; /* Increased from 60px to accommodate larger padding */
   background: linear-gradient(135deg, 
     rgba(55, 65, 81, 0.95) 0%, 
     rgba(45, 55, 72, 0.95) 100%);
@@ -300,6 +378,7 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
+  padding: 8px 0; /* Additional padding for better logo spacing */
   /* Remove any additional margins or positioning */
 }
 
@@ -682,9 +761,9 @@ body {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
-  /* iOS date picker text color override */
-  color: #f1f5f9 !important; /* app-text-primary equivalent */
-  -webkit-text-fill-color: #f1f5f9 !important;
+  /* iOS date picker text color override - consistent white text */
+  color: #ffffff !important; /* consistent white text */
+  -webkit-text-fill-color: #ffffff !important;
   /* Fix for iOS date picker appearance */
   -webkit-appearance: none;
   appearance: none;

@@ -233,7 +233,7 @@ export default function Track() {
                     Intensity Level
                   </FormLabel>
                   <FormControl>
-                    <div className="space-y-3">
+                    <div className="intensity-slider-container">
                       <Slider
                         min={1}
                         max={10}
@@ -242,9 +242,9 @@ export default function Track() {
                         onValueChange={(values) => field.onChange(values[0])}
                         className="intensity-slider"
                       />
-                      <div className="flex justify-between text-xs app-text-secondary">
+                      <div className="intensity-labels">
                         <span>1 - Mild</span>
-                        <span className="app-primary font-medium">{field.value}</span>
+                        <span className="current-value">{field.value}</span>
                         <span>10 - Severe</span>
                       </div>
                     </div>

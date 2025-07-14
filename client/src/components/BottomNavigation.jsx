@@ -15,6 +15,8 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const handleTabClick = (tab) => {
     onTabChange(tab.id);
     setLocation(tab.path);
+    // Scroll to top on navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const isActive = (path) => location === path || (location === "/" && path === "/track");
