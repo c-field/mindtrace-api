@@ -273,6 +273,15 @@ Changelog:
   * Streamlined API request functions to eliminate verbose debugging that causes TestFlight crashes
   * Production build now renders proper UI instead of ASCII characters after login
   * All functionality preserved while eliminating production console pollution
+- July 13, 2025. Comprehensive UTF-8 encoding and iOS compatibility fixes:
+  * Added explicit "Content-Type: application/json; charset=utf-8" headers to ALL server API responses
+  * Enhanced client-side API response validation with UTF-8 encoding checks and garbled character detection
+  * Removed all remaining debug console.log statements from server routes and middleware
+  * Added iOS-compatible font stack: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto fallbacks
+  * Implemented comprehensive response validation to catch encoding issues before UI rendering
+  * Added UTF-8 validation helper function to detect garbled characters (%#@+= patterns)
+  * Enhanced error handling with proper encoding for all API routes and middleware
+  * Resolved garbled text rendering issue on iOS devices by ensuring proper character encoding throughout the stack
 ```
 
 ## User Preferences

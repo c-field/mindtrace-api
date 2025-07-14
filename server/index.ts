@@ -31,12 +31,9 @@ app.use((req, res, next) => {
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
-  // Debug logging for iOS API calls
+  // Add UTF-8 encoding to all API responses
   if (path.startsWith("/api")) {
-    console.log(`=== DEBUG: ${req.method} ${path} ===`);
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
-    console.log("Session:", req.session);
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
   }
 
   const originalResJson = res.json;
@@ -49,15 +46,9 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
-      console.log(`=== DEBUG: Response ${res.statusCode} ${res.get('content-type')} ===`);
       log(logLine);
     }
   });
@@ -72,6 +63,8 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
+    // Ensure UTF-8 encoding for error responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.status(status).json({ message });
     throw err;
   });

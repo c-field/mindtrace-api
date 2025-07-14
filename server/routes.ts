@@ -10,6 +10,9 @@ import supabase from "./lib/supabase";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.post("/api/auth/signup", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       const validatedData = insertUserSchema.parse(req.body);
       
@@ -43,17 +46,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/auth/login", async (req, res) => {
-    // Set CORS headers for Capacitor iOS app
+    // Set CORS headers for Capacitor iOS app and ensure UTF-8 encoding
     res.setHeader("Access-Control-Allow-Origin", "capacitor://localhost");
     res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     
     try {
       const { username, password } = req.body;
-      
-      console.log("=== DEBUG: Login attempt ===");
-      console.log("Username:", username);
-      console.log("Password length:", password?.length);
       
       // First, authenticate with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -61,10 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password: password
       });
       
-      console.log("Supabase auth response:", { authData, authError });
-      
       if (authError || !authData.user) {
-        console.error("Supabase auth error:", authError);
         return res.status(401).json({ message: "Invalid credentials" });
       }
       
@@ -75,32 +72,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .eq('username', username)
         .single();
       
-      console.log("Supabase users query result:", userData);
-      console.log("Supabase users query error:", userError);
-      
       if (userError || !userData) {
-        console.error("Failed to fetch user from users table:", userError);
         return res.status(401).json({ message: "User not found in database" });
       }
       
       // Store both numeric ID and Supabase UUID in session
       (req.session as any).userId = 1; // Keep for backward compatibility  
-      console.log("auth.uid() equivalent:", userData.id);
       (req.session as any).supabaseUserId = userData.id; // Store real Supabase UUID from users table
-      
-      console.log("✅ Supabase authentication successful");
-      console.log("Real User UUID from users table:", userData.id);
-      console.log("Username:", userData.username);
-      console.log("Session after setting supabaseUserId:", req.session);
       
       res.json({ id: userData.id, username: userData.username });
     } catch (error) {
-      console.error("Login error:", error);
       res.status(500).json({ message: "Login failed" });
     }
   });
 
   app.get("/api/auth/me", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     const userId = (req.session as any)?.userId;
     if (!userId) {
       return res.status(401).json({ message: "Not authenticated" });
@@ -115,6 +104,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.patch("/api/auth/profile", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       const userId = (req.session as any)?.userId;
       if (!userId) {
@@ -135,6 +127,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/auth/logout", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     req.session.destroy((err) => {
       if (err) {
         return res.status(500).json({ message: "Failed to logout" });
@@ -145,6 +140,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Database API endpoints for HubSpot integration
   app.get("/api/database/users", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       // Get all users with basic info (no passwords)
       const allUsers = await db.select({
@@ -155,12 +153,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(allUsers);
     } catch (error) {
-      console.error("Database users error:", error);
       res.status(500).json({ message: "Failed to fetch users" });
     }
   });
 
   app.get("/api/database/users/:userId/thoughts", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       const userId = parseInt(req.params.userId);
       if (isNaN(userId)) {
@@ -172,12 +172,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(userThoughts);
     } catch (error) {
-      console.error("Database user thoughts error:", error);
       res.status(500).json({ message: "Failed to fetch user thoughts" });
     }
   });
 
   app.get("/api/database/analytics", async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       // Get analytics data for HubSpot integration
       const totalUsers = await db.select({ count: sql`count(*)` }).from(users);
@@ -198,7 +200,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userEngagement: activeUsers
       });
     } catch (error) {
-      console.error("Database analytics error:", error);
       res.status(500).json({ message: "Failed to fetch analytics" });
     }
   });
@@ -206,18 +207,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Middleware to check authentication for protected routes
   const requireAuth = async (req: any, res: any, next: any) => {
     try {
-      console.log("=== DEBUG: requireAuth middleware ===");
-      console.log("Session:", req.session);
-      console.log("User ID from session:", req.session?.userId);
-      console.log("Supabase User ID from session:", req.session?.supabaseUserId);
-      
       const userId = req.session?.userId;
       const supabaseUserId = req.session?.supabaseUserId;
       
       if (!userId && !supabaseUserId) {
-        console.log("=== DEBUG: Authentication failed - no user ID ===");
         // Ensure we always return JSON for auth failures and NEVER fall through
-        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
         return res.status(401).json({ 
           success: false,
           message: "Authentication required",
@@ -225,14 +220,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log("=== DEBUG: Authentication successful ===");
       req.userId = userId;
       req.supabaseUserId = supabaseUserId;
       next();
     } catch (error) {
-      console.error("=== DEBUG: requireAuth middleware error ===", error);
       // Even middleware errors should return JSON
-      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
       return res.status(500).json({
         success: false,
         message: "Authentication error",
@@ -243,15 +236,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get all thoughts with optional date filtering
   app.get("/api/thoughts", requireAuth, async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       const { dateFrom, dateTo } = req.query;
       const supabaseUserId = req.session?.supabaseUserId;
-      
-      console.log("=== DEBUG: GET /api/thoughts ===");
-      console.log("Raw query params:", req.query);
-      console.log("dateFrom:", dateFrom);
-      console.log("dateTo:", dateTo);
-      console.log("Supabase User ID:", supabaseUserId);
       
       if (!supabaseUserId) {
         return res.status(401).json({ message: "Supabase user ID not found in session" });
@@ -260,43 +250,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let query = supabase.from("thoughts").select("*").eq("user_id", supabaseUserId);
       
       if (dateFrom && typeof dateFrom === 'string') {
-        console.log("Adding dateFrom filter:", dateFrom);
         query = query.gte("created_at", dateFrom);
       }
       if (dateTo && typeof dateTo === 'string') {
-        console.log("Adding dateTo filter:", dateTo);
         query = query.lte("created_at", dateTo);
       }
       
-      console.log("Executing Supabase query...");
       const { data, error } = await query.order("created_at", { ascending: false });
       
-      console.log("Supabase query result:", { data, error });
-      console.log("Number of thoughts found:", data?.length || 0);
-      
       if (error) {
-        console.error("Supabase query error:", error);
         return res.status(500).json({ message: "Failed to retrieve thoughts from database" });
       }
       
       res.json(data || []);
     } catch (error) {
-      console.error("GET /api/thoughts error:", error);
       res.status(500).json({ message: "Failed to retrieve thoughts" });
     }
   });
 
   // Debug route to test if API routing is working
   app.all("/api/test", (req, res) => {
-    console.log("=== DEBUG: Test route hit ===");
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.json({ message: "API routing is working", method: req.method });
   });
 
   // Debug route to return authenticated user info
   app.get("/api/me", requireAuth, async (req, res) => {
-    console.log("🔐 Authenticated user ID:", req.session?.userId);
-    console.log("🔐 Full session:", req.session);
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.status(200).json({ 
       userId: req.session?.userId,
       authenticated: true,
@@ -305,18 +285,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create a new thought
-  console.log("🔧 Registering POST /api/thoughts route...");
   app.post("/api/thoughts", requireAuth, async (req, res) => {
-    console.log("🧪 DEBUG: /api/thoughts session check");
-    console.log("Session supabaseUserId:", req.session?.supabaseUserId);
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     
     try {
       const { content, cognitiveDistortion, intensity } = req.body;
       const supabaseUserId = req.session?.supabaseUserId;
-
-      console.log("=== DEBUG: POST /api/thoughts ===");
-      console.log("Request body:", req.body);
-      console.log("Supabase User ID:", supabaseUserId);
 
       if (!content || !cognitiveDistortion || typeof intensity !== "number") {
         return res.status(400).json({ success: false, error: "Missing or invalid fields" });
@@ -327,8 +302,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Map camelCase to snake_case for Supabase
-      console.log("Attempting to insert thought with UUID:", supabaseUserId);
-      
       const { data, error } = await supabase.from("thoughts").insert([
         {
           user_id: supabaseUserId,
@@ -339,17 +312,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       ]).select();
 
-      console.log("Supabase insert response:", { data, error });
-
       if (error) {
-        console.error("Supabase insert error:", error);
-        console.error("Error details:", JSON.stringify(error, null, 2));
-        
         // Check if it's an RLS policy violation
         if (error.code === '42501') {
-          console.error("RLS Policy violation - the user_id may not exist in the users table");
-          console.error("Trying to insert with user_id:", supabaseUserId);
-          
           // Verify the user exists in the users table
           const { data: userCheck, error: userCheckError } = await supabase
             .from('users')
@@ -357,23 +322,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .eq('id', supabaseUserId)
             .single();
             
-          console.log("User existence check:", { userCheck, userCheckError });
+          if (userCheckError || !userCheck) {
+            return res.status(401).json({ success: false, error: "User not found in database" });
+          }
         }
         
         return res.status(500).json({ success: false, error: error.message || "Database insert failed" });
       }
 
-      console.log("✅ Thought inserted successfully:", data);
       res.status(200).json({ success: true, data });
     } catch (error) {
-      console.error("=== DEBUG: POST /api/thoughts ERROR ===");
-      console.error("Error:", error);
       res.status(500).json({ success: false, error: "Internal server error" });
     }
   });
 
   // Delete all thoughts
   app.delete("/api/thoughts", requireAuth, async (req, res) => {
+    // Ensure UTF-8 encoding for all responses
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     try {
       const userId = (req.session as any).userId;
       await storage.deleteAllThoughts(userId);
@@ -414,10 +381,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const csv = csvHeader + csvRows;
       
-      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="mindtrace-thoughts.csv"');
       res.send(csv);
     } catch (error) {
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.status(500).json({ message: "Failed to export thoughts" });
     }
   });

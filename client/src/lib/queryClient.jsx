@@ -5,29 +5,57 @@ async function throwIfResNotOk(res) {
     const contentType = res.headers.get('content-type');
     let message = "An error occurred";
     
+    // Validate UTF-8 encoding for JSON responses
     if (contentType && contentType.includes('application/json')) {
       try {
         const errorData = await res.json();
-        message = errorData.message || message;
+        
+        // Validate that the response contains valid text
+        if (typeof errorData.message === 'string' && isValidUTF8(errorData.message)) {
+          message = errorData.message;
+        } else {
+          message = "Invalid server response format";
+        }
       } catch {
         // Fallback to text if JSON parsing fails
         try {
           const errorText = await res.text();
-          message = errorText || message;
+          message = isValidUTF8(errorText) ? errorText : "Invalid response encoding";
         } catch {
-          // Use default message if all parsing fails
+          message = "Response parsing failed";
         }
       }
     } else {
       try {
         const errorText = await res.text();
-        message = errorText || message;
+        message = isValidUTF8(errorText) ? errorText : "Invalid response encoding";
       } catch {
-        // Use default message if text parsing fails
+        message = "Response parsing failed";
       }
     }
     
     throw new Error(message);
+  }
+}
+
+// Helper function to validate UTF-8 encoding
+function isValidUTF8(str) {
+  try {
+    // Check if string contains valid UTF-8 characters
+    if (typeof str !== 'string') return false;
+    
+    // Check for common encoding issues - garbled characters
+    const hasGarbledChars = /[^\x00-\x7F\u00A0-\uFFFF]/.test(str);
+    const hasRandomSymbols = /[%#@+=]{5,}/.test(str);
+    
+    if (hasGarbledChars || hasRandomSymbols) {
+      console.warn('Detected potentially garbled response:', str.substring(0, 100));
+      return false;
+    }
+    
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -76,6 +104,10 @@ export const getQueryFn = (options) => {
       const response = await fetch(fullUrl, {
         credentials: "include",
         cache: "no-cache",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
       });
       
       if (response.status === 401) {
@@ -89,7 +121,20 @@ export const getQueryFn = (options) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      return response.json();
+      // Validate response before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid response format: Expected JSON');
+      }
+      
+      const data = await response.json();
+      
+      // Validate UTF-8 encoding for string responses
+      if (typeof data === 'string' && !isValidUTF8(data)) {
+        throw new Error('Invalid response encoding detected');
+      }
+      
+      return data;
     } catch (error) {
       if (on401 === "returnNull" && error.message === "Unauthorized") {
         return null;
