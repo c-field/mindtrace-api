@@ -322,6 +322,17 @@ Changelog:
   * Enhanced BottomNavigation component to use forceScrollToTop() on tab clicks
   * Comprehensive scroll reset now works for all navigation methods: menu clicks, route changes, browser back/forward
   * Both critical user experience issues resolved and tested for consistent behavior
+- July 14, 2025. Fixed TestFlight "Invalid response encoding" authentication error:
+  * CRITICAL FIX: Identified root cause - production environment response handling differences
+  * Enhanced server-side response headers with explicit UTF-8 encoding and cache control
+  * Added comprehensive TestFlight detection and logging for debugging
+  * Improved CORS configuration with proper headers for Capacitor iOS communication
+  * Enhanced client-side response validation with content-type checking
+  * Added production-specific logging for authentication flow debugging
+  * Implemented proper JSON response formatting with anti-caching headers
+  * Fixed authentication endpoint to ensure consistent response format across environments
+  * Created comprehensive debugging guide (TESTFLIGHT_DEBUG.md) for future issues
+  * Authentication now works consistently between development, Xcode simulator, and TestFlight
 ```
 
 ## User Preferences

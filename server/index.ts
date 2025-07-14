@@ -8,10 +8,18 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// CORS configuration for Capacitor iOS app
+// CORS configuration for Capacitor iOS app and development
 app.use(cors({
-  origin: ['capacitor://localhost', 'http://localhost'],
-  credentials: true
+  origin: [
+    'capacitor://localhost', 
+    'http://localhost', 
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev'
+  ],
+  credentials: true,
+  exposedHeaders: ['Content-Type', 'Content-Length', 'X-Powered-By'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cache-Control', 'Pragma']
 }));
 
 // Session configuration
@@ -34,6 +42,8 @@ app.use((req, res, next) => {
   // Add UTF-8 encoding to all API responses
   if (path.startsWith("/api")) {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Pragma', 'no-cache');
   }
 
   const originalResJson = res.json;

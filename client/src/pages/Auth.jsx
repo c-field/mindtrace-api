@@ -31,10 +31,56 @@ export default function Auth({ onAuthSuccess }) {
   const authMutation = useMutation({
     mutationFn: async (data) => {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-      const response = await apiRequest("POST", endpoint, data);
-      return response.json();
+      
+      // Enhanced logging for TestFlight debugging
+      const isTestFlight = window.location.protocol === 'capacitor:' || 
+                          navigator.userAgent.includes('iPhone') || 
+                          navigator.userAgent.includes('iPad');
+      
+      if (isTestFlight) {
+        console.log('TestFlight auth mutation starting:', { endpoint, isLogin });
+      }
+      
+      try {
+        const response = await apiRequest("POST", endpoint, data);
+        
+        if (isTestFlight) {
+          console.log('TestFlight auth response received:', {
+            status: response.status,
+            ok: response.ok,
+            headers: Object.fromEntries(response.headers.entries())
+          });
+        }
+        
+        // Enhanced response parsing with validation
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Invalid response format: Expected JSON');
+        }
+        
+        const responseData = await response.json();
+        
+        if (isTestFlight) {
+          console.log('TestFlight auth data parsed:', responseData);
+        }
+        
+        return responseData;
+      } catch (error) {
+        if (isTestFlight) {
+          console.log('TestFlight auth mutation error:', error.message);
+        }
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const isTestFlight = window.location.protocol === 'capacitor:' || 
+                          navigator.userAgent.includes('iPhone') || 
+                          navigator.userAgent.includes('iPad');
+      
+      if (isTestFlight) {
+        console.log('TestFlight auth success:', data);
+      }
+      
       toast({
         title: "Success!",
         description: isLogin ? "Welcome back!" : "Account created successfully!",
@@ -44,6 +90,14 @@ export default function Auth({ onAuthSuccess }) {
       onAuthSuccess();
     },
     onError: (error) => {
+      const isTestFlight = window.location.protocol === 'capacitor:' || 
+                          navigator.userAgent.includes('iPhone') || 
+                          navigator.userAgent.includes('iPad');
+      
+      if (isTestFlight) {
+        console.log('TestFlight auth error:', error.message);
+      }
+      
       toast({
         title: "Error",
         description: error.message || "Authentication failed. Please try again.",

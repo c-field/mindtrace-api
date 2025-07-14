@@ -37,23 +37,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Handle OPTIONS preflight for login
+  // Handle OPTIONS preflight for login - simplified for development
   app.options("/api/auth/login", (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "capacitor://localhost");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, Pragma");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.status(200).end();
   });
 
   app.post("/api/auth/login", async (req, res) => {
-    // Set CORS headers for Capacitor iOS app and ensure UTF-8 encoding
-    res.setHeader("Access-Control-Allow-Origin", "capacitor://localhost");
+    // Set CORS headers for multiple environments and ensure UTF-8 encoding
+    const allowedOrigins = [
+      'capacitor://localhost',
+      'http://localhost',
+      'http://localhost:5000',
+      'http://127.0.0.1:5000',
+      'https://11d3d8eb-500f-47e4-982c-6840c979c26a-00-29fzi9wm5gkmr.riker.replit.dev'
+    ];
+    
+    // Simplified CORS for development
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    
     res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, Pragma");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     
     try {
       const { username, password } = req.body;
+      
+      // Enhanced logging for TestFlight debugging
+      const isProduction = process.env.NODE_ENV === 'production';
+      if (isProduction) {
+        console.log('Login attempt for user:', username?.substring(0, 5) + '...');
+      }
       
       // First, authenticate with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -62,6 +80,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       if (authError || !authData.user) {
+        if (isProduction) {
+          console.log('Supabase auth error:', authError?.message);
+        }
         return res.status(401).json({ message: "Invalid credentials" });
       }
       
@@ -73,6 +94,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .single();
       
       if (userError || !userData) {
+        if (isProduction) {
+          console.log('User lookup error:', userError?.message);
+        }
         return res.status(401).json({ message: "User not found in database" });
       }
       
@@ -80,9 +104,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       (req.session as any).userId = 1; // Keep for backward compatibility  
       (req.session as any).supabaseUserId = userData.id; // Store real Supabase UUID from users table
       
-      res.json({ id: userData.id, username: userData.username });
+      // Ensure response is properly formatted JSON with UTF-8 encoding
+      const response = { 
+        id: userData.id, 
+        username: userData.username 
+      };
+      
+      if (isProduction) {
+        console.log('Login successful, sending response:', JSON.stringify(response).substring(0, 100));
+      }
+      
+      // Force JSON response with explicit encoding and prevent caching
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
+      // Ensure we don't return before the response is sent
+      return res.status(200).json(response);
     } catch (error) {
-      res.status(500).json({ message: "Login failed" });
+      const isProduction = process.env.NODE_ENV === 'production';
+      if (isProduction) {
+        console.log('Login endpoint error:', error.message);
+      }
+      
+      // Ensure error response is properly formatted
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
+      return res.status(500).json({ message: "Login failed" });
     }
   });
 

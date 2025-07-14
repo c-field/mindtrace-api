@@ -5,23 +5,55 @@ async function throwIfResNotOk(res) {
     const contentType = res.headers.get('content-type');
     let message = "An error occurred";
     
+    // Enhanced debugging for TestFlight
+    const isTestFlight = window.location.protocol === 'capacitor:' || 
+                        navigator.userAgent.includes('iPhone') || 
+                        navigator.userAgent.includes('iPad');
+    
+    if (isTestFlight) {
+      console.log('TestFlight error response details:', {
+        status: res.status,
+        statusText: res.statusText,
+        contentType,
+        headers: Object.fromEntries(res.headers.entries())
+      });
+    }
+    
     // Validate UTF-8 encoding for JSON responses
     if (contentType && contentType.includes('application/json')) {
       try {
         const errorData = await res.json();
+        
+        if (isTestFlight) {
+          console.log('TestFlight parsed error data:', errorData);
+        }
         
         // Validate that the response contains valid text
         if (typeof errorData.message === 'string' && isValidUTF8(errorData.message)) {
           message = errorData.message;
         } else {
           message = "Invalid server response format";
+          if (isTestFlight) {
+            console.log('TestFlight: Invalid error message format detected');
+          }
         }
-      } catch {
+      } catch (jsonError) {
+        if (isTestFlight) {
+          console.log('TestFlight JSON parsing error:', jsonError.message);
+        }
+        
         // Fallback to text if JSON parsing fails
         try {
           const errorText = await res.text();
           message = isValidUTF8(errorText) ? errorText : "Invalid response encoding";
-        } catch {
+          
+          if (isTestFlight) {
+            console.log('TestFlight fallback text response:', errorText.substring(0, 200));
+          }
+        } catch (textError) {
+          if (isTestFlight) {
+            console.log('TestFlight text parsing error:', textError.message);
+          }
           message = "Response parsing failed";
         }
       }
@@ -29,7 +61,14 @@ async function throwIfResNotOk(res) {
       try {
         const errorText = await res.text();
         message = isValidUTF8(errorText) ? errorText : "Invalid response encoding";
-      } catch {
+        
+        if (isTestFlight) {
+          console.log('TestFlight non-JSON error response:', errorText.substring(0, 200));
+        }
+      } catch (textError) {
+        if (isTestFlight) {
+          console.log('TestFlight text error parsing failed:', textError.message);
+        }
         message = "Response parsing failed";
       }
     }
@@ -70,7 +109,9 @@ export async function apiRequest(method, url, data) {
     method,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
+      "Accept": "application/json; charset=utf-8",
+      "Cache-Control": "no-cache",
     },
   };
 
@@ -83,10 +124,44 @@ export async function apiRequest(method, url, data) {
   }
 
   try {
+    // Enhanced logging for TestFlight debugging
+    const isTestFlight = window.location.protocol === 'capacitor:' || 
+                        navigator.userAgent.includes('iPhone') || 
+                        navigator.userAgent.includes('iPad');
+    
+    if (isTestFlight && method === 'POST' && url.includes('/login')) {
+      console.log('TestFlight login request:', { method, url, hasData: !!data });
+    }
+    
     const res = await fetch(fullUrl, options);
+    
+    // Enhanced response logging for TestFlight
+    if (isTestFlight && method === 'POST' && url.includes('/login')) {
+      console.log('TestFlight login response:', {
+        status: res.status,
+        statusText: res.statusText,
+        headers: Object.fromEntries(res.headers.entries()),
+        ok: res.ok
+      });
+    }
+    
     await throwIfResNotOk(res);
     return res;
   } catch (fetchError) {
+    // Enhanced error logging for TestFlight
+    const isTestFlight = window.location.protocol === 'capacitor:' || 
+                        navigator.userAgent.includes('iPhone') || 
+                        navigator.userAgent.includes('iPad');
+    
+    if (isTestFlight) {
+      console.log('TestFlight API error:', {
+        method,
+        url,
+        error: fetchError.message,
+        stack: fetchError.stack
+      });
+    }
+    
     throw fetchError;
   }
 }
