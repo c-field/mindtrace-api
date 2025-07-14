@@ -206,7 +206,7 @@ export default function Profile({ onLogout = () => {} }) {
             <Input
               value={user?.username || ""}
               disabled
-              className="app-surface-light border-slate-600 text-gray-500 cursor-not-allowed"
+              className="app-surface-light border-slate-600 cursor-not-allowed opacity-60"
             />
           </div>
 
@@ -224,7 +224,7 @@ export default function Profile({ onLogout = () => {} }) {
                         <FormControl>
                           <Input
                             placeholder="Enter your full name"
-                            className="app-surface-light border-slate-600 text-gray-700 placeholder:text-gray-500 focus:border-primary"
+                            className="app-surface-light border-slate-600 focus:border-primary"
                             {...field}
                           />
                         </FormControl>
@@ -261,7 +261,7 @@ export default function Profile({ onLogout = () => {} }) {
                 <Input
                   value={user?.name || "Not set"}
                   disabled
-                  className="app-surface-light border-slate-600 text-gray-700 cursor-not-allowed"
+                  className="app-surface-light border-slate-600 cursor-not-allowed opacity-60"
                 />
                 <Button
                   size="sm"

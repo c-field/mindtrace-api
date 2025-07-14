@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft } from "lucide-react";
+import { goBackWithScrollReset } from "@/lib/navigationUtils";
 
 export default function NotFound() {
   return (
@@ -25,7 +26,7 @@ export default function NotFound() {
           </Link>
           <Button 
             variant="outline" 
-            onClick={() => window.history.back()}
+            onClick={goBackWithScrollReset}
             className="border-primary/20 app-text-primary hover:bg-primary/5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

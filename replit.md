@@ -291,6 +291,15 @@ Changelog:
   * Added comprehensive CSS for iOS-compatible slider track, thumb, and label alignment
   * Implemented touch-friendly navigation with smooth scrolling and proper z-index hierarchy
   * All fixes tested for cross-platform compatibility between Replit, Xcode, and TestFlight environments
+- July 13, 2025. Critical white text visibility and scroll position fixes:
+  * Fixed white text on white background issues: removed conflicting text color classes from all form inputs
+  * Implemented smart contrast-based text color system: white text for dark backgrounds, dark grey (#1f2937) for light backgrounds
+  * Added light-background and light-text CSS classes for context-aware text coloring
+  * Comprehensive scroll-to-top functionality: covers all navigation methods including route changes, tab clicks, authentication, logout, and browser back/forward
+  * Created navigationUtils.js with utilities for consistent scroll behavior across all navigation types
+  * Enhanced form readability: removed text-gray-700 and text-gray-500 classes that conflicted with automatic text coloring
+  * Added popstate event listener for browser navigation scroll reset
+  * Implemented scroll position reset for authentication success, logout, and form toggles
 ```
 
 ## User Preferences

@@ -129,18 +129,43 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
 
-  /* Fix input and textarea text colors - consistent white text */
+  /* Fix input and textarea text colors - smart contrast-based approach */
   input, textarea, select {
+    /* Default to white text for dark backgrounds */
     color: #ffffff !important;
   }
   
-  /* Ensure date inputs specifically have white text */
+  /* Override with dark text for light backgrounds */
+  .light-background input,
+  .light-background textarea,
+  .light-background select,
+  input.light-text,
+  textarea.light-text,
+  select.light-text {
+    color: #1f2937 !important; /* Dark grey text for light backgrounds */
+  }
+  
+  /* Ensure date inputs work with both dark and light backgrounds */
   input[type="date"] {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
   }
+  
+  .light-background input[type="date"],
+  input[type="date"].light-text {
+    color: #1f2937 !important;
+    -webkit-text-fill-color: #1f2937 !important;
+  }
 
   input::placeholder, textarea::placeholder {
+    color: #6b7280 !important;
+  }
+  
+  /* Better placeholder contrast for light backgrounds */
+  .light-background input::placeholder,
+  .light-background textarea::placeholder,
+  input.light-text::placeholder,
+  textarea.light-text::placeholder {
     color: #6b7280 !important;
   }
 

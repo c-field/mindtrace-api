@@ -319,7 +319,7 @@ export default function Export() {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="date-input app-surface-light border-slate-600 app-text-primary focus:border-primary touch-target"
+                className="date-input app-surface-light border-slate-600 focus:border-primary touch-target"
               />
             </div>
           </div>
@@ -334,7 +334,7 @@ export default function Export() {
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="date-input app-surface-light border-slate-600 app-text-primary focus:border-primary touch-target"
+                className="date-input app-surface-light border-slate-600 focus:border-primary touch-target"
               />
             </div>
           </div>

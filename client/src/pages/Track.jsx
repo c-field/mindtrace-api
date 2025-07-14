@@ -143,7 +143,7 @@ export default function Track() {
                   <FormControl>
                     <Textarea
                       placeholder="Describe the negative thought you're experiencing..."
-                      className="app-surface-light border-slate-600 text-gray-700 placeholder:text-gray-500 focus:border-primary resize-none min-h-[100px]"
+                      className="app-surface-light border-slate-600 focus:border-primary resize-none min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
@@ -169,7 +169,7 @@ export default function Track() {
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="app-surface-light border-slate-600 text-gray-700 focus:border-primary">
+                      <SelectTrigger className="app-surface-light border-slate-600 focus:border-primary">
                         <SelectValue placeholder="Select a cognitive distortion..." />
                       </SelectTrigger>
                     </FormControl>
@@ -178,7 +178,7 @@ export default function Track() {
                         <SelectItem
                           key={distortion.id}
                           value={distortion.id}
-                          className="text-gray-700 hover:app-surface-light focus:text-gray-700 cursor-pointer"
+                          className="hover:app-surface-light cursor-pointer"
                         >
                           {distortion.name}
                         </SelectItem>
@@ -214,7 +214,7 @@ export default function Track() {
                   <FormControl>
                     <Input
                       placeholder="What triggered this thought?"
-                      className="app-surface-light border-slate-600 text-gray-700 placeholder:text-gray-500 focus:border-primary"
+                      className="app-surface-light border-slate-600 focus:border-primary"
                       {...field}
                     />
                   </FormControl>

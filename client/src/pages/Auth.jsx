@@ -39,6 +39,8 @@ export default function Auth({ onAuthSuccess }) {
         title: "Success!",
         description: isLogin ? "Welcome back!" : "Account created successfully!",
       });
+      // Reset scroll position after successful authentication
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       onAuthSuccess();
     },
     onError: (error) => {
@@ -119,7 +121,11 @@ export default function Auth({ onAuthSuccess }) {
           <div className="mt-6 text-center space-y-2">
             <Button
               variant="link"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                setIsLogin(!isLogin);
+                // Reset scroll position when switching between login/signup
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="text-sm"
             >
               {isLogin 

@@ -13,6 +13,7 @@ import ForgotPassword from "@/pages/ForgotPassword";
 import ForgotUsername from "@/pages/ForgotUsername";
 import NotFound from "@/pages/not-found";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { initializeNavigationScrollReset } from "@/lib/navigationUtils";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,11 @@ function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location]);
+
+  // Initialize comprehensive navigation scroll reset
+  useEffect(() => {
+    initializeNavigationScrollReset();
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -66,6 +72,8 @@ function App() {
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
+    // Reset scroll position after successful authentication
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = async () => {
@@ -78,6 +86,8 @@ function App() {
       console.error("Logout failed:", error);
     } finally {
       setIsAuthenticated(false);
+      // Reset scroll position after logout
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
