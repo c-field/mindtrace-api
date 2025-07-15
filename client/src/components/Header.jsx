@@ -1,6 +1,14 @@
 export default function Header() {
   return (
-    <header className="bg-slate-600 text-white border-b border-slate-600 sticky top-0 z-50 pt-[2px] pb-[2px]">
+      <header
+        className="bg-slate-800 text-white border-b border-slate-600 sticky top-0 z-50 pt-[2px] pb-[2px]"
+        style={{
+          paddingTop:
+            typeof window !== 'undefined' &&
+            /iPhone|iPad|iPod/.test(navigator.userAgent)
+              ? 'env(safe-area-inset-top)'
+              : '0px'
+        }}>
       <div className="header-content">
         <div className="logo">
           {/* iOS-optimized MindTrace Brain Network Logo */}

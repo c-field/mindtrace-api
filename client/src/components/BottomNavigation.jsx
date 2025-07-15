@@ -23,9 +23,16 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const isActive = (path) => location === path || (location === "/" && path === "/track");
 
   return (
-    <nav
-      className="app-surface compact-nav fixed bottom-0 left-0 right-0 z-50"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <nav
+          className="app-surface compact-nav fixed bottom-0 left-0 right-0 z-50"
+          style={{
+            paddingBottom:
+              typeof window !== 'undefined' &&
+              /iPhone|iPad|iPod/.test(navigator.userAgent)
+                ? 'env(safe-area-inset-bottom)'
+                : '0px',
+            backgroundColor: '#1e293b' // Tailwind bg-slate-800
+          }}>
       <div className="bottom-navigation">
         {tabs.map((tab) => {
           const Icon = tab.icon;
