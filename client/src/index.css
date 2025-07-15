@@ -11,8 +11,8 @@
   --safe-area-inset-left: env(safe-area-inset-left);
   
   /* Responsive spacing variables with clamp for better scaling */
-  --header-height: clamp(60px, 12vh, 80px);
-  --bottom-nav-height: clamp(60px, 12vh, 80px);
+  --header-height: clamp(50px, 10vh, 65px);
+  --bottom-nav-height: clamp(55px, 11vh, 70px);
   --content-padding-x: clamp(12px, 4vw, 24px);
   --content-padding-y: clamp(8px, 2vh, 16px);
   --content-padding-bottom: clamp(12px, 3vh, 20px);
@@ -603,11 +603,11 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
-  padding-top: max(env(safe-area-inset-top), 16px);
+  padding-top: max(env(safe-area-inset-top), 8px);
   padding-left: max(env(safe-area-inset-left), 16px);
   padding-right: max(env(safe-area-inset-right), 16px);
-  padding-bottom: 16px; /* Reduced excessive padding */
-  min-height: 60px; /* Reduced from 68px to minimize dead space */
+  padding-bottom: 8px; /* Minimized padding for compact header */
+  min-height: 50px; /* Further reduced for minimal vertical space */
   background: linear-gradient(135deg, 
     rgba(55, 65, 81, 0.95) 0%, 
     rgba(45, 55, 72, 0.95) 100%);
@@ -640,12 +640,15 @@ body {
   right: 0;
   z-index: 1000;
   padding: 8px max(env(safe-area-inset-left), 16px) 
-           max(env(safe-area-inset-bottom), 8px) 
+           env(safe-area-inset-bottom) 
            max(env(safe-area-inset-right), 16px);
   height: var(--bottom-nav-height);
   background: rgba(30, 41, 59, 0.95);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(100, 116, 139, 0.2);
+  /* Ensure navigation is flush with bottom edge */
+  margin-bottom: 0;
+  box-sizing: border-box;
 }
 
 /* Touch Target Optimization */
@@ -703,8 +706,8 @@ body {
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: clamp(18px, 4vw, 22px);
+  gap: 6px;
+  font-size: clamp(16px, 3.5vw, 20px);
   font-weight: 600;
   /* Perfect centering without manual margins */
   justify-content: center;
@@ -716,7 +719,7 @@ body {
 }
 
 .logo-text {
-  font-size: clamp(18px, 4vw, 22px);
+  font-size: clamp(16px, 3.5vw, 20px);
   font-weight: 600;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -740,16 +743,16 @@ body {
 
 /* Device-Specific Responsive Breakpoints */
 
-/* Progressive enhancement for safe area support - REDUCED PADDING */
+/* Progressive enhancement for safe area support - MINIMAL PADDING */
 @supports (padding-top: env(safe-area-inset-top)) {
   .compact-header {
-    padding-top: calc(env(safe-area-inset-top) + 8px); /* Reduced from 16px */
+    padding-top: calc(env(safe-area-inset-top) + 4px); /* Minimal padding for compact header */
   }
 }
 
 @supports not (padding-top: env(safe-area-inset-top)) {
   .compact-header {
-    padding-top: 32px; /* Reduced from 44px - Status bar height + minimal padding */
+    padding-top: 24px; /* Minimal padding for devices without safe area support */
   }
 }
 
@@ -823,10 +826,22 @@ body {
 /* iPhone 13 mini specific optimizations (375px width, 812px height) */
 @media (max-height: 812px) and (max-width: 375px) {
   :root {
-    --header-height: clamp(55px, 11vh, 65px);
-    --bottom-nav-height: clamp(55px, 11vh, 65px);
+    --header-height: clamp(45px, 9vh, 55px);
+    --bottom-nav-height: clamp(50px, 10vh, 60px);
     --content-padding-x: clamp(10px, 3vw, 16px);
     --content-padding-y: clamp(6px, 1.5vh, 12px);
+  }
+  
+  .compact-header {
+    padding-top: calc(env(safe-area-inset-top) + 2px);
+    padding-bottom: 4px;
+    min-height: 45px;
+  }
+  
+  .compact-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Ensure navigation is flush with bottom edge */
+    margin-bottom: 0;
   }
   
   .safe-container {

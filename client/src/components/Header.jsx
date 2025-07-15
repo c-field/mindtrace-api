@@ -4,10 +4,10 @@ export default function Header() {
       <div className="header-content">
         <div className="logo">
           {/* iOS-optimized MindTrace Brain Network Logo */}
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center relative">
+          <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center relative">
             <svg
               viewBox="0 0 24 24"
-              className="w-5 h-5 text-white"
+              className="w-4 h-4 text-white"
               fill="currentColor"
             >
               {/* Brain outline */}
