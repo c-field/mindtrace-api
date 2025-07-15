@@ -125,151 +125,153 @@ export default function Track() {
   const distortionDefinition = selectedDistortion ? getCognitiveDistortionById(selectedDistortion) : null;
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Card */}
-      <div className="from-primary/10 to-primary/20 rounded-2xl p-6 border border-primary/20 bg-[#1f2937]">
-        <h2 className="text-2xl font-semibold mb-2 app-text-primary">Track Your Thoughts</h2>
-        <p className="app-text-secondary text-sm">
-          Record and categorize negative thought patterns to gain insight into your mental health journey.
-        </p>
-      </div>
-      {/* Thought Form */}
-      <div className="app-surface rounded-2xl p-6 space-y-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Thought Content */}
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary">
-                    Your Thought
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe the negative thought you're experiencing..."
-                      className="app-surface-light border-slate-600 focus:border-primary resize-none min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Cognitive Distortion Selection */}
-            <FormField
-              control={form.control}
-              name="cognitiveDistortion"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary">
-                    Cognitive Distortion Pattern *
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setSelectedDistortion(value);
-                    }}
-                    value={field.value}
-                  >
+    <div className="min-h-screen flex flex-col justify-between">
+      <div className="space-y-6">
+        {/* Welcome Card */}
+        <div className="from-primary/10 to-primary/20 rounded-2xl pt-2 pb-4 px-4 border border-primary/20 bg-[#1f2937]">
+          <h2 className="text-2xl font-semibold mb-2 app-text-primary">Track Your Thoughts</h2>
+          <p className="app-text-secondary text-sm">
+            Record and categorize negative thought patterns to gain insight into your mental health journey.
+          </p>
+        </div>
+        {/* Thought Form */}
+        <div className="app-surface rounded-2xl p-6 space-y-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Thought Content */}
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium app-text-primary">
+                      Your Thought
+                    </FormLabel>
                     <FormControl>
-                      <SelectTrigger className="app-surface-light border-slate-600 focus:border-primary">
-                        <SelectValue placeholder="Select a cognitive distortion..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="app-surface border-slate-600 max-h-60 overflow-auto">
-                      {cognitiveDistortions.map((distortion) => (
-                        <SelectItem
-                          key={distortion.id}
-                          value={distortion.id}
-                          className="hover:app-surface-light cursor-pointer"
-                        >
-                          {distortion.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Definition Display */}
-            {distortionDefinition && (
-              <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl space-y-2">
-                <p className="text-sm app-text-secondary">
-                  <strong className="app-text-primary">Definition:</strong> {distortionDefinition.description}
-                </p>
-                <p className="text-sm app-text-secondary">
-                  <strong className="app-text-primary">Example:</strong> <em>{distortionDefinition.example}</em>
-                </p>
-              </div>
-            )}
-
-            {/* Trigger */}
-            <FormField
-              control={form.control}
-              name="trigger"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary">
-                    Trigger (Optional)
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="What triggered this thought?"
-                      className="app-surface-light border-slate-600 focus:border-primary"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Intensity Slider */}
-            <FormField
-              control={form.control}
-              name="intensity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium app-text-primary">
-                    Intensity Level
-                  </FormLabel>
-                  <FormControl>
-                    <div className="intensity-slider-container">
-                      <Slider
-                        min={1}
-                        max={10}
-                        step={1}
-                        value={[field.value]}
-                        onValueChange={(values) => field.onChange(values[0])}
-                        className="intensity-slider"
+                      <Textarea
+                        placeholder="Describe the negative thought you're experiencing..."
+                        className="app-surface-light border-slate-600 focus:border-primary resize-none min-h-[100px]"
+                        {...field}
                       />
-                      <div className="intensity-labels">
-                        <span>1 - Mild</span>
-                        <span className="current-value">{field.value}</span>
-                        <span>10 - Severe</span>
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={createThoughtMutation.isPending}
-              className="w-full app-primary-bg hover:app-primary-bg-hover text-white font-medium py-3 rounded-xl transition-colors duration-200"
-            >
-              {createThoughtMutation.isPending ? "Recording..." : "Record Thought"}
-            </Button>
-          </form>
-        </Form>
+              {/* Cognitive Distortion Selection */}
+              <FormField
+                control={form.control}
+                name="cognitiveDistortion"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium app-text-primary">
+                      Cognitive Distortion Pattern *
+                    </FormLabel>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedDistortion(value);
+                      }}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="app-surface-light border-slate-600 focus:border-primary">
+                          <SelectValue placeholder="Select a cognitive distortion..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="app-surface border-slate-600 max-h-60 overflow-auto">
+                        {cognitiveDistortions.map((distortion) => (
+                          <SelectItem
+                            key={distortion.id}
+                            value={distortion.id}
+                            className="hover:app-surface-light cursor-pointer"
+                          >
+                            {distortion.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Definition Display */}
+              {distortionDefinition && (
+                <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl space-y-2">
+                  <p className="text-sm app-text-secondary">
+                    <strong className="app-text-primary">Definition:</strong> {distortionDefinition.description}
+                  </p>
+                  <p className="text-sm app-text-secondary">
+                    <strong className="app-text-primary">Example:</strong> <em>{distortionDefinition.example}</em>
+                  </p>
+                </div>
+              )}
+
+              {/* Trigger */}
+              <FormField
+                control={form.control}
+                name="trigger"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium app-text-primary">
+                      Trigger (Optional)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="What triggered this thought?"
+                        className="app-surface-light border-slate-600 focus:border-primary"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Intensity Slider */}
+              <FormField
+                control={form.control}
+                name="intensity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium app-text-primary">
+                      Intensity Level
+                    </FormLabel>
+                    <FormControl>
+                      <div className="intensity-slider-container">
+                        <Slider
+                          min={1}
+                          max={10}
+                          step={1}
+                          value={[field.value]}
+                          onValueChange={(values) => field.onChange(values[0])}
+                          className="intensity-slider"
+                        />
+                        <div className="intensity-labels">
+                          <span>1 - Mild</span>
+                          <span className="current-value">{field.value}</span>
+                          <span>10 - Severe</span>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={createThoughtMutation.isPending}
+                className="w-full app-primary-bg hover:app-primary-bg-hover text-white font-medium py-3 rounded-xl transition-colors duration-200"
+              >
+                {createThoughtMutation.isPending ? "Recording..." : "Record Thought"}
+              </Button>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ export default function BottomNavigation({ activeTab, onTabChange }) {
   const isActive = (path) => location === path || (location === "/" && path === "/track");
 
   return (
-    <nav className="app-surface compact-nav">
+    <nav className="app-surface compact-nav fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="bottom-navigation">
         {tabs.map((tab) => {
           const Icon = tab.icon;
