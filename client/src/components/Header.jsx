@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 compact-header">
+    <header className="app-surface border-b border-slate-600 sticky top-0 z-50 compact-header pt-[7px] pb-[7px]">
       <div className="header-content">
         <div className="logo">
           {/* iOS-optimized MindTrace Brain Network Logo */}
