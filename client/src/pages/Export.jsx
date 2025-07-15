@@ -414,13 +414,13 @@ export default function Export() {
           <Label className="text-responsive-sm font-medium app-text-primary">Export Format</Label>
           <RadioGroup value={exportFormat} onValueChange={setExportFormat}>
             <div className="flex items-center space-x-2 touch-target">
-              <RadioGroupItem value="csv" id="csv" />
+              <RadioGroupItem value="csv" id="csv" className="border-[#00D4AA] text-[#00D4AA] data-[state=checked]:bg-[#00D4AA] data-[state=checked]:border-[#00D4AA]" />
               <Label htmlFor="csv" className="text-responsive-sm app-text-primary cursor-pointer">
                 CSV (Spreadsheet compatible)
               </Label>
             </div>
             <div className="flex items-center space-x-2 touch-target">
-              <RadioGroupItem value="pdf" id="pdf" />
+              <RadioGroupItem value="pdf" id="pdf" className="border-[#00D4AA] text-[#00D4AA] data-[state=checked]:bg-[#00D4AA] data-[state=checked]:border-[#00D4AA]" />
               <Label htmlFor="pdf" className="text-responsive-sm app-text-primary cursor-pointer">
                 PDF (Professional report)
               </Label>

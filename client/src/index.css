@@ -403,6 +403,17 @@ body {
   box-sizing: border-box !important;
   margin: 0 !important;
   padding: 0 !important;
+  /* Enhanced mobile interaction */
+  touch-action: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -khtml-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  cursor: pointer !important;
+  /* Ensure slider responds to touch */
+  pointer-events: auto !important;
 }
 
 .intensity-slider::-webkit-slider-track {
@@ -417,17 +428,24 @@ body {
 .intensity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: hsl(174, 77%, 56%);
   cursor: pointer;
   border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   /* Perfect center alignment */
-  margin-top: -6px;
+  margin-top: -8px;
   position: relative;
   z-index: 2;
+  /* Enhanced mobile interaction */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Ensure thumb responds to touch */
+  pointer-events: auto;
 }
 
 .intensity-slider::-moz-range-track {
@@ -440,8 +458,8 @@ body {
 }
 
 .intensity-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: hsl(174, 77%, 56%);
   cursor: pointer;
@@ -451,6 +469,42 @@ body {
   -moz-appearance: none;
   appearance: none;
   margin-top: 0;
+  /* Enhanced mobile interaction */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  /* Ensure thumb responds to touch */
+  pointer-events: auto;
+}
+
+/* Intensity slider container and labels */
+.intensity-slider-container {
+  padding: 1rem;
+  margin: 0.5rem 0;
+  /* Ensure container allows interaction */
+  touch-action: auto;
+  pointer-events: auto;
+}
+
+.intensity-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+.intensity-labels .current-value {
+  font-weight: 600;
+  color: #10b981;
+  background-color: #1f2937;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #10b981;
+  /* Enhanced mobile interaction */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
 }
 
 /* Ensure slider container has proper alignment */
@@ -534,21 +588,26 @@ body {
 }
 
 .content-area {
-  /* Optimized content area with minimal padding */
-  padding-top: var(--content-padding-y);
-  padding-bottom: var(--content-padding-bottom);
+  /* Optimized content area with minimal padding - ADJUSTED for fixed header/nav */
+  padding-top: calc(var(--header-height) + var(--content-padding-y));
+  padding-bottom: calc(var(--bottom-nav-height) + var(--content-padding-bottom));
   overflow-y: auto;
   /* Enable momentum scrolling on iOS */
   -webkit-overflow-scrolling: touch;
 }
 
 .compact-header {
-  /* iOS-optimized header with proper safe area handling */
-  padding-top: max(env(safe-area-inset-top), 44px);
+  /* iOS-optimized header with proper safe area handling - FIXED POSITIONING */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding-top: max(env(safe-area-inset-top), 16px);
   padding-left: max(env(safe-area-inset-left), 16px);
   padding-right: max(env(safe-area-inset-right), 16px);
-  padding-bottom: 24px; /* Increased from 16px for better logo spacing */
-  min-height: 68px; /* Increased from 60px to accommodate larger padding */
+  padding-bottom: 16px; /* Reduced excessive padding */
+  min-height: 60px; /* Reduced from 68px to minimize dead space */
   background: linear-gradient(135deg, 
     rgba(55, 65, 81, 0.95) 0%, 
     rgba(45, 55, 72, 0.95) 100%);
@@ -557,7 +616,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
   /* Ensure header content stays within bounds */
   box-sizing: border-box;
   overflow: hidden;
@@ -575,7 +633,12 @@ body {
 }
 
 .compact-nav {
-  /* Modern bottom navigation with optimized spacing */
+  /* Modern bottom navigation with optimized spacing - FIXED POSITIONING */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   padding: 8px max(env(safe-area-inset-left), 16px) 
            max(env(safe-area-inset-bottom), 8px) 
            max(env(safe-area-inset-right), 16px);
@@ -677,16 +740,16 @@ body {
 
 /* Device-Specific Responsive Breakpoints */
 
-/* Progressive enhancement for safe area support */
+/* Progressive enhancement for safe area support - REDUCED PADDING */
 @supports (padding-top: env(safe-area-inset-top)) {
   .compact-header {
-    padding-top: calc(env(safe-area-inset-top) + 16px);
+    padding-top: calc(env(safe-area-inset-top) + 8px); /* Reduced from 16px */
   }
 }
 
 @supports not (padding-top: env(safe-area-inset-top)) {
   .compact-header {
-    padding-top: 44px; /* Status bar height + padding */
+    padding-top: 32px; /* Reduced from 44px - Status bar height + minimal padding */
   }
 }
 
