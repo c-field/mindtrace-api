@@ -129,7 +129,7 @@ return (
     {/* Scrollable main content */}
     <main className="flex-1 overflow-y-auto space-y-6 px-4 pb-24">
       {/* Track your thoughts */}
-      <div className="from-primary/10 to-primary/20 rounded-2xl pt-2 pb-4 px-6 border border-primary/20 bg-[#1f2937]">
+      <div className="from-primary/10 to-primary/20 mt-8 rounded-2xl pt-2 pb-4 px-6 border border-primary/20 bg-[#1f2937]">
         <h2 className="text-2xl font-semibold mb-2 app-text-primary">Track your thoughts</h2>
         <p className="app-text-secondary text-sm">
           Record and categorize negative thought patterns to gain insight into your mental health journey.
