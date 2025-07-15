@@ -105,10 +105,12 @@ export default function Analyze() {
       return acc;
     }, {});
 
-    return Object.entries(dailyCount).map(([date, count]) => ({
+    return Object.entries(dailyCount)
+    .map(([date, count]) => ({
       date,
       count,
-    }));
+    }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [thoughts]);
 
   const categoryData = useMemo(() => {
@@ -194,7 +196,9 @@ export default function Analyze() {
         <div className="app-surface rounded-2xl p-6">
           <h3 className="text-lg font-semibold mb-4 app-text-primary">Daily Thoughts</h3>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={dailyData}>
+            <BarChart 
+              data={dailyData}
+              margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
               <XAxis dataKey="date" className="text-xs" />
               <YAxis className="text-xs" />
               <Bar dataKey="count" fill="#4FD1C7" radius={[4, 4, 0, 0]} />
