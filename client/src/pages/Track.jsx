@@ -125,19 +125,17 @@ export default function Track() {
   const distortionDefinition = selectedDistortion ? getCognitiveDistortionById(selectedDistortion) : null;
 
 return (
-  <div className="h-screen flex flex-col">
-    {/* Header */}
-    <div className="shrink-0">
-      <div className="from-primary/10 to-primary/20 rounded-2xl pt-0 pb-4 px-4 border border-primary/20 bg-[#1f2937]">
-        <h2 className="text-2xl font-semibold mb-2 app-text-primary">Track Your Thoughts</h2>
+  <div className="flex flex-col min-h-screen">
+    {/* Scrollable main content */}
+    <main className="flex-1 overflow-y-auto space-y-6 px-4 pb-24">
+      {/* Track your thoughts */}
+      <div className="from-primary/10 to-primary/20 rounded-2xl pt-2 pb-4 px-6 border border-primary/20 bg-[#1f2937]">
+        <h2 className="text-2xl font-semibold mb-2 app-text-primary">Track your thoughts</h2>
         <p className="app-text-secondary text-sm">
           Record and categorize negative thought patterns to gain insight into your mental health journey.
         </p>
       </div>
-    </div>
 
-    {/* Scrollable main content */}
-    <main className="flex-1 overflow-y-auto space-y-6 px-4 pb-24">
         {/* Thought Form */}
         <div className="app-surface rounded-2xl p-6 space-y-6">
           <Form {...form}>
