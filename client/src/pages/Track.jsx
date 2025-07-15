@@ -137,7 +137,7 @@ return (
     </div>
 
     {/* Scrollable main content */}
-  </main className="flex-1 overflow-y-auto space-y-6 px-4 pb-24">
+    <main className="flex-1 overflow-y-auto space-y-6 px-4 pb-24">
         {/* Thought Form */}
         <div className="app-surface rounded-2xl p-6 space-y-6">
           <Form {...form}>
@@ -276,7 +276,7 @@ return (
             </form>
           </Form>
         </div>
-      </div>
-    </div>
-  );
+    </main>
+  </div>
+);
 }
