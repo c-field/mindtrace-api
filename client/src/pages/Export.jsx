@@ -322,25 +322,25 @@ export default function Export() {
 
   return (
     <div className="space-y-4 mobile-space-y-4 container-bounded">
-      {/* Header */}
-      <div className="from-primary/10 to-primary/20 card-compact border border-primary/20 bg-[#1f2937] container-bounded">
-        <h2 className="text-responsive-xl font-semibold card-compact-header app-text-primary">Export Your Data</h2>
-        <p className="app-text-secondary text-responsive-sm card-compact-content">
+      {/* Export your data */}
+      <div className="app-surface rounded-2xl p-6">
+        <h2 className="text-2xl font-semibold mb-2 app-text-primary">Export your data</h2>
+        <p className="app-text-secondary text-sm">
           Download your thought records for personal review or to share with healthcare professionals.
         </p>
       </div>
       {/* Export Configuration */}
-      <div className="app-surface card-compact form-compact container-bounded">
-        <h3 className="text-responsive-lg font-semibold card-compact-header app-text-primary">Export Settings</h3>
+      <div className="app-surface rounded-2xl p-6 space-y-2">
+        <h3 className="text-responsive-lg font-semibold app-text-primary">Export Settings</h3>
         
         {/* Date Range */}
-        <div className="space-y-4 container-bounded">
+        <div className="space-y-2">
           {/* Quick Time Period Suggestions */}
-          <div className="space-y-2 container-bounded">
+          <div className="space-y-2">
             <Label className="text-responsive-sm font-medium app-text-primary">
               Quick Time Periods
             </Label>
-            <div className="flex flex-wrap gap-2 container-bounded">
+            <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -410,16 +410,19 @@ export default function Export() {
         </div>
 
         {/* Export Format */}
-        <div className="space-y-3">
+        <div className="space-y-0">
           <Label className="text-responsive-sm font-medium app-text-primary">Export Format</Label>
-          <RadioGroup value={exportFormat} onValueChange={setExportFormat}>
-            <div className="flex items-center space-x-2 touch-target">
+          <RadioGroup 
+            className="space-y-0"
+            value={exportFormat} 
+            onValueChange={setExportFormat}>
+            <div className="flex items-center space-x-2">
               <RadioGroupItem value="csv" id="csv" className="border-[#00D4AA] text-[#00D4AA] data-[state=checked]:bg-[#00D4AA] data-[state=checked]:border-[#00D4AA]" />
               <Label htmlFor="csv" className="text-responsive-sm app-text-primary cursor-pointer">
                 CSV (Spreadsheet compatible)
               </Label>
             </div>
-            <div className="flex items-center space-x-2 touch-target">
+            <div className="flex items-center space-x-2">
               <RadioGroupItem value="pdf" id="pdf" className="border-[#00D4AA] text-[#00D4AA] data-[state=checked]:bg-[#00D4AA] data-[state=checked]:border-[#00D4AA]" />
               <Label htmlFor="pdf" className="text-responsive-sm app-text-primary cursor-pointer">
                 PDF (Professional report)

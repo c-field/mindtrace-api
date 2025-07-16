@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,25 +30,13 @@ function App() {
   const [activeTab, setActiveTab] = useState("track");
   const isMobile = useIsMobile();
   const [location] = useLocation();
+  const scrollRef = useRef(null);
 
   // Scroll to top on page navigation - more robust implementation
   useEffect(() => {
-    // Force immediate scroll to top
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    
-    // Additional scroll reset after a brief delay for stubborn cases
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    }, 10);
-    
-    // Final scroll reset after component render
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 100);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, 0);
+    }
   }, [location]);
 
   // Initialize comprehensive navigation scroll reset
@@ -142,7 +130,22 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <div className="viewport-height bg-background app-container">
         <Header />
-        <main className="flex-1 overflow-y-auto content-area">
+          <main
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto content-area"
+              style={{
+                paddingTop:
+                  typeof window !== "undefined" &&
+                  /iPhone|iPad|iPod/.test(navigator.userAgent)
+                    ? `calc(48px + env(safe-area-inset-top))`
+                    : "48px",
+                paddingBottom:
+                  typeof window !== "undefined" &&
+                  /iPhone|iPad|iPod/.test(navigator.userAgent)
+                    ? `calc(64px + env(safe-area-inset-bottom))`
+                    : "64px",
+              }}
+            >
           <div className="safe-container space-y-4 mobile-space-y-4">
             <Switch>
               <Route path="/" component={Track} />
