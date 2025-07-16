@@ -6,6 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        display: ['"Playfair Display"', 'serif'],
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'sans-serif'],
       },
       borderRadius: {

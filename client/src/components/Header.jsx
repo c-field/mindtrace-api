@@ -29,7 +29,7 @@ export default function Header() {
               <line x1="16" y1="11" x2="12" y2="13" stroke="currentColor" strokeWidth="0.5" opacity="0.7"/>
             </svg>
           </div>
-          <h1 className="logo-text font-bold app-text-primary">MindTrace</h1>
+          <h1 className="font-display text-xl app-text-primary">MindTrace</h1>
         </div>
       </div>
     </header>
