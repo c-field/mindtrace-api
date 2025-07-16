@@ -134,11 +134,7 @@ function App() {
               ref={scrollRef}
               className="flex-1 overflow-y-auto content-area"
               style={{
-                paddingTop:
-                  typeof window !== "undefined" &&
-                  /iPhone|iPad|iPod/.test(navigator.userAgent)
-                    ? `calc(48px + env(safe-area-inset-top))`
-                    : "48px",
+                paddingTop: "16px",
                 paddingBottom:
                   typeof window !== "undefined" &&
                   /iPhone|iPad|iPod/.test(navigator.userAgent)
