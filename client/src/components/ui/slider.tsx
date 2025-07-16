@@ -23,7 +23,7 @@ export const Slider = ({
   return (
     <ReactSlider
       className={cn("relative w-full h-2 bg-secondary rounded-full", className)}
-      thumbClassName="h-5 w-5 rounded-full bg-primary border-2 border-white cursor-pointer touch-pan-x focus:outline-none focus:ring-2 focus:ring-ring"
+      thumbClassName="h-6 w-6 rounded-full bg-primary border-2 border-white cursor-pointer touch-pan-x focus:outline-none focus:ring-2 focus:ring-ring -mt-2"
       trackClassName="bg-primary h-full rounded-full"
       min={min}
       max={max}
@@ -31,6 +31,7 @@ export const Slider = ({
       value={value[0]}
       onChange={(val: number) => onValueChange([val])}
       renderThumb={(props, state) => <div {...props} />}
+      style={{ touchAction: "pan-x", WebkitTapHighlightColor: "transparent" }}
     />
   );
 };
