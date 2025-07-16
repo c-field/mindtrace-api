@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
+// No import needed if using public folder
 
 const authSchema = z.object({
   username: z.string().email("Please enter a valid email address"),
@@ -111,7 +112,12 @@ export default function Auth({ onAuthSuccess }) {
   };
 
   return (
-    <div className="viewport-height flex items-center justify-center bg-background safe-container py-6">
+      <div className="viewport-height flex flex-col items-center justify-center bg-background safe-container py-6">
+        <img 
+          src="/mindtrace-logo.png" 
+          alt="MindTrace logo" 
+          className="h-12 mb-6"
+        />
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
