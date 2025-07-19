@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global Styles to Prevent Full Page Scrolling */
+html, body {
+  overflow: hidden; /* Crucial: Prevents the entire page from scrolling */
+  height: 100%;      /* Ensures html and body take up the full viewport height */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-overflow-scrolling: touch; /* Improves smooth, native-like scrolling on iOS */
+  overscroll-behavior-y: contain; /* Prevents scroll events from bubbling up (iOS bounce) */
+}
+
+#root {
+  height: 100%; /* Ensures the root React element also takes full height */
+  display: flex; /* Helps in setting up vertical layout for the app */
+  flex-direction: column; /* Stacks children (header, main, footer) vertically */
+}
+
 /* iOS Safe Area Support with Responsive Design */
 :root {
   /* Safe area insets for iOS devices */
@@ -217,20 +234,6 @@ div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-year-fie
   text-shadow: none !important;
 }
 
-/* Smooth scrolling for mobile */
-html {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  /* Prevent horizontal overflow */
-  overflow-x: hidden;
-}
-
-/* Full viewport height handling for mobile browsers */
-body {
-  /* Use dynamic viewport units for better mobile support */
-  min-height: 100dvh;
-  overflow-x: hidden;
-}
 
 :root {
   --background: hsl(0, 0%, 100%);
@@ -358,6 +361,11 @@ body {
   .app-container {
     background: hsl(222, 84%, 4.9%);
     color: hsl(210, 40%, 98%);
+    display: flex; /* Ensure it uses flexbox for layout */
+    flex-direction: column; /* Stack header, main, footer vertically */
+    height: 100%; /* Make it take full height of its parent (#root) */
+    overflow: hidden; /* Prevent this container from scrolling */
+    position: relative; /* Useful if you need z-index or other positioning later */
   }
 
   .app-surface {
@@ -563,15 +571,6 @@ body {
   padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
 }
 
-/* CSS Grid Layout for Better Space Distribution */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  overflow: hidden;
-}
-
-
 .viewport-height {
   height: 100vh;
   height: 100dvh; /* Dynamic viewport height for mobile */
@@ -587,10 +586,20 @@ body {
 }
 
 .content-area {
-  flex: 1;
-  padding-top: var(--header-height);  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+  flex: 1; /* Allows this element to fill available vertical space */
+  overflow-y: auto; /* Keeps vertical scrolling enabled for the content */
+  -webkit-overflow-scrolling: touch; /* Essential for smooth iOS scrolling */
+
+  /* Correctly position content between header and bottom navigation */
+  padding-top: calc(var(--header-height) + var(--content-padding-y));
+  padding-bottom: calc(var(--bottom-nav-height) + var(--content-padding-y) + var(--safe-area-inset-bottom)); /* Add safe area to bottom padding */
+
+  /* Maintain your existing horizontal padding */
+  padding-left: var(--content-padding-x);
+  padding-right: var(--content-padding-x);
+
+  /* If you have any negative margins that were pulling content *out* of view, remove them here. */
+  /* For example, if you had: margin-bottom: calc(var(--bottom-nav-height) * -1); */
 }
 
 .compact-header {
@@ -1163,10 +1172,4 @@ body {
 
 .home-indicator-safe {
   margin-bottom: var(--safe-area-inset-bottom);
-}
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  background-color: var(--background); /* or #ffffff if you're not using theming */
-  box-sizing: border-box;
 }
