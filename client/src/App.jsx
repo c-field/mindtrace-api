@@ -133,14 +133,6 @@ function App() {
           <main
               ref={scrollRef}
               className="flex-1 overflow-y-auto content-area"
-              style={{
-                paddingTop: "16px",
-                paddingBottom:
-                  typeof window !== "undefined" &&
-                  /iPhone|iPad|iPod/.test(navigator.userAgent)
-                    ? `calc(64px + env(safe-area-inset-bottom))`
-                    : "64px",
-              }}
             >
           <div className="safe-container space-y-4 mobile-space-y-4">
             <Switch>

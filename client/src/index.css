@@ -567,11 +567,10 @@ body {
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background-color: var(--background); /* Dynamically adapts to light/dark */
-  box-sizing: border-box;
+  height: 100dvh;
+  overflow: hidden;
 }
+
 
 .viewport-height {
   height: 100vh;
@@ -588,12 +587,10 @@ body {
 }
 
 .content-area {
-  /* Optimized content area with minimal padding - ADJUSTED for fixed header/nav */
-  padding-top: calc(var(--header-height) + var(--content-padding-y));
-  padding-bottom: calc(var(--bottom-nav-height) + var(--content-padding-bottom));
-  overflow-y: auto;
-  /* Enable momentum scrolling on iOS */
+  flex: 1;
+  padding-top: var(--header-height);  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
 }
 
 .compact-header {
@@ -1099,10 +1096,6 @@ body {
   height: 100dvh;
 }
 
-.content-area {
-  min-height: calc(100dvh - var(--header-height) - var(--bottom-nav-height));
-  padding-bottom: var(--bottom-nav-height);
-}
 
 /* Responsive breakpoints for tablets and larger screens */
 @media screen and (min-width: 768px) {
@@ -1147,12 +1140,6 @@ body {
     --content-padding-y: 12px;
   }
 }
-
-/* iPad specific adjustments */
-@media screen and (min-width: 768px) and (min-height: 1024px) {
-  .content-area {
-    padding: var(--content-padding-y) 0;
-  }
   
   /* Center content on larger screens */
   .card-grid {
@@ -1162,7 +1149,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
   }
-}
 
 /* Touch target sizing for better accessibility */
 .touch-target {
