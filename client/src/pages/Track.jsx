@@ -180,15 +180,22 @@ return (
                           <SelectValue placeholder="Select a cognitive distortion..." />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="app-surface border-slate-600 max-h-60 overflow-auto">
+                        <SelectContent
+                          className="app-surface border-slate-600 max-h-60 overflow-auto"
+                          style={{
+                            WebkitTapHighlightColor: "transparent",
+                            WebkitUserSelect: "none",
+                            touchAction: "manipulation",
+                          }}
+                        >
                         {cognitiveDistortions.map((distortion) => (
-                          <SelectItem
-                            key={distortion.id}
-                            value={distortion.id}
-                            className="hover:app-surface-light cursor-pointer"
-                          >
-                            {distortion.name}
-                          </SelectItem>
+                      <SelectItem
+                        key={distortion.id}
+                        value={distortion.id}
+                        className="cursor-pointer hover:bg-app-surface-light aria-selected:bg-transparent"
+                      >
+                        {distortion.name}
+                      </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
