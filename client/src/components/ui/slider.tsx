@@ -47,7 +47,9 @@ export const Slider = ({
         step={step}
         value={value}
         onChange={onValueChange}
-        renderThumb={(props) => <div {...props} />}
+        renderThumb={(props) => (
+          <div {...props} role="slider" tabIndex={0} aria-valuemin={min} aria-valuemax={max} aria-valuenow={value} />
+        )}
       />
     </div>
   );
