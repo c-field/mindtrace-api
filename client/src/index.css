@@ -398,151 +398,108 @@ div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-year-fie
 }
 
 /* Custom slider styling - iOS-compatible with precise alignment */
+/* Consolidated Styles for Slider Container and Labels (Fixes Alignment) */
+
+/* Main container for the slider and its labels */
+.intensity-slider-container {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.5rem; /* Keeps existing spacing from surrounding elements */
+  padding: 0; /* Ensures the container itself doesn't add extra padding to its children's layout */
+  /* Ensure touch actions are enabled for the container */
+  touch-action: auto; /* ALLOWS TOUCH INTERACTION ON THE CONTAINER */
+  pointer-events: auto;
+}
+
+/* Styles for the main slider element from slider.tsx (the track and its container) */
 .intensity-slider {
   /* Ensure consistent width and height across platforms */
   width: 100% !important;
   height: 8px !important;
-  border-radius: 4px !important;
-  background: hsl(215, 25%, 27%) !important;
+  border-radius: 9999px !important; /* Should match rounded-full */
+  background: hsl(215, 25%, 27%) !important; /* Secondary track color (darker grey) */
   outline: none !important;
-  -webkit-appearance: none !important;
-  appearance: none !important;
+  -webkit-appearance: none !important; /* Remove default Webkit styles */
+  appearance: none !important; /* Remove default styles */
   /* Cross-platform consistency */
   box-sizing: border-box !important;
   margin: 0 !important;
   padding: 0 !important;
-  /* Enhanced mobile interaction */
-  touch-action: none !important;
-  -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  -khtml-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  user-select: none !important;
+  /* Enhanced mobile interaction: ALLOW touch-action: pan-x from ReactSlider */
+  /* REMOVED: touch-action: none !important; */
+  -webkit-touch-callout: none !important; /* Disable iOS callout */
+  /* REMOVED: -webkit-user-select: none !important; */
+  /* REMOVED: -khtml-user-select: none !important; */
+  /* REMOVED: -moz-user-select: none !important; */
+  /* REMOVED: -ms-user-select: none !important; */
+  /* REMOVED: user-select: none !important; */
   cursor: pointer !important;
   /* Ensure slider responds to touch */
   pointer-events: auto !important;
 }
 
-.intensity-slider::-webkit-slider-track {
-  width: 100%;
-  height: 8px;
-  background: hsl(215, 25%, 27%);
-  border-radius: 4px;
-  border: none;
-  outline: none;
+/* Styles for the filled part of the track (left of thumb) */
+.intensity-slider .react-slider_track {
+  top: 0;
+  bottom: 0;
+  border-radius: 9999px; /* Matches rounded-full from Tailwind */
+  background: hsl(174, 77%, 56%); /* Primary color for the filled track */
 }
 
+/* Styles for the actual draggable thumb */
+.intensity-slider .react-slider_thumb {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) translateX(-2px); /* Vertically centers and nudges 2px left */
+  z-index: 10;
+  height: 24px;
+  width: 24px;
+  border-radius: 9999px; /* Matches rounded-full from Tailwind */
+  background-color: hsl(174, 77%, 56%); /* Primary color for thumb */
+  border: 2px solid #ffffff; /* White border for thumb */
+  cursor: pointer;
+  touch-action: pan-x; /* ALLOWS HORIZONTAL DRAGGING ON THE THUMB */
+  outline: none;
+  box-sizing: border-box; /* Crucial for consistent sizing */
+}
+
+/* Hide native thumb for consistent styling */
 .intensity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: hsl(174, 77%, 56%);
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  /* Perfect center alignment */
-  margin-top: -8px;
-  position: relative;
-  z-index: 2;
-  /* Enhanced mobile interaction */
-  touch-action: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  /* Ensure thumb responds to touch */
-  pointer-events: auto;
-}
-
-.intensity-slider::-moz-range-track {
-  width: 100%;
-  height: 8px;
-  background: hsl(215, 25%, 27%);
-  border-radius: 4px;
-  border: none;
-  outline: none;
 }
 
 .intensity-slider::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: hsl(174, 77%, 56%);
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  /* Remove default Mozilla styles */
-  -moz-appearance: none;
-  appearance: none;
-  margin-top: 0;
-  /* Enhanced mobile interaction */
-  touch-action: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  /* Ensure thumb responds to touch */
-  pointer-events: auto;
+  border: none; /* Remove Firefox default border */
 }
 
-/* Intensity slider container and labels */
-.intensity-slider-container {
-  padding: 1rem;
-  margin: 0.5rem 0;
-  /* Ensure container allows interaction */
-  touch-action: auto;
-  pointer-events: auto;
-}
-
+/* Styles for the numerical labels (1 - Mild, current value, 10 - Severe) */
 .intensity-labels {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 0.5rem;
+  justify-content: space-between; /* Spreads out the labels evenly */
+  align-items: center; /* Vertically centers text */
+  width: 100%;
+  margin-top: 8px; /* Space between slider track and labels */
+  box-sizing: border-box;
+  /* CRUCIAL FOR ALIGNMENT: Padding equal to half the thumb width (24px / 2 = 12px) */
+  /* This aligns the "1" and "10" labels with the center of the thumb when it's at the start/end */
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 0.875rem; /* Equivalent to text-sm */
+  color: hsl(215, 20%, 65%); /* App text secondary for labels */
 }
 
 .intensity-labels .current-value {
-  font-weight: 600;
-  color: #10b981;
-  background-color: #1f2937;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid #10b981;
-  /* Enhanced mobile interaction */
-  touch-action: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
+  color: hsl(210, 40%, 98%); /* App text primary for the current value */
+  font-weight: 500; /* Equivalent to font-medium */
 }
 
-/* Ensure slider container has proper alignment */
-.intensity-slider-container {
-  position: relative;
-  width: 100%;
-  padding: 10px 0;
-}
-
-/* Number alignment fixes for cross-platform compatibility */
-.intensity-labels {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  width: 100%;
-  margin-top: 8px;
-}
-
-.intensity-labels span {
-  font-size: 12px;
-  font-weight: 500;
-  color: hsl(215, 20%, 65%);
-  text-align: center;
-  position: relative;
-}
-
-.intensity-labels .current-value {
-  color: hsl(174, 77%, 56%);
-  font-weight: 600;
+/* Responsive adjustments for labels */
+@media (max-width: 640px) { /* Adjust for small screens, if needed */
+  .intensity-labels {
+    font-size: 0.75rem; /* text-xs on small screens */
+  }
 }
 
 /* Tab active styling */
@@ -1172,4 +1129,46 @@ div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-year-fie
 
 .home-indicator-safe {
   margin-bottom: var(--safe-area-inset-bottom);
+}
+
+/* --- Slider z-index fix to resolve iOS drag conflicts --- */
+.intensity-slider-container {
+  position: relative;
+  z-index: 10;
+}
+
+.intensity-slider {
+  z-index: 11;
+  position: relative;
+}
+
+.intensity-slider .react-slider_thumb {
+  z-index: 20 !important;
+}
+
+/* --- Slider z-index fix to resolve iOS drag conflicts --- */
+.intensity-slider-container {
+  position: relative;
+  z-index: 10;
+}
+
+.intensity-slider {
+  z-index: 11;
+  position: relative;
+}
+
+.intensity-slider .react-slider_thumb {
+  z-index: 20 !important;
+}
+
+/* --- Fix iOS dragging issue: re-enable touch and selection for slider --- */
+.intensity-slider {
+  -webkit-user-select: auto !important;
+  user-select: auto !important;
+}
+
+.react-slider_thumb {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
 }

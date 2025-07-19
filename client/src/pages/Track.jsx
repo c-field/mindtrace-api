@@ -240,13 +240,13 @@ return (
                       Intensity Level
                     </FormLabel>
                     <FormControl>
-                      <div className="intensity-slider-container">
+                      <div className="intensity-slider-container mb-6"> {/* Add space below */}
                         <Slider
                           min={1}
                           max={10}
                           step={1}
-                          value={[field.value]}
-                          onValueChange={(values) => field.onChange(values[0])}
+                          value={field.value}
+                          onValueChange={field.onChange}
                           className="intensity-slider"
                         />
                         <div className="intensity-labels">
