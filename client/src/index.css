@@ -543,20 +543,16 @@ div.date-input-wrapper input[type="date"]#dateTo::-webkit-datetime-edit-year-fie
 }
 
 .content-area {
-  flex: 1; /* Allows this element to fill available vertical space */
-  overflow-y: auto; /* Keeps vertical scrolling enabled for the content */
-  -webkit-overflow-scrolling: touch; /* Essential for smooth iOS scrolling */
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: auto !important; /* <-- override iOS momentum scrolling */
+  overscroll-behavior: none !important;
+  touch-action: manipulation !important;
 
-  /* Correctly position content between header and bottom navigation */
   padding-top: calc(var(--header-height) + var(--content-padding-y));
-  padding-bottom: calc(var(--bottom-nav-height) + var(--content-padding-y) + var(--safe-area-inset-bottom)); /* Add safe area to bottom padding */
-
-  /* Maintain your existing horizontal padding */
+  padding-bottom: calc(var(--bottom-nav-height) + var(--content-padding-y) + var(--safe-area-inset-bottom));
   padding-left: var(--content-padding-x);
   padding-right: var(--content-padding-x);
-
-  /* If you have any negative margins that were pulling content *out* of view, remove them here. */
-  /* For example, if you had: margin-bottom: calc(var(--bottom-nav-height) * -1); */
 }
 
 .compact-header {
