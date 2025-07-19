@@ -44,10 +44,10 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: "automatic",
     scrollEnabled: true,
-    backgroundColor: "#374151"
+    backgroundColor: "#1e293b"
   },
   android: {
-    backgroundColor: "#374151",
+    backgroundColor: "#1e293b",
     allowMixedContent: true,
     captureInput: true,
     // Add network security config
