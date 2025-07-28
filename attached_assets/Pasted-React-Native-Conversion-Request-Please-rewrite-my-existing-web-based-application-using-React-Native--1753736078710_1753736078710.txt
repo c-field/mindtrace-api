@@ -1,0 +1,80 @@
+React Native Conversion Request
+Please rewrite my existing web-based application using React Native to create a truly native mobile experience. Here's what I need:
+Current App Structure
+My app currently uses:
+
+Frontend: React 18 with JavaScript/JSX and TypeScript/TSX components
+Backend: Node.js + Express with TypeScript
+Database: PostgreSQL with Drizzle ORM
+Mobile: Capacitor wrapper for iOS/Android deployment
+Key Components: Track.jsx, Analyze.jsx, Profile.jsx, slider.tsx, carousel.tsx
+
+Conversion Requirements
+1. Frontend Migration to React Native
+
+Convert all React web components (Track.jsx, Analyze.jsx, Profile.jsx) to React Native equivalents
+Transform TypeScript UI components (slider.tsx, carousel.tsx) to use React Native components
+Replace web-specific elements with React Native components:
+
+<div> → <View>
+<span>, <p> → <Text>
+CSS styling → StyleSheet or styled-components
+Web forms → React Native form components
+
+
+Implement React Native navigation (React Navigation) instead of web routing
+Ensure responsive design works across different mobile screen sizes
+
+2. Backend Considerations
+
+Keep the existing Node.js + Express TypeScript backend as-is (it should work with React Native)
+Ensure API endpoints are properly configured for mobile app consumption
+Update CORS settings if needed for React Native client
+Maintain PostgreSQL + Drizzle ORM setup
+
+3. Mobile-Specific Features
+
+Implement proper React Native navigation structure
+Add native mobile UI patterns and components
+Ensure proper handling of:
+
+Touch gestures and interactions
+Mobile-specific layouts
+Status bar and safe area handling
+Keyboard avoiding views where needed
+
+
+
+4. Development Setup
+
+Set up React Native CLI or Expo development environment
+Configure proper build settings for iOS and Android
+Set up debugging and development tools
+Ensure hot reloading works properly
+
+5. Dependencies and Libraries
+
+Identify React Native equivalents for any web-specific libraries
+Set up necessary React Native packages for:
+
+HTTP requests (axios or fetch)
+State management (if using Redux/Context)
+Navigation (React Navigation)
+UI components and styling
+Any specific functionality from the original app
+
+
+
+Key Deliverables
+
+Complete React Native project structure
+All components converted from React web to React Native
+Proper navigation implementation
+Mobile-optimized styling and layouts
+Working connection to existing backend API
+Build configuration for iOS and Android
+Updated package.json with React Native dependencies
+
+Preserve Functionality
+Please ensure all existing features and functionality from the original app are maintained in the React Native version. The app should work seamlessly on both iOS and Android devices while providing a native mobile experience.
+Note: Focus on creating a true native mobile app experience rather than a web wrapper, taking advantage of React Native's native components and mobile-specific capabilities.
