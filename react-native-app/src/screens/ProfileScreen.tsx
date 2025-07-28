@@ -2,135 +2,109 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format } from 'date-fns';
+import { thoughtService, Thought } from '../services/thoughtService';
 import { authService } from '../services/authService';
-import { thoughtService } from '../services/thoughtService';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-interface UserProfile {
-  email: string;
-  name?: string;
+interface ProfileScreenProps {
+  navigation?: any;
 }
 
-const ProfileScreen: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  
-  const queryClient = useQueryClient();
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Load user profile
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async (): Promise<UserProfile> => {
-      const userEmail = await authService.getCurrentUser();
-      return {
-        email: userEmail || '',
-        name: '' // We'll get this from backend if available
-      };
-    },
-  });
+  useEffect(() => {
+    loadUserInfo();
+  }, []);
 
-  // Load user thoughts for statistics
-  const { data: thoughts = [] } = useQuery({
+  const loadUserInfo = async () => {
+    const email = await authService.getCurrentUser();
+    if (email) {
+      setUserEmail(email);
+    }
+  };
+
+  const { data: thoughts = [], isLoading } = useQuery({
     queryKey: ['thoughts'],
     queryFn: () => thoughtService.getThoughts(),
   });
 
-  useEffect(() => {
-    if (profile) {
-      setEmail(profile.email);
-      setName(profile.name || '');
-    }
-  }, [profile]);
-
-  const updateProfileMutation = useMutation({
-    mutationFn: async (newName: string) => {
-      // This would need to be implemented in the backend
-      // For now, we'll just store locally
-      await AsyncStorage.setItem('userName', newName);
-      return { name: newName };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      setIsEditing(false);
-      Alert.alert('Success', 'Profile updated successfully!');
-    },
-    onError: () => {
-      Alert.alert('Error', 'Failed to update profile');
-    },
-  });
-
-  const handleUpdateProfile = () => {
-    if (!name.trim()) {
-      Alert.alert('Error', 'Please enter your name');
-      return;
-    }
-    
-    updateProfileMutation.mutate(name.trim());
-  };
-
   const handleLogout = async () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      'Confirm Logout',
+      'Are you sure you want to sign out?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Logout',
+          text: 'Sign Out',
           style: 'destructive',
           onPress: async () => {
-            await authService.logout();
-            // Navigation will be handled by the App component
+            setIsLoggingOut(true);
+            try {
+              await authService.logout();
+              // Navigation will be handled by App.tsx auth state change
+            } catch (error) {
+              Alert.alert('Error', 'Failed to logout');
+            } finally {
+              setIsLoggingOut(false);
+            }
           },
         },
       ]
     );
   };
 
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete Account',
-      'This action cannot be undone. All your data will be permanently deleted.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('Feature Coming Soon', 'Account deletion will be available in a future update');
-          },
-        },
-      ]
-    );
+  const calculateStats = (thoughts: Thought[]) => {
+    if (thoughts.length === 0) {
+      return {
+        totalThoughts: 0,
+        averageIntensity: 0,
+        mostCommonDistortion: 'None',
+        joinDate: new Date(),
+      };
+    }
+
+    const totalIntensity = thoughts.reduce((sum, thought) => sum + (thought.intensity || 0), 0);
+    const averageIntensity = totalIntensity / thoughts.length;
+
+    // Find most common distortion
+    const distortionCounts: { [key: string]: number } = {};
+    thoughts.forEach(thought => {
+      if (thought.cognitive_distortion) {
+        distortionCounts[thought.cognitive_distortion] = (distortionCounts[thought.cognitive_distortion] || 0) + 1;
+      }
+    });
+
+    const mostCommonDistortion = Object.entries(distortionCounts)
+      .sort(([,a], [,b]) => b - a)[0]?.[0] || 'None';
+
+    // Estimate join date from earliest thought
+    const earliestThought = thoughts
+      .filter(t => t.created_at)
+      .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime())[0];
+    
+    const joinDate = earliestThought ? new Date(earliestThought.created_at!) : new Date();
+
+    return {
+      totalThoughts: thoughts.length,
+      averageIntensity: Math.round(averageIntensity * 10) / 10,
+      mostCommonDistortion,
+      joinDate,
+    };
   };
 
-  // Calculate statistics
-  const totalThoughts = thoughts.length;
-  const avgIntensity = totalThoughts > 0 
-    ? (thoughts.reduce((sum, t) => sum + t.intensity, 0) / totalThoughts).toFixed(1)
-    : '0';
-
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#00D4AA" />
-          <Text style={styles.loadingText}>Loading profile...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const stats = calculateStats(thoughts);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -139,120 +113,126 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profile</Text>
           <Text style={styles.headerSubtitle}>
-            Manage your account settings and view your mental health journey statistics.
+            Your mental health journey overview and account settings.
           </Text>
         </View>
 
-        {/* Profile Information */}
-        <View style={styles.profileContainer}>
-          <View style={styles.profileHeader}>
-            <View style={styles.avatarContainer}>
-              <Icon name="person-circle" size={80} color="#00D4AA" />
+        {/* User Info */}
+        <View style={styles.userInfoContainer}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar}>
+              <Icon name="person" size={40} color="#00D4AA" />
             </View>
           </View>
-
-          <View style={styles.profileFields}>
-            {/* Name Field */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.fieldLabel}>Name</Text>
-              {isEditing ? (
-                <TextInput
-                  style={styles.input}
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="Enter your name"
-                  placeholderTextColor="#6B7280"
-                />
-              ) : (
-                <View style={styles.fieldValueContainer}>
-                  <Text style={styles.fieldValue}>
-                    {name || 'Not set'}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.editButton}
-                    onPress={() => setIsEditing(true)}
-                  >
-                    <Icon name="pencil" size={16} color="#00D4AA" />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-
-            {/* Email Field */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.fieldLabel}>Email</Text>
-              <Text style={styles.fieldValue}>{email}</Text>
-              <Text style={styles.fieldNote}>(Cannot be changed)</Text>
-            </View>
-
-            {/* Action Buttons for Editing */}
-            {isEditing && (
-              <View style={styles.actionButtons}>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => {
-                    setIsEditing(false);
-                    setName(profile?.name || '');
-                  }}
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.saveButton, updateProfileMutation.isPending && styles.saveButtonDisabled]}
-                  onPress={handleUpdateProfile}
-                  disabled={updateProfileMutation.isPending}
-                >
-                  {updateProfileMutation.isPending ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.saveButtonText}>Save</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </View>
-
-        {/* Statistics */}
-        <View style={styles.statsContainer}>
-          <Text style={styles.statsTitle}>Your Journey</Text>
           
-          <View style={styles.statsGrid}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{totalThoughts}</Text>
-              <Text style={styles.statLabel}>Total Thoughts</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{avgIntensity}</Text>
-              <Text style={styles.statLabel}>Avg Intensity</Text>
-            </View>
+          <View style={styles.userDetails}>
+            <Text style={styles.userName}>Welcome Back!</Text>
+            <Text style={styles.userEmail}>{userEmail || 'user@mindtrace.app'}</Text>
+            <Text style={styles.joinDate}>
+              Member since {format(stats.joinDate, 'MMM yyyy')}
+            </Text>
           </View>
         </View>
 
-        {/* App Information */}
-        <View style={styles.appInfoContainer}>
-          <Text style={styles.appInfoTitle}>About MindTrace</Text>
-          <Text style={styles.appInfoText}>
-            MindTrace helps you track your mental health journey through cognitive behavioral therapy 
-            techniques. Record your thoughts, identify patterns, and gain insights into your emotional well-being.
-          </Text>
-          <Text style={styles.appVersion}>Version 1.0.0</Text>
+        {/* Stats Overview */}
+        <View style={styles.statsContainer}>
+          <Text style={styles.sectionTitle}>Your Journey Stats</Text>
+          
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#00D4AA" />
+              <Text style={styles.loadingText}>Loading your stats...</Text>
+            </View>
+          ) : (
+            <View style={styles.statsGrid}>
+              <View style={styles.statCard}>
+                <Icon name="create-outline" size={24} color="#00D4AA" />
+                <Text style={styles.statNumber}>{stats.totalThoughts}</Text>
+                <Text style={styles.statLabel}>Thoughts Tracked</Text>
+              </View>
+              
+              <View style={styles.statCard}>
+                <Icon name="trending-up-outline" size={24} color="#00D4AA" />
+                <Text style={styles.statNumber}>{stats.averageIntensity}</Text>
+                <Text style={styles.statLabel}>Avg Intensity</Text>
+              </View>
+              
+              <View style={styles.statCard}>
+                <Icon name="analytics-outline" size={24} color="#00D4AA" />
+                <Text style={styles.statNumber}>
+                  {stats.mostCommonDistortion === 'None' ? 'N/A' : stats.mostCommonDistortion.split('-')[0]}
+                </Text>
+                <Text style={styles.statLabel}>Top Pattern</Text>
+              </View>
+            </View>
+          )}
         </View>
 
-        {/* Account Actions */}
+        {/* Quick Actions */}
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Icon name="log-out-outline" size={20} color="#FFFFFF" />
-            <Text style={styles.logoutButtonText}>Logout</Text>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          
+          <TouchableOpacity style={styles.actionButton}>
+            <Icon name="download-outline" size={20} color="#F3F4F6" />
+            <Text style={styles.actionButtonText}>Export All Data</Text>
+            <Icon name="chevron-forward" size={16} color="#9CA3AF" />
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
-            <Icon name="trash-outline" size={20} color="#EF4444" />
-            <Text style={styles.deleteButtonText}>Delete Account</Text>
+          
+          <TouchableOpacity style={styles.actionButton}>
+            <Icon name="analytics-outline" size={20} color="#F3F4F6" />
+            <Text style={styles.actionButtonText}>View Analysis</Text>
+            <Icon name="chevron-forward" size={16} color="#9CA3AF" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.actionButton}>
+            <Icon name="settings-outline" size={20} color="#F3F4F6" />
+            <Text style={styles.actionButtonText}>App Settings</Text>
+            <Icon name="chevron-forward" size={16} color="#9CA3AF" />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.bottomPadding} />
+        {/* Support Section */}
+        <View style={styles.supportContainer}>
+          <Text style={styles.sectionTitle}>Need Help?</Text>
+          
+          <TouchableOpacity style={styles.supportButton}>
+            <Icon name="help-circle-outline" size={20} color="#F3F4F6" />
+            <Text style={styles.supportButtonText}>Help & FAQ</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.supportButton}>
+            <Icon name="mail-outline" size={20} color="#F3F4F6" />
+            <Text style={styles.supportButtonText}>Contact Support</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.supportButton}>
+            <Icon name="shield-checkmark-outline" size={20} color="#F3F4F6" />
+            <Text style={styles.supportButtonText}>Privacy Policy</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.logoutButton, isLoggingOut && styles.logoutButtonDisabled]}
+            onPress={handleLogout}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <>
+                <Icon name="log-out-outline" size={20} color="#FFFFFF" />
+                <Text style={styles.logoutButtonText}>Sign Out</Text>
+              </>
+            )}
+          </TouchableOpacity>
+          
+          <View style={styles.appInfo}>
+            <Text style={styles.appVersion}>MindTrace v1.0.0</Text>
+            <Text style={styles.appCopyright}>© 2025 Mental Health Support</Text>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -265,16 +245,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#9CA3AF',
-    marginTop: 16,
   },
   header: {
     backgroundColor: '#374151',
@@ -296,113 +266,75 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
     lineHeight: 20,
   },
-  profileContainer: {
+  userInfoContainer: {
     backgroundColor: '#374151',
-    marginHorizontal: 16,
-    marginTop: 16,
+    margin: 16,
+    padding: 20,
     borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#4B5563',
-  },
-  profileHeader: {
-    alignItems: 'center',
-    paddingTop: 24,
-    paddingBottom: 16,
   },
   avatarContainer: {
-    marginBottom: 8,
+    marginRight: 16,
   },
-  profileFields: {
-    padding: 24,
-    paddingTop: 0,
-  },
-  fieldContainer: {
-    marginBottom: 20,
-  },
-  fieldLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#F3F4F6',
-    marginBottom: 8,
-  },
-  fieldValueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  fieldValue: {
-    fontSize: 16,
-    color: '#D1D5DB',
-    flex: 1,
-  },
-  fieldNote: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  editButton: {
-    padding: 8,
-  },
-  input: {
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: '#1F2937',
-    borderColor: '#4B5563',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#F3F4F6',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: '#4B5563',
-    borderRadius: 12,
-    paddingVertical: 12,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#00D4AA',
   },
-  cancelButtonText: {
-    color: '#F3F4F6',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  saveButton: {
+  userDetails: {
     flex: 1,
-    backgroundColor: '#00D4AA',
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: 'center',
   },
-  saveButtonDisabled: {
-    backgroundColor: '#6B7280',
-  },
-  saveButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+  userName: {
+    fontSize: 20,
     fontWeight: '600',
+    color: '#F3F4F6',
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 16,
+    color: '#9CA3AF',
+    marginBottom: 4,
+  },
+  joinDate: {
+    fontSize: 14,
+    color: '#6B7280',
   },
   statsContainer: {
     backgroundColor: '#374151',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 24,
+    margin: 16,
+    padding: 20,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#4B5563',
   },
-  statsTitle: {
+  sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#F3F4F6',
     marginBottom: 16,
   },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    marginLeft: 12,
+  },
   statsGrid: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
   },
   statCard: {
     flex: 1,
@@ -410,81 +342,95 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4B5563',
   },
   statNumber: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#00D4AA',
+    marginTop: 8,
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#9CA3AF',
-    fontWeight: '500',
+    textAlign: 'center',
   },
-  appInfoContainer: {
+  actionsContainer: {
     backgroundColor: '#374151',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 24,
+    margin: 16,
+    padding: 20,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#4B5563',
   },
-  appInfoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#4B5563',
+  },
+  actionButtonText: {
+    flex: 1,
+    fontSize: 16,
     color: '#F3F4F6',
-    marginBottom: 12,
+    marginLeft: 12,
   },
-  appInfoText: {
-    fontSize: 14,
-    color: '#D1D5DB',
-    lineHeight: 20,
-    marginBottom: 16,
+  supportContainer: {
+    backgroundColor: '#374151',
+    margin: 16,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#4B5563',
   },
-  appVersion: {
-    fontSize: 12,
-    color: '#6B7280',
-    fontWeight: '500',
+  supportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
   },
-  actionsContainer: {
-    marginHorizontal: 16,
-    marginTop: 16,
-    gap: 12,
+  supportButtonText: {
+    fontSize: 16,
+    color: '#F3F4F6',
+    marginLeft: 12,
+  },
+  footer: {
+    margin: 16,
+    marginBottom: 32,
   },
   logoutButton: {
-    backgroundColor: '#00D4AA',
+    backgroundColor: '#EF4444',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
+    marginBottom: 24,
+  },
+  logoutButtonDisabled: {
+    backgroundColor: '#6B7280',
   },
   logoutButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
-  deleteButton: {
-    backgroundColor: 'transparent',
-    borderColor: '#EF4444',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 16,
+  appInfo: {
     alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
   },
-  deleteButtonText: {
-    color: '#EF4444',
-    fontSize: 16,
-    fontWeight: '500',
+  appVersion: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    marginBottom: 4,
   },
-  bottomPadding: {
-    height: 32,
+  appCopyright: {
+    fontSize: 12,
+    color: '#6B7280',
   },
 });
 

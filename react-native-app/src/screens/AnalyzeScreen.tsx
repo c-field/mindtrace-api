@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
-import { format, subDays, isAfter, isBefore, parseISO } from 'date-fns';
+import { LineChart, BarChart } from 'react-native-chart-kit';
+import { format, subDays, parseISO } from 'date-fns';
 import { thoughtService, Thought } from '../services/thoughtService';
 import { getCognitiveDistortionById } from '../data/cognitiveDistortions';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -48,9 +48,9 @@ const AnalyzeScreen: React.FC = () => {
       const now = new Date();
       
       if (timeFilter === '7days') {
-        return isAfter(thoughtDate, subDays(now, 7));
+        return thoughtDate > subDays(now, 7);
       } else if (timeFilter === '30days') {
-        return isAfter(thoughtDate, subDays(now, 30));
+        return thoughtDate > subDays(now, 30);
       }
       
       return true;
@@ -58,11 +58,6 @@ const AnalyzeScreen: React.FC = () => {
       return false;
     }
   });
-
-  // Prepare chart data
-  const intensityData = prepareIntensityData(filteredThoughts);
-  const distortionData = prepareDistortionData(filteredThoughts);
-  const dailyData = prepareDailyData(filteredThoughts, timeFilter);
 
   const chartConfig = {
     backgroundGradientFrom: '#374151',
@@ -119,6 +114,10 @@ const AnalyzeScreen: React.FC = () => {
     );
   }
 
+  // Prepare chart data
+  const distortionData = prepareDistortionData(filteredThoughts);
+  const intensityData = prepareIntensityData(filteredThoughts);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -174,23 +173,6 @@ const AnalyzeScreen: React.FC = () => {
             <Text style={styles.statsLabel}>Avg Intensity</Text>
           </View>
         </View>
-
-        {/* Intensity Over Time Chart */}
-        {dailyData.datasets[0].data.length > 0 && (
-          <View style={styles.chartContainer}>
-            <Text style={styles.chartTitle}>Intensity Over Time</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <LineChart
-                data={dailyData}
-                width={Math.max(chartWidth, dailyData.labels.length * 50)}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-              />
-            </ScrollView>
-          </View>
-        )}
 
         {/* Cognitive Distortions Chart */}
         {distortionData.length > 0 && (
@@ -264,42 +246,6 @@ function prepareDistortionData(thoughts: Thought[]) {
   return Object.entries(distortionCount)
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
-}
-
-function prepareDailyData(thoughts: Thought[], timeFilter: string) {
-  const days = timeFilter === '7days' ? 7 : timeFilter === '30days' ? 30 : 90;
-  const dailyData: { [key: string]: { total: number, count: number } } = {};
-  
-  // Initialize with empty days
-  for (let i = 0; i < days; i++) {
-    const date = format(subDays(new Date(), i), 'MM/dd');
-    dailyData[date] = { total: 0, count: 0 };
-  }
-  
-  // Fill with actual data
-  thoughts.forEach(thought => {
-    if (thought.created_at && thought.intensity) {
-      try {
-        const date = format(parseISO(thought.created_at), 'MM/dd');
-        if (dailyData[date]) {
-          dailyData[date].total += thought.intensity;
-          dailyData[date].count += 1;
-        }
-      } catch (error) {
-        console.error('Date parsing error:', error);
-      }
-    }
-  });
-  
-  const labels = Object.keys(dailyData).reverse();
-  const data = labels.map(date => 
-    dailyData[date].count > 0 ? dailyData[date].total / dailyData[date].count : 0
-  );
-  
-  return {
-    labels,
-    datasets: [{ data }]
-  };
 }
 
 const styles = StyleSheet.create({

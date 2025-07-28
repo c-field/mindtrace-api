@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import DatePicker from '@react-native-community/datetimepicker';
 import { format, subDays } from 'date-fns';
@@ -195,16 +196,6 @@ const ExportScreen: React.FC = () => {
               </>
             )}
           </TouchableOpacity>
-
-          {/* Export Info */}
-          <View style={styles.infoContainer}>
-            <Icon name="information-circle-outline" size={20} color="#00D4AA" />
-            <Text style={styles.infoText}>
-              Your data will be exported securely and can be saved to your device or shared 
-              with healthcare providers. All exports include thought content, cognitive distortions, 
-              intensity levels, and timestamps.
-            </Text>
-          </View>
         </View>
       </ScrollView>
 
@@ -213,7 +204,7 @@ const ExportScreen: React.FC = () => {
         <DatePicker
           value={dateFrom}
           mode="date"
-          display="default"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={(event, selectedDate) => {
             setShowFromPicker(false);
             if (selectedDate) setDateFrom(selectedDate);
@@ -225,7 +216,7 @@ const ExportScreen: React.FC = () => {
         <DatePicker
           value={dateTo}
           mode="date"
-          display="default"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={(event, selectedDate) => {
             setShowToPicker(false);
             if (selectedDate) setDateTo(selectedDate);
@@ -389,21 +380,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#0F2E29',
-    padding: 16,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#00D4AA',
-    gap: 12,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#D1D5DB',
-    lineHeight: 20,
   },
 });
 
