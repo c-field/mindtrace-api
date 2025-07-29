@@ -1,46 +1,29 @@
-import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  name: text("name"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const thoughts = pgTable("thoughts", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
-  intensity: integer("intensity").notNull(),
-  cognitiveDistortion: text("cognitive_distortion").notNull(),
-  trigger: text("trigger"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const insertThoughtSchema = createInsertSchema(thoughts).omit({
-  id: true,
-  createdAt: true,
+// Simplified schema - no local user storage, Supabase handles auth
+export const insertThoughtSchema = z.object({
+  content: z.string().min(1, "Content is required").max(2000, "Content too long"),
+  intensity: z.number().min(1).max(10),
+  cognitiveDistortion: z.string().min(1, "Cognitive distortion is required"),
+  trigger: z.string().optional(),
 });
 
 export type InsertThought = z.infer<typeof insertThoughtSchema>;
-export type Thought = typeof thoughts.$inferSelect;
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-}).extend({
-  username: z.string().email("Username must be a valid email address"),
-});
+// User types for Supabase integration
+export interface User {
+  id: string; // Supabase UUID
+  username: string;
+  name?: string;
+  created_at: string;
+}
 
-export const updateUserSchema = createInsertSchema(users).pick({
-  name: true,
-}).extend({
-  name: z.string().optional(),
-});
-
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type UpdateUser = z.infer<typeof updateUserSchema>;
-export type User = typeof users.$inferSelect;
+export interface Thought {
+  id: string;
+  user_id: string;
+  content: string;
+  intensity: number;
+  cognitive_distortion: string;
+  trigger?: string;
+  created_at: string;
+}

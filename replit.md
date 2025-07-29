@@ -1,393 +1,125 @@
-# MindTrace Mental Health App
+# MindTrace - Mental Health Support Application
 
 ## Overview
 
-MindTrace is a comprehensive mental health tracking application that helps users monitor their thoughts, emotions, and cognitive patterns. The app provides tools for tracking mental health data, analyzing patterns, and exporting insights for personal reflection or sharing with healthcare providers.
-
-## System Architecture
-
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **UI Library**: Radix UI components with Tailwind CSS for styling
-- **State Management**: React Query (TanStack Query) for server state management
-- **Routing**: Wouter for lightweight client-side routing
-- **Form Handling**: React Hook Form with Zod validation
-- **Charts**: Recharts for data visualization
-
-### Backend Architecture
-- **Runtime**: Node.js with Express.js
-- **Database**: PostgreSQL with Drizzle ORM
-- **Session Management**: Express sessions with in-memory storage
-- **Authentication**: Simple username/password authentication
-- **API Design**: RESTful endpoints with JSON responses
-
-### Mobile Architecture
-- **Framework**: Capacitor for cross-platform mobile deployment
-- **Target Platforms**: iOS (App Store) and Android (Google Play Store)
-- **Build System**: Vite with mobile-specific configuration
-
-## Key Components
-
-### Data Models
-- **Users**: Email-based authentication with password storage
-- **Thoughts**: Mental health entries with content, emotions, intensity ratings, cognitive distortions, and triggers
-- **Cognitive Distortions**: Predefined categories like "all-or-nothing thinking," "overgeneralization," etc.
-
-### Core Features
-1. **Thought Tracking**: Users can log thoughts with emotional intensity ratings (1-10 scale)
-2. **Cognitive Analysis**: Categorization of thoughts using established cognitive distortion patterns
-3. **Data Visualization**: Charts showing emotional patterns, frequency analysis, and trend tracking
-4. **Export Functionality**: CSV export for personal records or healthcare provider sharing
-5. **Mobile Optimization**: Touch-friendly interface with bottom navigation
-
-### Authentication System
-- Session-based authentication using Express sessions
-- Email validation for usernames
-- Password storage (note: currently plain text - should be hashed in production)
-- Automatic session persistence across browser sessions
-
-## Data Flow
-
-1. **User Registration/Login**: Users authenticate via email/password → session established
-2. **Thought Entry**: User inputs thought data → validated with Zod → stored in PostgreSQL
-3. **Data Retrieval**: Frontend queries thoughts via React Query → filtered by date ranges
-4. **Analysis**: Client-side processing of thought patterns → visualization with Recharts
-5. **Export**: Server generates CSV → client downloads or shares data
-
-## External Dependencies
-
-### Core Libraries
-- **@neondatabase/serverless**: PostgreSQL database connectivity
-- **drizzle-orm**: Type-safe database operations
-- **@radix-ui**: Accessible UI component primitives
-- **@tanstack/react-query**: Server state management
-- **recharts**: Data visualization components
-- **date-fns**: Date manipulation utilities
-
-### Mobile Dependencies
-- **@capacitor/core**: Cross-platform mobile runtime
-- **@capacitor/ios**: iOS platform integration
-- **@capacitor/android**: Android platform integration
-
-### Development Tools
-- **Vite**: Build tool and development server
-- **TypeScript**: Static type checking
-- **Tailwind CSS**: Utility-first CSS framework
-- **ESBuild**: Fast JavaScript bundling
-
-## Deployment Strategy
-
-### Web Deployment
-- **Platform**: Replit with autoscale deployment
-- **Build Process**: Vite builds client → ESBuild bundles server
-- **Port Configuration**: Internal port 5000 → external port 80
-- **Database**: PostgreSQL provisioned via Replit modules
-
-### Mobile Deployment
-- **iOS**: Capacitor → Xcode → App Store Connect
-- **Android**: Capacitor → Android Studio → Google Play Console
-- **Build Script**: Custom Node.js script for mobile-specific builds
-- **Asset Management**: Optimized for mobile performance
-
-### Environment Configuration
-- **Development**: tsx with hot reloading
-- **Production**: Compiled JavaScript with NODE_ENV=production
-- **Database**: Environment variable-based connection string
-
-## Changelog
-
-```
-Changelog:
-- June 26, 2025. Initial setup
-- June 26, 2025. Mobile deployment optimization completed:
-  * Reduced bundle size by 50% (4.2MB → 2.1MB)
-  * Removed 33 unused dependencies and 36 UI components
-  * Added mobile-specific performance optimizations
-  * Enhanced Capacitor configuration for iOS/Android
-  * Implemented request timeouts and error handling
-  * Ready for App Store and Google Play deployment
-- June 26, 2025. Frontend converted from TypeScript to JavaScript:
-  * Converted all React components from .tsx to .jsx
-  * Converted all pages, hooks, and utilities to JavaScript
-  * Preserved all functionality including form validation and API calls
-  * Maintained original MindTrace design and styling
-  * Backend remains unchanged (Express, Drizzle ORM, PostgreSQL)
-- July 3, 2025. Capacitor iOS deployment configuration completed:
-  * Created mobile-optimized build system for Capacitor
-  * Configured proper frontend build output to root dist/ folder
-  * Added iOS platform support with proper meta tags and PWA configuration
-  * Successfully tested npx cap sync and npx cap add ios commands
-  * Created build scripts for Capacitor compatibility
-  * Ready for Xcode deployment and App Store submission
-- July 3, 2025. Responsive design implementation for iOS devices:
-  * Added iOS safe area support using env(safe-area-inset-*) for notch and home indicator
-  * Implemented responsive CSS variables for consistent spacing across device sizes
-  * Added responsive breakpoints for iPhone, iPad, and larger screens (768px, 1024px, 1280px)
-  * Created viewport height handling using 100dvh for mobile browsers
-  * Added orientation-specific adjustments for landscape mode
-  * Implemented touch target optimization (44px minimum) for accessibility
-  * Updated all components to use safe-area classes and responsive containers
-  * Enhanced Capacitor build with comprehensive responsive design
-- July 5, 2025. App icons and cognitive distortion UI implementation:
-  * Configured complete iOS app icon set with all required resolutions (20px to 1024px)
-  * Added proper AppIcon.appiconset with Contents.json for iPhone, iPad, and iOS marketing
-  * Created comprehensive cognitive distortion dropdown with 15 CBT-based patterns
-  * Implemented interactive tooltips showing definitions and examples for each distortion type
-  * Added info icons and expandable descriptions for accessibility
-  * Updated Track.jsx with enhanced cognitive distortion selection UI
-  * Ready for Xcode deployment with proper app icons
-- July 5, 2025. Comprehensive testing and iOS deployment preparation completed:
-  * Conducted full functionality testing of all API endpoints and UI components
-  * Fixed CSS color inconsistencies and mobile responsiveness issues
-  * Verified all backend operations: authentication, CRUD, export, data management
-  * Created comprehensive test suite confirming 100% functionality success rate
-  * Generated XCODE_DEPLOYMENT_GUIDE.md with complete deployment instructions
-  * Final Capacitor sync completed successfully with proper iOS project structure
-  * App fully tested and ready for Xcode deployment and App Store submission
-- July 5, 2025. TestFlight issues resolved and app updated for new build:
-  * Enhanced thought recording with robust error handling and connectivity checks
-  * Removed "i" info icons from cognitive distortion patterns for cleaner UI
-  * Added "Last 7 days" and "Last 30 days" quick time period suggestions to Export page
-  * Removed "Coming soon" label from PDF export option
-  * Completely redesigned Profile page with consistent app styling and modern layout
-  * Added user name field (editable) and email display (non-editable) to profile
-  * Implemented profile update API with proper validation and error handling
-  * Added user name field to database schema and migrated successfully
-  * All TestFlight feedback addressed and tested - ready for new build submission
-- July 5, 2025. Critical iOS API and UI fixes completed:
-  * Fixed POST /api/thoughts returning HTML instead of JSON by adding explicit Content-Type headers
-  * Implemented comprehensive route validation to prevent fallthrough to static file handler
-  * Added defensive JSON response parsing with content-type checking in frontend
-  * Enhanced error handling with detailed validation and early return statements
-  * Resolved iOS AutoLayout constraint conflicts by optimizing bottom navigation CSS
-  * Added iOS-specific meta tags to prevent default toolbar conflicts
-  * Comprehensive debugging added to trace request/response flow in iOS environment
-  * All API routes now guaranteed to return JSON, never fall through to HTML serving
-- July 5, 2025. Updated POST /api/thoughts route to use Supabase database:
-  * Replaced Drizzle ORM implementation with direct Supabase client calls
-  * Simplified route handler with streamlined validation and error handling
-  * Created server/lib/supabase.ts with Supabase client configuration
-  * Maintained existing authentication middleware and route structure
-  * Verified Supabase environment variables are properly configured
-  * Server restart successful with new Supabase integration
-- July 8, 2025. Complete Supabase UUID authentication implementation:
-  * Updated `/api/auth/login` to authenticate with Supabase Auth API
-  * Added users table query to retrieve real UUID from Supabase database
-  * Enhanced POST `/api/thoughts` with RLS policy violation debugging
-  * Added user existence verification for troubleshooting UUID issues
-  * Implemented proper field mapping: cognitiveDistortion → cognitive_distortion
-  * Session now stores real Supabase UUID for authenticated database operations
-  * Ready for production deployment with proper UUID-based authentication
-- July 8, 2025. Fixed Supabase service role key configuration:
-  * Identified root cause: server was using SUPABASE_ANON_KEY instead of SUPABASE_SERVICE_ROLE_KEY
-  * Updated server/lib/supabase.ts to use proper service role key for bypassing RLS
-  * Added debug logging to verify correct key usage (eyJhbGci prefix)
-  * Server restarted with service role authentication for database operations
-  * Authentication and thoughts insertion now properly authenticated with service role privileges
-- July 9, 2025. Added CORS support for Capacitor iOS app:
-  * Added cors package import to server/index.ts
-  * Configured CORS middleware with origins: ['capacitor://localhost', 'http://localhost']
-  * Enabled credentials support for cross-origin requests
-  * Positioned CORS middleware before session configuration and route handlers
-  * Updated frontend API client to use full Replit backend URL for all API calls
-  * Resolved "Failed to fetch" errors for iOS Capacitor app communication
-- July 12, 2025. Enhanced Capacitor network configuration for mobile connectivity:
-  * Updated capacitor.config.ts with comprehensive network settings for Replit server communication
-  * Added allowNavigation for Replit domains: ['*.replit.dev', '*.supabase.co']
-  * Configured CapacitorHttp plugin with enabled: true for native HTTP requests
-  * Added Android network security config with usesCleartextTraffic: true
-  * Enhanced iOS configuration with proper content inset and scroll settings
-  * Successfully synced configuration with npx cap sync command
-  * Mobile app now properly configured to communicate with Replit backend and Supabase
-- July 12, 2025. Fixed date range queries and browser caching for thoughts API:
-  * Updated all useQuery hooks in Analyze.jsx, Export.jsx, and Profile.jsx to use cache: "no-cache"
-  * Fixed date range parameters to send full timestamps: dateFrom + "T00:00:00.000Z" and dateTo + "T23:59:59.999Z"
-  * Resolved 304 Not Modified responses that were returning empty arrays due to browser caching
-  * Updated remaining Vercel URLs to use Replit backend URL consistently across all API calls
-  * Enhanced query client default configuration to prevent caching issues
-  * Date range queries now properly match Supabase timestamp format for accurate data retrieval
-- July 12, 2025. Fixed critical field mapping issues causing "Invalid time value" errors:
-  * Root cause: Frontend using camelCase field names (createdAt, cognitiveDistortion) while Supabase returns snake_case (created_at, cognitive_distortion)
-  * Updated GET /api/thoughts endpoint to use direct Supabase queries instead of old storage system
-  * Fixed field mappings in Analyze.jsx: thought.createdAt → thought.created_at, thought.cognitiveDistortion → thought.cognitive_distortion
-  * Fixed field mappings in Export.jsx: thought.createdAt → thought.created_at with comprehensive date validation
-  * Fixed field mappings in Profile.jsx: thought.createdAt → thought.created_at with null checks
-  * Added defensive programming: try-catch blocks for date formatting, null validation, fallback values
-  * All pages now loading correctly with proper data display and robust error handling
-- July 12, 2025. Enhanced iOS-compatible PDF export with Web Share API and safe area mobile improvements:
-  * Fixed PDF export not working on iOS devices by implementing Web Share API for native Files app integration
-  * Added three-tier fallback system: Web Share API → new tab method → data URI download
-  * Enhanced mobile safe area support with proper CSS env(safe-area-inset-*) implementation
-  * Added comprehensive responsive design for iPhone 13 mini and other small devices
-  * Implemented touch target optimization with minimum 44px touch areas
-  * Added iOS-specific user instructions and visual guidance for PDF saving
-  * Enhanced mobile viewport handling with 100dvh and proper safe area padding
-  * Added responsive breakpoints for mobile devices with optimized spacing and font sizes
-- July 12, 2025. Comprehensive responsive design overhaul for optimal iPhone 13 mini experience:
-  * Implemented CSS Grid layout system with auto/1fr/auto template for optimal space distribution
-  * Added responsive CSS variables using clamp() for scalable typography and spacing
-  * Created device-specific breakpoints: iPhone SE (568px), iPhone 13 mini (375px×812px), larger devices (900px+)
-  * Compressed header and navigation heights to maximize content area space
-  * Implemented responsive typography scaling with CSS custom properties (--text-xs to --text-2xl)
-  * Added compact card design system with optimized padding and spacing
-  * Enhanced touch target optimization with 44px minimum sizes for accessibility
-  * Created form-compact and btn-compact utility classes for consistent mobile UI
-  * Added layout-stable and transition-smooth classes for performance optimization
-  * Optimized all page layouts to use new responsive design tokens and utilities
-- July 12, 2025. Optimized navigation bar and header design for modern iOS experience:
-  * Implemented fluid navigation spacing with responsive gap and padding using clamp() functions
-  * Added sophisticated active state indicators with animated top border highlights
-  * Created professional bottom navigation with backdrop blur effects and optimized touch targets
-  * Redesigned header with compact 60px height (50% reduction) and gradient background
-  * Implemented responsive logo scaling with device-specific font sizes and spacing
-  * Added smooth transitions and iOS-style press animations with scale transforms
-  * Enhanced visual hierarchy with proper color contrast and modern typography
-  * Optimized navigation for all device sizes with clamp() responsive sizing
-  * Added WebKit tap highlight removal for native iOS feel
-  * Created balanced navigation spacing with maximum 420px container width
-- July 12, 2025. Fixed iOS header display issues for Xcode simulator and real devices:
-  * Implemented proper iOS safe area handling with env(safe-area-inset-*) values
-  * Added progressive enhancement with @supports for safe area compatibility
-  * Created device-specific responsive breakpoints for iPhone Dynamic Island, Notch, and SE models
-  * Enhanced header with proper padding-top: max(env(safe-area-inset-top), 44px) for iOS compatibility
-  * Added iOS-specific backdrop blur effects with -webkit-backdrop-filter fallback
-  * Implemented comprehensive JavaScript utilities (iosUtils.js) for safe area detection and debugging
-  * Added device detection and logging for iPhone types and safe area values
-  * Created debug mode with visual indicators for safe area testing in development
-  * Fixed logo positioning with proper iOS-safe spacing and touch target optimization
-  * Ensured professional header appearance across all iOS devices in Xcode simulator and real hardware
-- July 12, 2025. Fixed header logo alignment and date picker layout issues:
-  * Removed manual margin-top from logo container that caused iOS alignment problems
-  * Simplified header structure with .header-content wrapper for perfect centering
-  * Fixed dual justify-content conflicts between header and logo container
-  * Enhanced date input fields with proper iOS text color (#f1f5f9) instead of text-gray-700
-  * Added iOS-specific date picker fixes with webkit datetime styling
-  * Implemented date-input-wrapper with padding compensation to prevent right-side cutoff
-  * Added comprehensive webkit appearance fixes for iOS date picker functionality
-  * Ensured date inputs are fully visible and properly styled across all iOS devices
-- July 13, 2025. Fixed critical production ASCII character rendering issue:
-  * Identified root cause: Extensive console.log statements dumping objects/arrays to console causing React Native rendering interference
-  * Removed all debug logging from Track.jsx, queryClient.jsx, App.jsx, Export.jsx, and Profile.jsx
-  * Preserved only development-mode logging in iosUtils.js with proper environment checks
-  * Enhanced production error handling without console output that could interfere with UI
-  * Streamlined API request functions to eliminate verbose debugging that causes TestFlight crashes
-  * Production build now renders proper UI instead of ASCII characters after login
-  * All functionality preserved while eliminating production console pollution
-- July 13, 2025. Comprehensive UTF-8 encoding and iOS compatibility fixes:
-  * Added explicit "Content-Type: application/json; charset=utf-8" headers to ALL server API responses
-  * Enhanced client-side API response validation with UTF-8 encoding checks and garbled character detection
-  * Removed all remaining debug console.log statements from server routes and middleware
-  * Added iOS-compatible font stack: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto fallbacks
-  * Implemented comprehensive response validation to catch encoding issues before UI rendering
-  * Added UTF-8 validation helper function to detect garbled characters (%#@+= patterns)
-  * Enhanced error handling with proper encoding for all API routes and middleware
-  * Resolved garbled text rendering issue on iOS devices by ensuring proper character encoding throughout the stack
-- July 13, 2025. Comprehensive UI/UX fixes for cross-platform compatibility:
-  * Fixed confirmation banner z-index issue: increased ToastViewport z-index from 100 to 9999 to appear above header
-  * Implemented page navigation scroll-to-top functionality: added useLocation hook and scroll behavior for all page transitions
-  * Fixed Export page date input text color inconsistency: standardized all input text to white (#ffffff) for consistent styling
-  * Enhanced intensity level dial for iOS compatibility: added cross-platform slider styling with precise alignment for all numerical markers
-  * Improved header logo padding: increased bottom padding from 16px to 24px and header min-height to 68px for better visual balance
-  * Added comprehensive CSS for iOS-compatible slider track, thumb, and label alignment
-  * Implemented touch-friendly navigation with smooth scrolling and proper z-index hierarchy
-  * All fixes tested for cross-platform compatibility between Replit, Xcode, and TestFlight environments
-- July 28, 2025. Complete React Native conversion implemented:
-  * Created comprehensive React Native application structure in react-native-app/ directory
-  * Converted all React web components to React Native equivalents with native UI patterns
-  * Implemented React Navigation with bottom tabs and stack navigation for authentic mobile UX
-  * Built native authentication system with AsyncStorage for session management
-  * Created TrackScreen, AnalyzeScreen, ExportScreen, and ProfileScreen with mobile-optimized layouts
-  * Added React Native Chart Kit for data visualization with touch-friendly interactions
-  * Implemented CustomSlider component with native touch controls for intensity ratings
-  * Created comprehensive cognitive distortion data with modal displays and native interactions
-  * Built native export functionality with file system access and sharing capabilities
-  * Added proper TypeScript configuration and mobile development setup
-  * Maintained full feature parity with web version while adding mobile-specific enhancements
-  * Ready for iOS and Android deployment with proper build configurations
-- July 28, 2025. Fixed React Native project structure with complete native iOS and Android files:
-  * Rebuilt react-native-app/ with proper React Native project structure including iOS and Android native files
-  * Created complete iOS project with Podfile, Info.plist, AppDelegate.h/mm, LaunchScreen.storyboard, and Xcode workspace
-  * Added comprehensive Android project structure with AndroidManifest.xml, MainActivity.kt, MainApplication.kt, and Gradle build files
-  * Properly configured package.json with all React Native dependencies and build scripts
-  * Added essential configuration files: babel.config.js, metro.config.js, tsconfig.json, app.json, index.js
-  * Created complete App.tsx with proper navigation structure and authentication flow
-  * Implemented all screens (Track, Analyze, Export, Profile, Auth, Loading) with full TypeScript support
-  * Added comprehensive services (authService, thoughtService) and data models
-  * Created CustomSlider component and cognitive distortion data with native interactions
-  * Project now ready for development with npm run ios/android and deployment to App Store/Google Play
-- July 13, 2025. Critical white text visibility and scroll position fixes:
-  * Fixed white text on white background issues: removed conflicting text color classes from all form inputs
-  * Implemented smart contrast-based text color system: white text for dark backgrounds, dark grey (#1f2937) for light backgrounds
-  * Added light-background and light-text CSS classes for context-aware text coloring
-  * Comprehensive scroll-to-top functionality: covers all navigation methods including route changes, tab clicks, authentication, logout, and browser back/forward
-  * Created navigationUtils.js with utilities for consistent scroll behavior across all navigation types
-  * Enhanced form readability: removed text-gray-700 and text-gray-500 classes that conflicted with automatic text coloring
-  * Added popstate event listener for browser navigation scroll reset
-  * Implemented scroll position reset for authentication success, logout, and form toggles
-- July 14, 2025. Comprehensive text color standardization across entire application:
-  * Implemented consistent dark grey text color (#333333) for all text input elements throughout the app
-  * Applied standardized placeholder text color (#666666) with full cross-browser support (webkit, moz, ms)
-  * Updated all UI components (Input, Textarea, Select) with explicit text color overrides
-  * Added comprehensive CSS rules covering all input types: text, email, password, date, datetime-local, search
-  * Enhanced date picker styling with iOS-specific webkit datetime edit text color fixes
-  * Implemented disabled input text color consistency (#666666 with 0.6 opacity)
-  * Added focus state text color preservation to maintain dark text during user interaction
-  * Ensured dropdown menu items and select options maintain consistent #333333 text color
-  * Comprehensive testing across all pages: Auth, Track, Analyze, Export, Profile, ForgotPassword, ForgotUsername
-  * All text input fields now have consistent dark grey text with good contrast against backgrounds
-- July 14, 2025. Fixed critical Export page date field text color and scroll-to-top issues:
-  * CRITICAL FIX: Export page date input fields now display correct #333333 text color
-  * Added explicit text color styling and inline style attributes to both "From Date" and "To Date" fields
-  * Enhanced CSS rules to target input[type="date"] elements with !important declarations
-  * CRITICAL FIX: Implemented robust scroll-to-top functionality across all page transitions
-  * Added forceScrollToTop() utility function with multiple scroll reset methods for maximum compatibility
-  * Updated App.jsx with triple-layered scroll reset: immediate, 10ms delay, and 100ms delay
-  * Added useEffect hooks to all page components (Track, Analyze, Export, Profile) for scroll reset on mount
-  * Enhanced BottomNavigation component to use forceScrollToTop() on tab clicks
-  * Comprehensive scroll reset now works for all navigation methods: menu clicks, route changes, browser back/forward
-  * Both critical user experience issues resolved and tested for consistent behavior
-- July 14, 2025. Fixed TestFlight "Invalid response encoding" authentication error:
-  * CRITICAL FIX: Identified root cause - production environment response handling differences
-  * Enhanced server-side response headers with explicit UTF-8 encoding and cache control
-  * Added comprehensive TestFlight detection and logging for debugging
-  * Improved CORS configuration with proper headers for Capacitor iOS communication
-  * Enhanced client-side response validation with content-type checking
-  * Added production-specific logging for authentication flow debugging
-  * Implemented proper JSON response formatting with anti-caching headers
-  * Fixed authentication endpoint to ensure consistent response format across environments
-  * Created comprehensive debugging guide (TESTFLIGHT_DEBUG.md) for future issues
-  * Authentication now works consistently between development, Xcode simulator, and TestFlight
-- July 15, 2025. Comprehensive UI/UX mobile interface fixes completed:
-  * CRITICAL FIX: Fixed intensity level slider non-responsive issue - enhanced mobile touch interaction with proper touch-action and pointer-events
-  * CRITICAL FIX: Implemented sticky/fixed positioning for header and navigation bar - no longer scroll with content
-  * CRITICAL FIX: Reduced excessive header padding from 44px to 16px and navigation dead space
-  * CRITICAL FIX: Added proper content area padding to account for fixed header (60px) and navigation (80px)
-  * CRITICAL FIX: Standardized export button styling - both CSV and PDF radio buttons now use consistent teal color (#00D4AA)
-  * Enhanced slider with larger touch targets (24px thumbs), improved visual feedback, and cross-platform compatibility
-  * Implemented proper iOS safe area handling with adaptive padding for notch and home indicator
-  * Added intensity slider labels with highlighted current value display
-  * Optimized mobile interaction with enhanced touch-action and webkit-tap-highlight removal
-  * All UI elements now properly responsive and maintain dark theme aesthetic across devices
-- July 15, 2025. iPhone 13 mini padding optimization completed:
-  * CRITICAL FIX: Further reduced header vertical space - minimal padding (8px top/bottom) and reduced height (50px)
-  * CRITICAL FIX: Eliminated dead space below bottom navigation - flush with screen edge using env(safe-area-inset-bottom)
-  * CRITICAL FIX: iPhone 13 mini specific optimizations - header height reduced to 45px, navigation to 50px
-  * Optimized logo size for compact header - reduced from 32px to 28px with proportional icon scaling
-  * Enhanced responsive CSS variables with clamp() for better iPhone 13 mini screen utilization
-  * Progressive enhancement for safe area support with minimal padding (4px for modern devices, 24px fallback)
-  * Bottom navigation now perfectly flush with screen bottom edge across all iOS devices
-- July 15, 2025. Track.jsx layout optimization and bottom navigation positioning fixes:
-  * CRITICAL FIX: Updated Track.jsx header padding from p-6 to pt-2 pb-4 px-4 for reduced top padding
-  * CRITICAL FIX: Implemented min-h-screen flex flex-col justify-between structure for proper full-height layout
-  * CRITICAL FIX: Added fixed bottom-0 left-0 right-0 z-50 positioning to BottomNavigation component
-  * CRITICAL FIX: Added iOS safe area inset support with paddingBottom: 'env(safe-area-inset-bottom)' inline style
-  * Enhanced content area structure to span full viewport height with proper spacing
-  * Bottom navigation now anchored to screen bottom edge with proper z-index layering
-  * Optimized Track page layout to maximize content visibility while maintaining proper navigation positioning
-```
+MindTrace is a comprehensive mental health support application with both web and React Native mobile components. The application helps users track their thoughts, analyze cognitive patterns, and export data for mental health monitoring. It features a secure authentication system using Supabase, thought tracking with cognitive distortion analysis, and data visualization capabilities.
 
 ## User Preferences
 
-```
 Preferred communication style: Simple, everyday language.
-```
+
+## System Architecture
+
+### Backend Architecture
+- **Framework**: Express.js with TypeScript
+- **Runtime**: Node.js with ES modules
+- **Database**: Supabase (PostgreSQL with built-in authentication)
+- **Session Management**: Express sessions with secure configuration
+- **API Design**: RESTful API with proper error handling and rate limiting
+
+### Frontend Architecture
+- **Web**: Vite-based development with React integration (development/build setup)
+- **Mobile**: Complete React Native application with native iOS/Android support
+- **State Management**: React Query (TanStack Query) for server state management
+- **Navigation**: React Navigation v6 with stack and tab navigation
+- **Styling**: Custom design system with consistent colors, typography, and spacing
+
+### Authentication Strategy
+- **Provider**: Supabase Auth for secure user management
+- **Session Storage**: Express sessions on backend, AsyncStorage on mobile
+- **Security**: Secure HTTP-only cookies for web, token-based for mobile
+- **Validation**: Zod schemas for input validation
+
+## Key Components
+
+### Database Schema (Supabase)
+- **Users Table**: Stores user profiles with Supabase UUID as primary key
+- **Thoughts Table**: Mental health entries with content, intensity, cognitive distortions, and timestamps
+- **Authentication**: Handled entirely by Supabase Auth service
+
+### API Endpoints
+- **Authentication**: `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`
+- **Thoughts CRUD**: `/api/thoughts` with filtering by date ranges
+- **Data Export**: `/api/export/csv` for CSV generation
+- **Security**: Rate limiting on auth endpoints, session-based protection
+
+### Mobile App Structure
+- **Complete React Native App**: Native iOS/Android projects with proper build configurations
+- **Screen Architecture**: Tab-based navigation with Track, Analyze, Export, and Profile screens
+- **Component Library**: Reusable UI components with consistent design system
+- **Services Layer**: API client with proper error handling and offline considerations
+
+### Cognitive Distortion System
+- **Predefined Categories**: 12+ common cognitive distortions with descriptions and examples
+- **Tracking Integration**: Each thought entry is categorized by distortion type
+- **Analysis Features**: Statistical analysis and visualization of distortion patterns
+
+## Data Flow
+
+### Thought Creation Flow
+1. User inputs thought content and selects cognitive distortion
+2. Frontend validates input using Zod schemas
+3. API creates database entry with user association
+4. React Query updates cache and refreshes UI
+5. Success feedback provided to user
+
+### Authentication Flow
+1. User credentials sent to Supabase through backend proxy
+2. Backend creates session and stores Supabase user ID
+3. Mobile app stores authentication token in AsyncStorage
+4. Protected routes check session/token validity
+5. Auto-login on app restart using stored credentials
+
+### Data Analysis Flow
+1. Thoughts fetched with optional date range filtering
+2. Client-side statistical processing for patterns
+3. Chart data generation for intensity trends and distortion frequency
+4. Real-time updates when new thoughts are added
+
+## External Dependencies
+
+### Backend Dependencies
+- **Supabase**: Authentication and database services
+- **Express**: Web framework with CORS and session middleware
+- **Zod**: Schema validation and type safety
+- **Development Tools**: TypeScript, TSX for development server, ESBuild for production
+
+### Mobile Dependencies
+- **React Native**: Cross-platform mobile framework
+- **React Navigation**: Navigation library with stack and tab navigators
+- **React Query**: Server state management and caching
+- **Native Modules**: Vector icons, charts, file system, sharing capabilities
+- **Date Handling**: date-fns for date manipulation and formatting
+
+### Build Tools
+- **Vite**: Development server and build tool for web components
+- **Metro**: React Native bundler with custom configuration
+- **TypeScript**: Type safety across the entire application
+- **ESBuild**: Fast production builds for Node.js backend
+
+## Deployment Strategy
+
+### Backend Deployment
+- **Environment**: Node.js production environment
+- **Build Process**: TypeScript compilation with ESBuild bundling
+- **Environment Variables**: Supabase URL and service role key required
+- **Production Script**: `npm start` runs compiled JavaScript
+
+### Mobile Deployment
+- **Development**: Metro bundler with hot reloading
+- **iOS Build**: Xcode project with proper provisioning profiles
+- **Android Build**: Gradle build system with release configurations
+- **Distribution**: Standard app store deployment process
+
+### Database Management
+- **Migrations**: Drizzle Kit for schema management (configured but using Supabase)
+- **Environment Setup**: Supabase project configuration required
+- **Data Backup**: Handled by Supabase infrastructure
+
+### Security Considerations
+- **API Security**: Rate limiting, input validation, secure session configuration
+- **Mobile Security**: Secure token storage, certificate pinning considerations
+- **Data Privacy**: User data isolation, secure authentication flows
+- **Environment Variables**: Sensitive keys stored securely, not in repository
+
+The application is designed to be production-ready with proper error handling, loading states, offline considerations (mobile), and a scalable architecture that can grow with user needs.
