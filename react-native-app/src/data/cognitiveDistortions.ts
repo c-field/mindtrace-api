@@ -1,103 +1,102 @@
-export interface CognitiveDistortion {
-  id: string;
-  name: string;
-  description: string;
-  example: string;
-}
+import type { CognitiveDistortion } from '../types';
 
 export const cognitiveDistortions: CognitiveDistortion[] = [
   {
-    id: "all-or-nothing",
-    name: "All-or-Nothing Thinking",
-    description: "Viewing situations in absolute, black-and-white terms (e.g., success or failure, good or bad).",
-    example: "If I don't get a perfect score, I'm a complete failure."
+    id: 'all-or-nothing',
+    name: 'All-or-Nothing Thinking',
+    description: 'Viewing situations in absolute terms, without recognizing middle ground or nuance.',
+    example: 'If I make one mistake, I\'m a complete failure.',
   },
   {
-    id: "overgeneralization", 
-    name: "Overgeneralization",
-    description: "Drawing broad conclusions from a single event or piece of evidence.",
-    example: "I made one mistake, so I'm terrible at everything."
+    id: 'overgeneralization',
+    name: 'Overgeneralization',
+    description: 'Drawing broad conclusions from a single incident or piece of evidence.',
+    example: 'I failed this test, so I\'ll never be good at anything.',
   },
   {
-    id: "mental-filtering",
-    name: "Mental Filtering", 
-    description: "Focusing only on the negative aspects of a situation and ignoring the positives.",
-    example: "Getting one criticism and forgetting all the compliments received."
+    id: 'mental-filter',
+    name: 'Mental Filter',
+    description: 'Focusing exclusively on negative details while ignoring positive aspects.',
+    example: 'Despite receiving many compliments, I only focus on one criticism.',
   },
   {
-    id: "disqualifying-positive",
-    name: "Disqualifying the Positive",
-    description: "Rejecting positive experiences or achievements as irrelevant or unearned.",
-    example: "That compliment doesn't count because they were just being nice."
+    id: 'discounting-positive',
+    name: 'Discounting the Positive',
+    description: 'Dismissing positive experiences as unimportant or accidental.',
+    example: 'They only said I did well to be nice, not because I actually did.',
   },
   {
-    id: "jumping-conclusions",
-    name: "Jumping to Conclusions",
-    description: "Making assumptions without evidence, including mind reading and fortune-telling.",
-    example: "They didn't text back immediately, so they must be angry with me."
+    id: 'jumping-to-conclusions',
+    name: 'Jumping to Conclusions',
+    description: 'Making negative assumptions without sufficient evidence.',
+    example: 'My friend didn\'t text back immediately, so they must be angry with me.',
   },
   {
-    id: "mind-reading",
-    name: "Mind Reading",
-    description: "Assuming others are thinking negatively about you without evidence.",
-    example: "I know they think I'm incompetent, even though they haven't said anything."
+    id: 'magnification',
+    name: 'Magnification (Catastrophizing)',
+    description: 'Exaggerating the importance or severity of negative events.',
+    example: 'Making a mistake at work means I\'ll definitely get fired.',
   },
   {
-    id: "fortune-telling",
-    name: "Fortune-Telling",
-    description: "Predicting a negative future as inevitable without considering other possibilities.",
-    example: "I'll never find love because this relationship didn't work out."
+    id: 'minimization',
+    name: 'Minimization',
+    description: 'Downplaying the significance of positive events or personal strengths.',
+    example: 'Getting promoted was just luck, anyone could have done it.',
   },
   {
-    id: "magnification",
-    name: "Magnification (Catastrophizing)",
-    description: "Exaggerating the importance of problems or perceived flaws beyond their actual significance.",
-    example: "Making a small mistake and thinking it will ruin my entire career."
+    id: 'emotional-reasoning',
+    name: 'Emotional Reasoning',
+    description: 'Believing something is true based solely on how you feel about it.',
+    example: 'I feel guilty, so I must have done something wrong.',
   },
   {
-    id: "minimization",
-    name: "Minimization",
-    description: "Downplaying the importance of positive qualities or accomplishments.",
-    example: "Getting promoted was just luck, it doesn't mean I'm actually good at my job."
+    id: 'should-statements',
+    name: 'Should Statements',
+    description: 'Using rigid rules about how you or others "should" behave.',
+    example: 'I should be perfect at everything I do.',
   },
   {
-    id: "emotional-reasoning",
-    name: "Emotional Reasoning",
-    description: "Believing that negative emotions reflect objective reality rather than subjective experience.",
-    example: "I feel like a failure, so I must be a failure."
+    id: 'labeling',
+    name: 'Labeling',
+    description: 'Assigning negative labels to yourself or others based on specific behaviors.',
+    example: 'I made a mistake, so I\'m an idiot.',
   },
   {
-    id: "should-statements",
-    name: "Should Statements",
-    description: "Using rigid rules about how you or others must behave, creating unrealistic expectations.",
-    example: "I should always be perfect and never make mistakes."
+    id: 'personalization',
+    name: 'Personalization',
+    description: 'Taking responsibility for events that are outside your control.',
+    example: 'My team lost the game because I didn\'t play well enough.',
   },
   {
-    id: "labeling",
-    name: "Labeling",
-    description: "Assigning global, negative labels to yourself or others based on specific behaviors.",
-    example: "I made a mistake, so I'm a failure as a person."
+    id: 'fortune-telling',
+    name: 'Fortune Telling',
+    description: 'Predicting negative outcomes without reasonable evidence.',
+    example: 'I know this presentation will go terribly.',
   },
   {
-    id: "mislabeling",
-    name: "Mislabeling",
-    description: "Using emotionally loaded and inaccurate language to describe events or people.",
-    example: "Calling a minor setback a 'complete disaster' or 'total catastrophe'."
+    id: 'mind-reading',
+    name: 'Mind Reading',
+    description: 'Assuming you know what others are thinking without checking.',
+    example: 'I can tell they think I\'m boring.',
   },
   {
-    id: "personalization",
-    name: "Personalization",
-    description: "Blaming yourself for things outside your control or taking responsibility for others' actions.",
-    example: "My friend is upset, so it must be something I did wrong."
+    id: 'control-fallacies',
+    name: 'Control Fallacies',
+    description: 'Believing you have too much or too little control over situations.',
+    example: 'Everything that goes wrong is my fault (or nothing is ever my fault).',
   },
   {
-    id: "blame",
-    name: "Blame",
-    description: "Holding others responsible for your emotions or circumstances without taking personal accountability.",
-    example: "I'm unhappy because of what other people do to me."
-  }
+    id: 'fairness-fallacy',
+    name: 'Fairness Fallacy',
+    description: 'Expecting life to always be fair and becoming upset when it isn\'t.',
+    example: 'It\'s not fair that others seem to have it easier than me.',
+  },
 ];
 
 export const getCognitiveDistortionById = (id: string): CognitiveDistortion | undefined => {
   return cognitiveDistortions.find(distortion => distortion.id === id);
+};
+
+export const getCognitiveDistortionNames = (): string[] => {
+  return cognitiveDistortions.map(distortion => distortion.name);
 };

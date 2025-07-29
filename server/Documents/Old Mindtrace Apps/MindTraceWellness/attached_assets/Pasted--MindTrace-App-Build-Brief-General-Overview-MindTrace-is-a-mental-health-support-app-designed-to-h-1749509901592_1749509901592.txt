@@ -1,0 +1,116 @@
+📱 MindTrace App Build Brief
+General Overview
+MindTrace is a mental health support app designed to help users track and analyse negative thought patterns in an intuitive, low-friction way. It enables users to quickly log thoughts, categorize them, and later review or export this data (e.g. for therapy use). The focus is on mobile-first design, simplicity, and elegant UX.
+
+📲 Platform
+Mobile only: iOS & Android (no web version required)
+
+Design system: Modern, clean, and intuitive — inspired by high-quality fitness/wellness apps
+
+Navigation: Fixed bottom tab bar for navigation (see uploaded reference)
+
+Tabs: Track, Analyse, Export, Profile
+
+🧠 App Structure
+1. Track Page
+Users input a negative thought and categorize it.
+
+Features:
+
+Large text box for entering a thought
+
+Dropdown or select menu for cognitive distortion categories (see list below)
+
+When a category is selected, show its definition
+
+Optional text box for entering potential triggers
+
+Intensity selector (1–10 slider)
+
+Submit button at the bottom
+
+Upon submission, show a confirmation message ("Thought recorded!")
+
+Categories (with definitions shown upon selection):
+
+All-or-nothing thinking: Viewing situations in extremes, as either completely good or bad, without acknowledging the gray areas.
+
+Overgeneralization: Drawing broad conclusions based on a single negative event, applying it to all situations.
+
+Mental filtering: Focusing solely on the negative aspects of a situation while ignoring the positive ones.
+
+Discounting the positive: Dismissing or downplaying positive experiences, as if they don't matter.
+
+Jumping to conclusions: Making negative interpretations without sufficient evidence.
+
+Catastrophizing: Anticipating the worst possible outcome in any situation.
+
+Emotional reasoning: Assuming that emotional feelings reflect reality, even if there's no factual basis.
+
+Personalization: Taking responsibility for events or behaviors that are not under your control.
+
+Should statements: Placing unrealistic demands or expectations on oneself or others using phrases like "I should" or "I must".
+
+Magnification and Minimization: Exaggerating the importance of negative events or downplaying positive ones.
+
+Labeling: Attributing broad, negative labels to oneself based on specific actions or behaviors.
+
+Mind Reading: Believing you know what others are thinking, often negatively.
+
+2. Analyse Page
+View trends and summaries over time.
+
+Features:
+
+Date range filter (buttons for: Today, Yesterday, Last 7 days, Last 30 days)
+
+Summary section with:
+
+Total thoughts logged
+
+Average thoughts/day
+
+Average intensity
+
+Most common category
+
+Reports/Charts:
+
+Thoughts per day (bar chart)
+
+Breakdown by category (pie chart or bar)
+
+Table of individual thoughts with: Date, Category, Intensity, and Trigger (if available)
+
+3. Export Page
+Allows users to filter and download their thought log.
+
+Features:
+
+Date range selector
+
+Export to CSV or PDF
+
+Download/share via system dialog (email, AirDrop, Drive, etc.)
+
+4. Profile Page
+User settings and information hub.
+
+Features:
+
+Edit profile info (name, email, preferences)
+
+Button to clear all app data (with confirmation)
+
+Static section with resources (e.g., mental health charities, helplines, CBT guidance)
+
+Explanation of the benefits of journaling thoughts
+
+🎨 Branding
+App Name: MindTrace
+Icon & Logo:
+Refer to uploaded assets:
+
+App icon (brain-shaped loop symbol)
+
+App logo (text: MindTrace, stylized in modern teal serif font)

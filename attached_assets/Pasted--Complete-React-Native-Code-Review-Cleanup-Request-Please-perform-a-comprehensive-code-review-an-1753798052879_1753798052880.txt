@@ -1,0 +1,91 @@
+# Complete React Native Code Review & Cleanup Request
+
+Please perform a comprehensive code review and cleanup of this React Native project. Focus on the following areas:
+
+## 1. Project Structure & Organization
+- Reorganize files into a logical folder structure following React Native best practices
+- Create appropriate directories: `/src`, `/components`, `/screens`, `/services`, `/utils`, `/assets`, `/constants`
+- Move components to dedicated folders with index files for clean imports
+- Separate business logic from UI components
+- Organize assets (images, fonts, etc.) in appropriate subdirectories
+
+## 2. Code Quality & Standards
+- Review all files for consistent coding style and formatting
+- Apply proper naming conventions (camelCase for variables/functions, PascalCase for components)
+- Remove any unused imports, variables, or functions
+- Fix any linting errors and warnings
+- Ensure consistent indentation and spacing throughout
+- Add proper TypeScript types where missing (if using TypeScript)
+
+## 3. Component Architecture
+- Review component hierarchy and suggest improvements
+- Identify and extract reusable components
+- Ensure proper separation of concerns between components
+- Implement proper prop validation or TypeScript interfaces
+- Review and optimize component lifecycle methods and hooks usage
+
+## 4. Performance Optimization
+- Identify and fix potential performance bottlenecks
+- Review FlatList implementations for proper optimization
+- Check for unnecessary re-renders and suggest React.memo where appropriate
+- Optimize image handling and lazy loading where needed
+- Review navigation structure for efficiency
+
+## 5. State Management
+- Review state management approach (useState, useContext, Redux, etc.)
+- Ensure state is managed at appropriate component levels
+- Check for proper data flow and avoid prop drilling
+- Validate async operations and error handling
+
+## 6. Navigation & Routing
+- Review navigation structure and flow
+- Ensure proper screen organization and naming
+- Check for correct navigation patterns and deep linking setup
+- Validate navigation types and parameters
+
+## 7. Styling & UI Consistency
+- Review and organize StyleSheet usage
+- Check for consistent spacing, colors, and typography
+- Identify opportunities to create reusable style constants
+- Ensure responsive design principles are followed
+- Review accessibility implementations
+
+## 8. Error Handling & Validation
+- Add proper error boundaries where needed
+- Review form validation and user input handling
+- Ensure proper error messaging and user feedback
+- Add loading states and proper async error handling
+
+## 9. Dependencies & Configuration
+- Review package.json for unused or outdated dependencies
+- Check for proper dependency versions and potential conflicts
+- Review configuration files (metro.config.js, babel.config.js, etc.)
+- Ensure proper environment configuration
+
+## 10. Documentation & Comments
+- Add meaningful comments for complex logic
+- Update or create README with setup instructions
+- Document component props and usage examples
+- Add inline documentation for utility functions
+
+## Specific Actions Requested:
+1. **Restructure the entire project** following React Native best practices
+2. **Create a clean, scalable folder structure**
+3. **Refactor components** for better reusability and maintainability
+4. **Optimize performance** where possible
+5. **Standardize coding style** throughout the project
+6. **Fix any bugs or issues** you identify
+7. **Add proper error handling** and loading states
+8. **Create reusable constants** for colors, fonts, and spacing
+9. **Optimize imports** and remove dead code
+10. **Add proper TypeScript types** (if applicable) or PropTypes
+
+## Output Format:
+Please provide:
+- A summary of changes made
+- List of identified issues and how they were resolved
+- Recommendations for future development
+- Any breaking changes or migration notes
+- Updated project structure overview
+
+Make the codebase production-ready, maintainable, and following industry best practices for React Native development.
